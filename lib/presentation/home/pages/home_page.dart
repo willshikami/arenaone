@@ -1,7 +1,7 @@
-import 'dart:ui';
 import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_sficon/flutter_sficon.dart';
 import '../../../redux/app_state.dart';
 import '../../../redux/actions/team_actions.dart';
 import '../../../redux/actions/navigation_actions.dart';
@@ -74,7 +74,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.sports_rounded, size: 100, color: Colors.grey),
+            SFIcon(SFIcons.sf_sportscourt, fontSize: 100, color: Colors.grey),
             SizedBox(height: 16),
             Text(
               'There are no upcoming matches in this league',
@@ -82,7 +82,7 @@ class HomeScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           ],
@@ -114,125 +114,155 @@ class _GameCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16161C), // Unified dark surface
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.05), width: 1),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                game.leagueType ?? 'Regular Season',
-                style: TextStyle(
-                  color: Colors.grey.shade500,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              if (game.isLive)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.red, width: 1),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 6,
-                        height: 6,
-                        decoration: const BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      const Text(
-                        'LIVE',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              else
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    game.status == 'Final' 
-                        ? 'FINAL' 
-                        : DateFormat('h:mm a').format(game.startTime),
-                    style: TextStyle(
-                      color: game.status == 'Final' ? Colors.white : Colors.grey.shade400,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(child: _TeamSection(
-                name: game.homeTeamName,
-                abbr: game.homeTeamAbbr,
-                logoUrl: game.homeTeamLogo,
-                isHome: true,
-              )),
-              _MatchInfo(game: game),
-              Expanded(child: _TeamSection(
-                name: game.awayTeamName,
-                abbr: game.awayTeamAbbr,
-                logoUrl: game.awayTeamLogo,
-                isHome: false,
-              )),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Divider(height: 1, color: Colors.white.withOpacity(0.08)),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.location_on_outlined, size: 14, color: Colors.grey),
-                  const SizedBox(width: 4),
-                  Text(
-                    game.stadium ?? 'TBD',
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  const Icon(Icons.tv_outlined, size: 14, color: Colors.grey),
-                  const SizedBox(width: 4),
-                  Text(
-                    game.broadcastChannel ?? 'Check Local',
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                ],
-              ),
-            ],
+        color: const Color(0xFF16161C),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withOpacity(0.06), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
           ),
         ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {}, // Enhanced with interaction surface
+            borderRadius: BorderRadius.circular(24),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 3,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFF6A1A),
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            (game.leagueType ?? 'Regular Season').toUpperCase(),
+                            style: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (game.isLive)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: Colors.red.withOpacity(0.5), width: 1),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 5,
+                                height: 5,
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Text(
+                                'LIVE',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      else
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.06),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            game.status == 'Final' 
+                                ? 'FINAL' 
+                                : DateFormat('h:mm a').format(game.startTime),
+                            style: TextStyle(
+                              color: game.status == 'Final' ? Colors.white : Colors.grey.shade300,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(child: _TeamSection(
+                        name: game.homeTeamName,
+                        abbr: game.homeTeamAbbr,
+                        logoUrl: game.homeTeamLogo,
+                        isHome: true,
+                      )),
+                      _MatchInfo(game: game),
+                      Expanded(child: _TeamSection(
+                        name: game.awayTeamName,
+                        abbr: game.awayTeamAbbr,
+                        logoUrl: game.awayTeamLogo,
+                        isHome: false,
+                      )),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    height: 1,
+                    width: double.infinity,
+                    color: Colors.white.withOpacity(0.06),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildFooterInfo(game.stadium ?? 'TBD'),
+                      _buildFooterInfo(game.broadcastChannel ?? 'Check Local'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFooterInfo(String label) {
+    return Text(
+      label,
+      style: TextStyle(
+        color: Colors.grey.shade500,
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
       ),
     );
   }
@@ -255,31 +285,42 @@ class _TeamSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (logoUrl != null && logoUrl!.endsWith('.svg'))
-          SvgPicture.network(
-            logoUrl!,
-            height: 48,
-            width: 48,
-            placeholderBuilder: (context) => const CircleAvatar(radius: 24, backgroundColor: Colors.transparent),
-          )
-        else if (logoUrl != null)
-          Image.network(
-            logoUrl!,
-            height: 48,
-            width: 48,
-            errorBuilder: (context, error, stackTrace) => const CircleAvatar(radius: 24, backgroundColor: Colors.transparent),
-          )
-        else
-          const CircleAvatar(radius: 24, backgroundColor: Colors.transparent),
+        Container(
+          height: 44,
+          width: 44,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.04),
+            shape: BoxShape.circle,
+          ),
+          child: logoUrl != null
+              ? (logoUrl!.endsWith('.svg')
+                  ? SvgPicture.network(
+                      logoUrl!,
+                      placeholderBuilder: (context) => const SizedBox.shrink(),
+                    )
+                  : Image.network(
+                      logoUrl!,
+                      errorBuilder: (context, error, stackTrace) => 
+                          const SFIcon(SFIcons.sf_basketball, color: Colors.grey, fontSize: 20),
+                    ))
+              : const SFIcon(SFIcons.sf_basketball, color: Colors.grey, fontSize: 20),
+        ),
         const SizedBox(height: 8),
         Text(
           abbr.isNotEmpty ? abbr : name,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.white),
           textAlign: TextAlign.center,
         ),
+        const SizedBox(height: 2),
         Text(
-          isHome ? 'Home' : 'Away',
-          style: const TextStyle(fontSize: 10, color: Colors.grey),
+          isHome ? 'HOME' : 'AWAY',
+          style: TextStyle(
+            fontSize: 8, 
+            color: Colors.grey.shade500, 
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.8,
+          ),
         ),
       ],
     );
@@ -304,20 +345,21 @@ class _MatchInfo extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 28, 
                 fontWeight: FontWeight.w900,
-                letterSpacing: -1,
+                color: Colors.white,
+                letterSpacing: -1.5,
                 fontFeatures: [FontFeature.tabularFigures()],
               ),
             ),
-            if (game.status == 'Final')
-              Text(
-                'FINAL',
-                style: TextStyle(
-                  fontSize: 10, 
-                  color: Colors.grey.shade600, 
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.2,
-                ),
+            const SizedBox(height: 2),
+            Text(
+              game.isLive ? 'LIVE' : 'FINAL',
+              style: TextStyle(
+                fontSize: 9, 
+                color: game.isLive ? Colors.red : Colors.grey.shade600, 
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.2,
               ),
+            ),
           ],
         ),
       );
@@ -327,18 +369,31 @@ class _MatchInfo extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          Text(
-            'VS',
-            style: TextStyle(
-              fontSize: 18, 
-              fontWeight: FontWeight.w900, 
-              color: Colors.grey.shade300,
-              letterSpacing: 2,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.04),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Text(
+              'VS',
+              style: TextStyle(
+                fontSize: 16, 
+                fontWeight: FontWeight.w900, 
+                color: Colors.white24,
+                letterSpacing: 2,
+              ),
             ),
           ),
-          const SizedBox(height: 4),
-          // We don't need the time here anymore as it's in the top right badge
-          // But we can show "Tonight" or "Tomorrow" or something similar if needed
+          const SizedBox(height: 8),
+          Text(
+            DateFormat('h:mm a').format(game.startTime),
+            style: TextStyle(
+              fontSize: 10, 
+              color: Colors.grey.shade500,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:async_redux/async_redux.dart';
+import 'package:flutter_sficon/flutter_sficon.dart';
 import '../../../redux/app_state.dart';
 import '../../../redux/actions/navigation_actions.dart';
 
@@ -87,16 +88,16 @@ class _ViewModel extends Vm {
 }
 
 class SportSelector extends StatelessWidget {
-  final List<Map<String, dynamic>> sports = [
-    {'name': 'NBA', 'icon': Icons.sports_basketball},
-    {'name': 'MLB', 'icon': Icons.sports_baseball},
-    {'name': 'NHL', 'icon': Icons.sports_hockey},
-    {'name': 'NFL', 'icon': Icons.sports_football},
-    {'name': 'EPL', 'icon': Icons.sports_soccer},
-    {'name': 'Tennis', 'icon': Icons.sports_tennis},
+  final List<Map<String, dynamic>> sports = const [
+    {'name': 'NBA', 'icon': SFIcons.sf_basketball},
+    {'name': 'MLB', 'icon': SFIcons.sf_baseball},
+    {'name': 'NHL', 'icon': SFIcons.sf_hockey_puck},
+    {'name': 'NFL', 'icon': SFIcons.sf_figure_american_football},
+    {'name': 'EPL', 'icon': SFIcons.sf_soccerball},
+    {'name': 'Tennis', 'icon': SFIcons.sf_tennisball},
   ];
 
-  SportSelector({super.key});
+  const SportSelector({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +115,7 @@ class SportSelector extends StatelessWidget {
           final isSelected = sport == 'NBA';
 
           return FilterChip(
-            avatar: Icon(icon, color: isSelected ? Colors.black : Colors.white, size: 16),
+            avatar: SFIcon(icon, color: isSelected ? Colors.black : Colors.white, fontSize: 16),
             label: Text(sport),
             selected: isSelected,
             onSelected: (selected) {},

@@ -1,5 +1,6 @@
 import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sficon/flutter_sficon.dart';
 import '../../../redux/app_state.dart';
 import 'home_page.dart';
 import '../../../redux/actions/navigation_actions.dart';
@@ -30,11 +31,29 @@ class MainNavigation extends StatelessWidget {
           selectedItemColor: const Color(0xFFFF6A1A),
           unselectedItemColor: Colors.grey.shade600,
           type: BottomNavigationBarType.fixed,
+          selectedFontSize: 11,
+          unselectedFontSize: 11,
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.search_outlined), activeIcon: Icon(Icons.search), label: 'Explore'),
-            BottomNavigationBarItem(icon: Icon(Icons.scoreboard_outlined), activeIcon: Icon(Icons.scoreboard), label: 'Scores'),
-            BottomNavigationBarItem(icon: Icon(Icons.favorite_outline), activeIcon: Icon(Icons.favorite), label: 'Following'),
+            BottomNavigationBarItem(
+              icon: SFIcon(SFIcons.sf_house, fontSize: 24),
+              activeIcon: SFIcon(SFIcons.sf_house_fill, fontSize: 24),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: SFIcon(SFIcons.sf_magnifyingglass, fontSize: 24),
+              activeIcon: SFIcon(SFIcons.sf_magnifyingglass, fontSize: 24, fontWeight: FontWeight.bold),
+              label: 'Explore',
+            ),
+            BottomNavigationBarItem(
+              icon: SFIcon(SFIcons.sf_sportscourt, fontSize: 24),
+              activeIcon: SFIcon(SFIcons.sf_sportscourt_fill, fontSize: 24),
+              label: 'Scores',
+            ),
+            BottomNavigationBarItem(
+              icon: SFIcon(SFIcons.sf_star, fontSize: 24),
+              activeIcon: SFIcon(SFIcons.sf_star_fill, fontSize: 24),
+              label: 'Following',
+            ),
           ],
         ),
       ),

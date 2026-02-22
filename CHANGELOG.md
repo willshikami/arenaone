@@ -2,16 +2,19 @@
 
 All notable changes to the Arena One project will be documented in this file.
 
-## [1.0.0-alpha.6] - 2026-02-22 15:45
+## [1.0.0-alpha.7] - 2026-02-22 16:05
 
 ### Changed
-- Removed "Profile" from the redundant `BottomNavigationBar` tabs.
-- Integrated profile navigation directly into the top-right avatar in the `HomeTopBar`.
-- Implemented `IndexedStack` in `MainNavigation` for smooth transitions between primary tabs (Home, Explore, Scores, Following).
-- Modernized `PlaceholderScreen` to match the dark theme and brand identity.
+- Reimagined the **Event Card** design with a focus on depth and premium sports aesthetics.
+- Added a `Material` `InkWell` surface to match cards for better interactive feedback.
+- Enhanced card layout with larger team containers (`64x64`) and subtle background glows.
+- Improved match information hierarchy:
+  - Added a brand-color vertical accent for league identification.
+  - Redesigned the "VS" indicator with a stylized background badge.
+  - Increased score typography to `32pt` with heavy weights for better impact.
+- Refined footer information (Stadium, Channel) with custom icons and consistent spacing.
 
-### Added
-- Created a dedicated `ProfileScreen` entry point.
+## [1.0.0-alpha.6] - 2026-02-22 15:45
 
 ## [1.0.0-alpha.5] - 2026-02-22 15:30
 
