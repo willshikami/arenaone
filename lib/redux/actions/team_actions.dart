@@ -2,7 +2,9 @@ import 'package:async_redux/async_redux.dart';
 import '../app_state.dart';
 import '../../data/services/database_helper.dart';
 import '../../data/models/team.dart';
-import '../../data/models/game.dart';
+import '../../data/models/sports/basketball_game.dart';
+import '../../data/models/sports/f1_game.dart';
+import '../../data/models/sports/golf_game.dart';
 import '../../data/assets/track_assets.dart';
 
 class LoadMockGamesAction extends ReduxAction<AppState> {
@@ -15,7 +17,7 @@ class LoadMockGamesAction extends ReduxAction<AppState> {
 
     final mockGames = [
       // Yesterday's Games
-      Game(
+      BasketballGame(
         id: 'y1',
         homeTeamName: 'Celtics',
         awayTeamName: 'Nets',
@@ -31,12 +33,8 @@ class LoadMockGamesAction extends ReduxAction<AppState> {
         score: '112-105',
         broadcastChannel: 'TNT',
       ),
-      Game(
+      F1Game(
         id: 'y2',
-        homeTeamName: '',
-        awayTeamName: '',
-        homeTeamAbbr: '',
-        awayTeamAbbr: '',
         sport: 'F1',
         leagueType: 'Abu Dhabi, UAE',
         stadium: 'Yas Marina Circuit',
@@ -61,13 +59,12 @@ class LoadMockGamesAction extends ReduxAction<AppState> {
         p3Points: '21',
         p3TotalPoints: '262',
         p3Gap: '+0.254s',
-        homeTeamLogo: 'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
         broadcastChannel: 'Sky Sports',
         trackLength: '5.281 km',
         circuitLayoutUrl: TrackAssets.yasMarina,
       ),
       // Today's Games
-      Game(
+      BasketballGame(
         id: 't1',
         homeTeamName: 'Knicks',
         awayTeamName: '76ers',
@@ -85,7 +82,7 @@ class LoadMockGamesAction extends ReduxAction<AppState> {
         broadcastChannel: 'ESPN',
       ),
       // Tomorrow's Games
-      Game(
+      BasketballGame(
         id: 'tm1',
         homeTeamName: 'Bulls',
         awayTeamName: 'Cavaliers',
@@ -100,12 +97,8 @@ class LoadMockGamesAction extends ReduxAction<AppState> {
         status: 'Upcoming',
         broadcastChannel: 'NBA TV',
       ),
-      Game(
+      F1Game(
         id: 'tm2',
-        homeTeamName: '',
-        awayTeamName: '',
-        homeTeamAbbr: '',
-        awayTeamAbbr: '',
         sport: 'F1',
         leagueType: 'Sakhir, Bahrain',
         stadium: 'Bahrain International Circuit',
@@ -118,12 +111,8 @@ class LoadMockGamesAction extends ReduxAction<AppState> {
         circuitLayoutUrl: TrackAssets.bahrain,
         trackLength: '5.412 km',
       ),
-      Game(
+      F1Game(
         id: 'tm3',
-        homeTeamName: '',
-        awayTeamName: '',
-        homeTeamAbbr: '',
-        awayTeamAbbr: '',
         sport: 'F1',
         leagueType: 'Jeddah, Saudi Arabia',
         stadium: 'Jeddah Corniche Circuit',
@@ -135,12 +124,8 @@ class LoadMockGamesAction extends ReduxAction<AppState> {
         circuitLayoutUrl: TrackAssets.jeddah,
         trackLength: '6.174 km',
       ),
-      Game(
+      F1Game(
         id: 'tm4',
-        homeTeamName: '',
-        awayTeamName: '',
-        homeTeamAbbr: '',
-        awayTeamAbbr: '',
         sport: 'F1',
         leagueType: 'Melbourne, Australia',
         stadium: 'Albert Park Circuit',
@@ -151,6 +136,92 @@ class LoadMockGamesAction extends ReduxAction<AppState> {
         laps: 58,
         circuitLayoutUrl: TrackAssets.albertPark,
         trackLength: '5.278 km',
+      ),
+      // Golf Mock Data
+      GolfGame(
+        id: 'g1',
+        sport: 'Golf',
+        tournamentName: 'The Genesis Invitational',
+        stadium: 'Riviera Country Club',
+        startTime: yesterday.subtract(const Duration(days: 2)),
+        status: 'Final',
+        tourType: 'PGA Tour',
+        winnerPurse: '\$4.0M',
+        leaderboard: [
+          GolfLeader(
+            position: 1,
+            name: 'Hideki Matsuyama',
+            team: 'Japan',
+            score: '-17',
+            thru: 'F',
+            image: 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_350,q_auto,w_280/headshots_28486.png',
+          ),
+          GolfLeader(
+            position: 2,
+            name: 'Luke List',
+            team: 'USA',
+            score: '-14',
+            thru: 'F',
+            image: 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_350,q_auto,w_280/headshots_27129.png',
+          ),
+          GolfLeader(
+            position: 3,
+            name: 'Adam Hadwin',
+            team: 'Canada',
+            score: '-14',
+            thru: 'F',
+            image: 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_350,q_auto,w_280/headshots_33410.png',
+          ),
+        ],
+      ),
+      GolfGame(
+        id: 'g2',
+        sport: 'Golf',
+        tournamentName: 'WM Phoenix Open',
+        stadium: 'TPC Scottsdale',
+        startTime: today,
+        status: 'Live',
+        isLive: true,
+        tourType: 'PGA Tour',
+        purse: '\$8.8M',
+        leaderboard: [
+          GolfLeader(
+            position: 1,
+            name: 'Nick Taylor',
+            team: 'Canada',
+            score: '-21',
+            thru: 'Hole 18',
+            image: 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_350,q_auto,w_280/headshots_35450.png',
+          ),
+          GolfLeader(
+            position: 2,
+            name: 'Charley Hoffman',
+            team: 'USA',
+            score: '-21',
+            thru: 'F',
+            image: 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_350,q_auto,w_280/headshots_25686.png',
+          ),
+          GolfLeader(
+            position: 3,
+            name: 'Sam Burns',
+            team: 'USA',
+            score: '-18',
+            thru: 'F',
+            image: 'https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,f_auto,g_face:center,h_350,q_auto,w_280/headshots_47484.png',
+          ),
+        ],
+      ),
+      GolfGame(
+        id: 'g3',
+        sport: 'Golf',
+        tournamentName: 'The Masters Tournament',
+        stadium: 'Augusta National Golf Club',
+        startTime: tomorrow.add(const Duration(days: 45)),
+        status: 'Upcoming',
+        par: '72',
+        tourType: 'PGA Tour',
+        purse: '\$20M',
+        broadcastChannel: 'CBS / ESPN',
       ),
     ];
     return state.copyWith(games: mockGames);

@@ -5,9 +5,12 @@ import '../../../redux/app_state.dart';
 import '../../../redux/actions/team_actions.dart';
 import '../../../redux/actions/navigation_actions.dart';
 import '../../../data/models/game.dart';
+import '../../../data/models/sports/f1_game.dart';
+import '../../../data/models/sports/golf_game.dart';
 import '../widgets/home_top_bar.dart';
 import '../widgets/game_card.dart';
 import '../widgets/f1_race_card.dart';
+import '../widgets/golf_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -19,10 +22,11 @@ class HomeScreen extends StatelessWidget {
       vm: () => _Factory(this),
       builder: (context, vm) {
         final isF1 = vm.selectedSport == 'F1';
+        final isGolf = vm.selectedSport == 'Golf';
         return DefaultTabController(
           key: ValueKey(vm.selectedSport),
-          length: isF1 ? 2 : 3,
-          initialIndex: isF1 ? 0 : 0, // Previous or Yesterday
+          length: (isF1 || isGolf) ? 2 : 3,
+          initialIndex: 0,
           child: Container(
             decoration: BoxDecoration(
               color: const Color(0xFF0D0D10),
@@ -56,7 +60,7 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                     fontSize: 16,
                   ),
-                  tabs: isF1
+                  tabs: (isF1 || isGolf)
                       ? const [Tab(text: 'Previous'), Tab(text: 'Upcoming')]
                       : const [
                           Tab(text: 'Yesterday'),
@@ -66,7 +70,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 Expanded(
                   child: TabBarView(
-                    children: isF1
+                    children: (isF1 || isGolf)
                         ? [
                             _buildGamesList(vm.yesterdayGames), // Previous
                             _buildGamesList(vm.todayGames), // Upcoming
@@ -119,7 +123,7 @@ class HomeScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         final game = games[index];
 
-        if (game.sport == 'F1') {
+        if (game is F1Game) {
           if (game.status == 'Upcoming') {
             return F1UpcomingCard(
               raceName: game.stadium ?? 'TBD Grand Prix',
@@ -159,6 +163,51 @@ class HomeScreen extends StatelessWidget {
           }
         }
 
+        if (game is GolfGame) {
+          final leaders = game.leaderboard ?? [];
+          if (game.status == 'Upcoming') {
+            return GolfUpcomingCard(
+              tournamentName: game.tournamentName ?? 'TBD Tournament',
+              location: game.stadium ?? 'TBD Course',
+              startDate: game.startTime,
+              par: game.par ?? '72',
+              tourType: game.tourType ?? 'PGA Tour',
+              broadcastChannel: game.broadcastChannel,
+              purse: game.purse,
+            );
+          } else if (game.status == 'Live') {
+            return GolfLiveCard(
+              tournamentName: game.tournamentName ?? 'TBD Tournament',
+              leaderName: leaders.isNotEmpty ? leaders[0].name : 'TBD',
+              leaderScore: leaders.isNotEmpty ? leaders[0].score : 'E',
+              thru: leaders.isNotEmpty ? leaders[0].thru : '-',
+              currentRound: game.round ?? 'Round 1',
+              tourType: game.tourType ?? 'PGA Tour',
+              leaderImage: leaders.isNotEmpty ? leaders[0].image : null,
+              purse: game.purse,
+              p2Name: leaders.length > 1 ? leaders[1].name : null,
+              p2Score: leaders.length > 1 ? leaders[1].score : null,
+              p2Thru: leaders.length > 1 ? leaders[1].thru : null,
+              p3Name: leaders.length > 2 ? leaders[2].name : null,
+              p3Score: leaders.length > 2 ? leaders[2].score : null,
+              p3Thru: leaders.length > 2 ? leaders[2].thru : null,
+            );
+          } else {
+            return GolfCompletedCard(
+              tournamentName: game.tournamentName ?? 'TBD Tournament',
+              winnerName: leaders.isNotEmpty ? leaders[0].name : 'Unknown',
+              winnerScore: leaders.isNotEmpty ? leaders[0].score : 'E',
+              winnerImage: leaders.isNotEmpty ? leaders[0].image : null,
+              tourType: game.tourType ?? 'PGA Tour',
+              winnerPurse: game.winnerPurse ?? game.purse,
+              p2Name: leaders.length > 1 ? leaders[1].name : null,
+              p2Score: leaders.length > 1 ? leaders[1].score : null,
+              p3Name: leaders.length > 2 ? leaders[2].name : null,
+              p3Score: leaders.length > 2 ? leaders[2].score : null,
+            );
+          }
+        }
+
         return GameCard(game: game);
       },
     );
@@ -186,6 +235,21 @@ class _Factory extends VmFactory<AppState, HomeScreen, _ViewModel> {
             .toList(),
         todayGames: state.games
             .where((g) => g.sport == 'F1' && g.status == 'Upcoming')
+            .toList(),
+        tomorrowGames: [],
+        selectedDate: state.selectedDate,
+        selectedSport: state.selectedSport,
+        onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
+      );
+    }
+
+    if (state.selectedSport == 'Golf') {
+      return _ViewModel(
+        yesterdayGames: state.games
+            .where((g) => g.sport == 'Golf' && g.status == 'Final')
+            .toList(),
+        todayGames: state.games
+            .where((g) => g.sport == 'Golf' && (g.status == 'Upcoming' || g.status == 'Live'))
             .toList(),
         tomorrowGames: [],
         selectedDate: state.selectedDate,

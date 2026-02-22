@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
 import 'package:intl/intl.dart';
 import '../../../data/models/game.dart';
+import '../../../data/models/sports/basketball_game.dart';
 
 class GameCard extends StatelessWidget {
   final Game game;
@@ -12,6 +13,10 @@ class GameCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // If it's a basketball game, we use its fields. 
+    // Otherwise we provide defaults to avoid crashes if used generically.
+    final baskGame = game is BasketballGame ? (game as BasketballGame) : null;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -52,16 +57,16 @@ class GameCard extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(child: TeamSection(
-                        name: game.homeTeamName,
-                        abbr: game.homeTeamAbbr,
-                        logoUrl: game.homeTeamLogo,
+                        name: baskGame?.homeTeamName ?? '',
+                        abbr: baskGame?.homeTeamAbbr ?? '',
+                        logoUrl: baskGame?.homeTeamLogo,
                         isHome: true,
                       )),
                       MatchInfo(game: game),
                       Expanded(child: TeamSection(
-                        name: game.awayTeamName,
-                        abbr: game.awayTeamAbbr,
-                        logoUrl: game.awayTeamLogo,
+                        name: baskGame?.awayTeamName ?? '',
+                        abbr: baskGame?.awayTeamAbbr ?? '',
+                        logoUrl: baskGame?.awayTeamLogo,
                         isHome: false,
                       )),
                     ],
@@ -168,6 +173,12 @@ class MatchInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // If it's a basketball game, we use its score.
+    String? score;
+    if (game is BasketballGame) {
+      score = (game as BasketballGame).score;
+    }
+
     if (game.status == 'Final' || game.isLive) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -175,7 +186,7 @@ class MatchInfo extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              game.score ?? '0-0',
+              score ?? '0-0',
               style: const TextStyle(
                 fontSize: 28, 
                 fontWeight: FontWeight.w900,
