@@ -1,8 +1,8 @@
 import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
-import 'core/app_store.dart';
-import 'core/theme.dart';
-import 'navigation/main_navigation.dart';
+import 'redux/store.dart';
+import 'utils/app_theme.dart';
+import 'presentation/home/pages/main_navigation.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

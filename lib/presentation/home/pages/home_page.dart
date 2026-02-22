@@ -1,9 +1,9 @@
 import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
-import '../../core/app_state.dart';
-import 'actions/team_actions.dart';
-import 'models/game.dart';
-import 'widgets/home_top_bar.dart';
+import '../../../redux/app_state.dart';
+import '../../../redux/actions/team_actions.dart';
+import '../../../data/models/game.dart';
+import '../widgets/home_top_bar.dart';
 import 'package:intl/intl.dart';
 
 class HomeScreen extends StatelessWidget {

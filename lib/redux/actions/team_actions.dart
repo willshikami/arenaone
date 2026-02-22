@@ -1,8 +1,8 @@
 import 'package:async_redux/async_redux.dart';
-import '../../../core/app_state.dart';
-import '../../../core/database_helper.dart';
-import '../models/team.dart';
-import '../models/game.dart';
+import '../app_state.dart';
+import '../../data/services/database_helper.dart';
+import '../../data/models/team.dart';
+import '../../data/models/game.dart';
 
 class LoadMockGamesAction extends ReduxAction<AppState> {
   @override

@@ -22,12 +22,10 @@ Arena One is a cross-sport tracking and personalization app designed to give use
 
 ```text
 lib/
-├── api/          # API clients & models (Generated with Retrofit/GraphQL)
-├── auth/         # Authentication flow and state
-├── core/         # Core configurations, theme, and services
-├── features/     # Feature modules (home, profile, etc.)
-├── navigation/   # Centralized routing and navigation logic
-├── shared/       # Reusable UI widgets
+├── data/         # Models, services (SQFlite), and viewmodels
+├── presentation/ # Pages and widgets (Auth, Home, Global)
+├── redux/        # App state, store, and actions
+├── utils/        # Theme, constants, and helpers
 └── main.dart     # Entry point
 ```
 

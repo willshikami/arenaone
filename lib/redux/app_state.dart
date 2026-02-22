@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
-import '../features/home/models/team.dart';
-import '../features/home/models/game.dart';
+import '../data/models/team.dart';
+import '../data/models/game.dart';
 
 part 'app_state.g.dart';
 

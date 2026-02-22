@@ -1,5 +1,5 @@
 import 'package:async_redux/async_redux.dart';
-import '../core/app_state.dart';
+import '../app_state.dart';
 
 class SetCurrentTabIndexAction extends ReduxAction<AppState> {
   final int index;

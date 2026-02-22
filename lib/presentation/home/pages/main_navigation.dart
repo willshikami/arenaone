@@ -1,8 +1,8 @@
 import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
-import '../core/app_state.dart';
-import '../features/home/home_screen.dart';
-import 'navigation_actions.dart';
+import '../../../redux/app_state.dart';
+import 'home_page.dart';
+import '../../../redux/actions/navigation_actions.dart';
 
 class MainNavigation extends StatelessWidget {
   const MainNavigation({super.key});
