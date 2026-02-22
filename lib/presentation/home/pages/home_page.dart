@@ -7,10 +7,12 @@ import '../../../redux/actions/navigation_actions.dart';
 import '../../../data/models/game.dart';
 import '../../../data/models/sports/f1_game.dart';
 import '../../../data/models/sports/golf_game.dart';
+import '../../../data/models/sports/tennis_game.dart';
 import '../widgets/home_top_bar.dart';
 import '../widgets/game_card.dart';
 import '../widgets/f1_race_card.dart';
 import '../widgets/golf_card.dart';
+import '../widgets/tennis_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -23,9 +25,10 @@ class HomeScreen extends StatelessWidget {
       builder: (context, vm) {
         final isF1 = vm.selectedSport == 'F1';
         final isGolf = vm.selectedSport == 'Golf';
+        final isTennis = vm.selectedSport == 'Tennis';
         return DefaultTabController(
           key: ValueKey(vm.selectedSport),
-          length: (isF1 || isGolf) ? 2 : 3,
+          length: (isF1 || isGolf || isTennis) ? 2 : 3,
           initialIndex: 0,
           child: Container(
             decoration: BoxDecoration(
@@ -60,7 +63,7 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                     fontSize: 16,
                   ),
-                  tabs: (isF1 || isGolf)
+                  tabs: (isF1 || isGolf || isTennis)
                       ? const [Tab(text: 'Previous'), Tab(text: 'Upcoming')]
                       : const [
                           Tab(text: 'Yesterday'),
@@ -70,7 +73,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 Expanded(
                   child: TabBarView(
-                    children: (isF1 || isGolf)
+                    children: (isF1 || isGolf || isTennis)
                         ? [
                             _buildGamesList(vm.yesterdayGames), // Previous
                             _buildGamesList(vm.todayGames), // Upcoming
@@ -208,6 +211,16 @@ class HomeScreen extends StatelessWidget {
           }
         }
 
+        if (game is TennisGame) {
+          if (game.status == 'Upcoming') {
+            return TennisUpcomingCard(game: game);
+          } else if (game.status == 'Live') {
+            return TennisLiveCard(game: game);
+          } else {
+            return TennisCompletedCard(game: game);
+          }
+        }
+
         return GameCard(game: game);
       },
     );
@@ -257,7 +270,20 @@ class _Factory extends VmFactory<AppState, HomeScreen, _ViewModel> {
         onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
       );
     }
-
+    if (state.selectedSport == 'Tennis') {
+      return _ViewModel(
+        yesterdayGames: state.games
+            .where((g) => g.sport == 'Tennis' && g.status == 'Final')
+            .toList(),
+        todayGames: state.games
+            .where((g) => g.sport == 'Tennis' && g.status != 'Final')
+            .toList(),
+        tomorrowGames: [],
+        selectedDate: state.selectedDate,
+        selectedSport: state.selectedSport,
+        onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
+      );
+    }
     return _ViewModel(
       yesterdayGames: state.games
           .where(

@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'sports/basketball_game.dart';
 import 'sports/f1_game.dart';
 import 'sports/golf_game.dart';
+import 'sports/tennis_game.dart';
 
 part 'game.g.dart';
 
@@ -34,6 +35,8 @@ class Game {
         return F1Game.fromJson(json);
       case 'Golf':
         return GolfGame.fromJson(json);
+      case 'Tennis':
+        return TennisGame.fromJson(json);
       default:
         return BasketballGame.fromJson(json);
     }
@@ -42,6 +45,7 @@ class Game {
   Map<String, dynamic> toJson() {
     if (this is F1Game) return (this as F1Game).toJson();
     if (this is GolfGame) return (this as GolfGame).toJson();
+    if (this is TennisGame) return (this as TennisGame).toJson();
     if (this is BasketballGame) return (this as BasketballGame).toJson();
     return _$GameToJson(this);
   }

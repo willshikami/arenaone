@@ -5,6 +5,7 @@ import '../../data/models/team.dart';
 import '../../data/models/sports/basketball_game.dart';
 import '../../data/models/sports/f1_game.dart';
 import '../../data/models/sports/golf_game.dart';
+import '../../data/models/sports/tennis_game.dart';
 import '../../data/assets/track_assets.dart';
 
 class LoadMockGamesAction extends ReduxAction<AppState> {
@@ -223,7 +224,60 @@ class LoadMockGamesAction extends ReduxAction<AppState> {
         purse: '\$20M',
         broadcastChannel: 'CBS / ESPN',
       ),
+      // Tennis Mock Data
+      TennisGame(
+        id: 't1',
+        sport: 'Tennis',
+        tournamentName: 'Australian Open',
+        round: 'Final',
+        startTime: yesterday,
+        status: 'Final',
+        surface: 'Hard',
+        stadium: 'Rod Laver Arena',
+        player1Name: 'Jannik Sinner',
+        player1Country: 'ITA',
+        player1Image: 'https://www.atptour.com/-/media/alias/player-headshot/s0ag',
+        player2Name: 'Daniil Medvedev',
+        player2Country: 'RUS',
+        player2Image: 'https://www.atptour.com/-/media/alias/player-headshot/mc65',
+        player1SetScores: ['3', '3', '6', '6', '6'],
+        player2SetScores: ['6', '6', '4', '4', '3'],
+      ),
+      TennisGame(
+        id: 't2',
+        sport: 'Tennis',
+        tournamentName: 'ATP Rotterdam',
+        round: 'Quarter-Final',
+        startTime: today,
+        status: 'Live',
+        isLive: true,
+        surface: 'Indoor Hard',
+        player1Name: 'Holger Rune',
+        player1Country: 'DEN',
+        player1HasService: true,
+        player1SetScores: ['6', '2'],
+        player2SetScores: ['4', '1'],
+        player1CurrentPoints: '30',
+        player2CurrentPoints: '15',
+        player2Name: 'Alexander Shevchenko',
+        player2Country: 'KAZ',
+      ),
+      TennisGame(
+        id: 't3',
+        sport: 'Tennis',
+        tournamentName: 'Indian Wells Open',
+        round: 'Round 1',
+        startTime: tomorrow.add(const Duration(days: 2)),
+        status: 'Upcoming',
+        surface: 'Hard',
+        stadium: 'Stadium 1',
+        player1Name: 'Carlos Alcaraz',
+        player1Country: 'ESP',
+        player2Name: 'Novak Djokovic',
+        player2Country: 'SRB',
+      ),
     ];
+
     return state.copyWith(games: mockGames);
   }
 }
