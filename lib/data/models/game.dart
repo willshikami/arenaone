@@ -3,6 +3,7 @@ import 'sports/basketball_game.dart';
 import 'sports/f1_game.dart';
 import 'sports/golf_game.dart';
 import 'sports/tennis_game.dart';
+import 'sports/rally_game.dart';
 
 part 'game.g.dart';
 
@@ -37,6 +38,8 @@ class Game {
         return GolfGame.fromJson(json);
       case 'Tennis':
         return TennisGame.fromJson(json);
+      case 'Rally':
+        return RallyGame.fromJson(json);
       default:
         return BasketballGame.fromJson(json);
     }
@@ -46,6 +49,7 @@ class Game {
     if (this is F1Game) return (this as F1Game).toJson();
     if (this is GolfGame) return (this as GolfGame).toJson();
     if (this is TennisGame) return (this as TennisGame).toJson();
+    if (this is RallyGame) return (this as RallyGame).toJson();
     if (this is BasketballGame) return (this as BasketballGame).toJson();
     return _$GameToJson(this);
   }

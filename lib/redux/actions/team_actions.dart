@@ -6,6 +6,7 @@ import '../../data/models/sports/basketball_game.dart';
 import '../../data/models/sports/f1_game.dart';
 import '../../data/models/sports/golf_game.dart';
 import '../../data/models/sports/tennis_game.dart';
+import '../../data/models/sports/rally_game.dart';
 import '../../data/assets/track_assets.dart';
 
 class LoadMockGamesAction extends ReduxAction<AppState> {
@@ -275,6 +276,96 @@ class LoadMockGamesAction extends ReduxAction<AppState> {
         player1Country: 'ESP',
         player2Name: 'Novak Djokovic',
         player2Country: 'SRB',
+      ),
+      // Rally Mock Data
+      RallyGame(
+        id: 'r1',
+        sport: 'Rally',
+        leagueType: 'WRC',
+        eventName: 'Rallye Monte-Carlo',
+        location: 'Monaco',
+        surface: 'Tarmac/Ice',
+        startTime: yesterday.subtract(const Duration(days: 3)),
+        status: 'Final',
+        totalStages: 18,
+        totalDistance: '324.44 km',
+        eventImageUrl: 'https://cdn-7.motorsport.com/images/mgl/6OEqXp40/s8/thierry-neuville-martijn-wyda-1.jpg',
+        leaderboard: [
+          RallyLeader(
+            position: 1,
+            name: 'Thierry Neuville',
+            team: 'Hyundai Shell Mobis WRT',
+            time: '3:09:30.9',
+            car: 'Hyundai i20 N Rally1',
+            image: 'https://wrc.com/a/p/thierry-neuville.jpg',
+          ),
+          RallyLeader(
+            position: 2,
+            name: 'Sébastien Ogier',
+            team: 'Toyota Gazoo Racing WRT',
+            gap: '+16.1s',
+            car: 'Toyota GR Yaris Rally1',
+          ),
+          RallyLeader(
+            position: 3,
+            name: 'Elfyn Evans',
+            team: 'Toyota Gazoo Racing WRT',
+            gap: '+45.2s',
+            car: 'Toyota GR Yaris Rally1',
+          ),
+        ],
+      ),
+      RallyGame(
+        id: 'r2',
+        sport: 'Rally',
+        leagueType: 'Dakar',
+        eventName: 'Dakar Rally',
+        location: 'Saudi Arabia',
+        surface: 'Sand/Dunes',
+        startTime: today,
+        status: 'Live',
+        isLive: true,
+        currentStage: 'Stage 11',
+        totalStages: 12,
+        totalDistance: '7,891 km',
+        eventImageUrl: 'https://img.redbull.com/images/c_fill,g_auto,w_1000,h_667/q_auto,f_auto/redbullcom/2024/1/15/s1j7v7v7v7v7v7v7v7v7/dakar-rally-2024-action',
+        leaderboard: [
+          RallyLeader(
+            position: 1,
+            name: 'Carlos Sainz',
+            team: 'Team Audi Sport',
+            time: '46:23:47',
+            car: 'Audi RS Q e-tron',
+            image: 'https://redbull-content-pool.s3.amazonaws.com/carlos-sainz.png',
+          ),
+          RallyLeader(
+            position: 2,
+            name: 'Guillaume de Mevius',
+            team: 'Overdrive Racing',
+            gap: '+1:27:06',
+            car: 'Toyota Hilux Overdrive',
+          ),
+          RallyLeader(
+            position: 3,
+            name: 'Sébastien Loeb',
+            team: 'Bahrain Raid Xtreme',
+            gap: '+1:35:02',
+            car: 'Prodrive Hunter',
+          ),
+        ],
+      ),
+      RallyGame(
+        id: 'r3',
+        sport: 'Rally',
+        leagueType: 'WRC',
+        eventName: 'Rally Sweden',
+        location: 'Umeå, Sweden',
+        surface: 'Snow/Ice',
+        startTime: tomorrow.add(const Duration(days: 10)),
+        status: 'Upcoming',
+        totalStages: 18,
+        totalDistance: '300.10 km',
+        eventImageUrl: 'https://wrc.com/a/p/rally-sweden-image.jpg',
       ),
     ];
 
