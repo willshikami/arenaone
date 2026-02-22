@@ -11,3 +11,14 @@ class SetCurrentTabIndexAction extends ReduxAction<AppState> {
     return state.copyWith(currentTabIndex: index);
   }
 }
+
+class SetSelectedDateAction extends ReduxAction<AppState> {
+  final DateTime date;
+
+  SetSelectedDateAction(this.date);
+
+  @override
+  AppState? reduce() {
+    return state.copyWith(selectedDate: date);
+  }
+}

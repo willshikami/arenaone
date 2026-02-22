@@ -16,6 +16,7 @@ AppState _$AppStateFromJson(Map<String, dynamic> json) => AppState(
   games: (json['games'] as List<dynamic>)
       .map((e) => Game.fromJson(e as Map<String, dynamic>))
       .toList(),
+  selectedDate: DateTime.parse(json['selectedDate'] as String),
 );
 
 Map<String, dynamic> _$AppStateToJson(AppState instance) => <String, dynamic>{
@@ -24,4 +25,5 @@ Map<String, dynamic> _$AppStateToJson(AppState instance) => <String, dynamic>{
   'currentTabIndex': instance.currentTabIndex,
   'followedTeams': instance.followedTeams,
   'games': instance.games,
+  'selectedDate': instance.selectedDate.toIso8601String(),
 };

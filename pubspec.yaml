@@ -41,6 +41,7 @@ dependencies:
   intl: ^0.20.2
   google_fonts: ^8.0.2
   json_annotation: ^4.11.0
+  flutter_svg: ^2.2.3
 
 #     cupertino_icons: ^1.0.8
 #   async_redux: ^26.3.3

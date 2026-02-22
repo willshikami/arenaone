@@ -2,20 +2,43 @@
 
 All notable changes to the Arena One project will be documented in this file.
 
-## [Unreleased]
+## [1.0.0-alpha.3] - 2026-02-22 14:45
 
 ### Added
-- Initial project setup with Flutter 3.3x.
-- Core architecture setup with directories: `lib/data`, `lib/presentation`, `lib/redux`, `lib/utils`.
-- Major project structure reorganization for better scalability (separated Data, Presentation, and Redux).
-- State management integration with `async_redux` moved to `lib/redux`.
-- Local storage support with `sqflite` and `DatabaseHelper` moved to `lib/data/services`.
-- Modern UI implementation for Home (Your Arena) moved to `lib/presentation/home`.
-- Data models (`Team`, `Game`) updated to `lib/data/models`.
-- Light theme with `Figtree` font moved to `lib/utils/app_theme.dart`.
-- Fixed all internal imports after file relocation.
+- Implemented "Yesterday, Today, Tomorrow" navigation tabs on the Home screen.
+- Redesigned match cards with detailed information: abbreviations, league type, stadium, and broadcast channel.
+- Added support for high-res transparent team logos from ESPN CDN.
+- Integrated `flutter_svg` to support SVG assets.
+- Added `selectedDate` to `AppState` with `SetSelectedDateAction` for tab-based date tracking.
+
+### Changed
+- Replaced basic game list with a Tab-based view for different match dates.
+- Modernized timestamp and match status design with dynamic pill-shaped badges (Live/Final/Upcoming).
+- Refined Home header to include the "Day of the Week" (e.g., SUNDAY) above the main date.
+- Standardized score typography using tabular figures for better alignment.
+- Switched default team logos to transparent PNGs to resolve rendering issues with complex SVGs.
 
 ### Fixed
-- "White screen" issue by flatteing the widget tree and removing redundant `Scaffold` calls.
-- Xcode PIF transfer session error by clearing `DerivedData` and re-installing pods.
-- Code generation errors by following `build_runner` conventions.
+- Resolved team logos appearing as black silhouettes by switching to optimized PNG assets.
+- Improved layout consistency on different screen sizes using a more modular card design.
+
+## [1.0.0-alpha.2] - 2026-02-22 11:30
+
+### Updated
+- Simplified Home header: removed notification bell, sport badges, and profile notification count.
+- Project structure reorganization for better scalability (separated Data, Presentation, and Redux).
+- Fixed "White screen" issue by flattening the widget tree.
+- Resolved Xcode PIF transfer session error by clearing `DerivedData`.
+
+## [1.0.0-alpha.1] - 2026-02-21 16:00
+
+### Added
+- Initial project setup with Flutter 3.3.
+- Core architecture setup with directories: `lib/data`, `lib/presentation`, `lib/redux`, `lib/utils`.
+- State management integration with `async_redux`.
+- Local storage support with `sqflite` and `DatabaseHelper`.
+- Modern UI implementation for Home (Your Arena).
+- Initial data models (`Team`, `Game`).
+- Light theme with `Figtree` font.
+
+```

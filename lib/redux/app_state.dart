@@ -12,6 +12,7 @@ class AppState {
   final int currentTabIndex;
   final List<Team> followedTeams;
   final List<Game> games;
+  final DateTime selectedDate;
 
   AppState({
     required this.isLoading,
@@ -19,6 +20,7 @@ class AppState {
     required this.currentTabIndex,
     required this.followedTeams,
     required this.games,
+    required this.selectedDate,
   });
 
   AppState copyWith({
@@ -27,6 +29,7 @@ class AppState {
     int? currentTabIndex,
     List<Team>? followedTeams,
     List<Game>? games,
+    DateTime? selectedDate,
   }) {
     return AppState(
       isLoading: isLoading ?? this.isLoading,
@@ -34,6 +37,7 @@ class AppState {
       currentTabIndex: currentTabIndex ?? this.currentTabIndex,
       followedTeams: followedTeams ?? this.followedTeams,
       games: games ?? this.games,
+      selectedDate: selectedDate ?? this.selectedDate,
     );
   }
 
@@ -42,6 +46,7 @@ class AppState {
         currentTabIndex: 0,
         followedTeams: [],
         games: [],
+        selectedDate: DateTime.now(),
       );
 
   factory AppState.fromJson(Map<String, dynamic> json) => _$AppStateFromJson(json);
@@ -55,6 +60,7 @@ class AppState {
           isLoading == other.isLoading &&
           error == other.error &&
           currentTabIndex == other.currentTabIndex &&
+          selectedDate == other.selectedDate &&
           listEquals(followedTeams, other.followedTeams) &&
           listEquals(games, other.games);
 
@@ -64,5 +70,6 @@ class AppState {
       error.hashCode ^ 
       currentTabIndex.hashCode ^ 
       followedTeams.hashCode ^
-      games.hashCode;
+      games.hashCode ^
+      selectedDate.hashCode;
 }

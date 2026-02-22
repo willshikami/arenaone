@@ -8,7 +8,8 @@ class HomeTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
-    final formattedDate = DateFormat('MMMM d').format(now);
+    final dayName = DateFormat('EEEE').format(now);
+    final monthDate = DateFormat('MMMM d').format(now);
 
     return Container(
       color: Colors.white,
@@ -16,72 +17,44 @@ class HomeTopBar extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            formattedDate,
-            style: GoogleFonts.figtree(
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(width: 8),
-          const Icon(Icons.notifications_none, color: Colors.black, size: 24),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Row(
-              children: [
-                _BadgeIcon(color: Colors.blue),
-                _BadgeIcon(color: Colors.green),
-                _BadgeIcon(color: Colors.teal),
-                Text('+3', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                Icon(Icons.keyboard_arrow_down, size: 16),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          const Stack(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.grey, // Background color while loading
+              Text(
+                dayName.toUpperCase(),
+                style: GoogleFonts.figtree(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.grey.shade500,
+                  letterSpacing: 1.5,
+                ),
               ),
-              Positioned(
-                right: 0,
-                top: 0,
-                child: CircleAvatar(
-                  radius: 7,
-                  backgroundColor: Colors.blue,
-                  child: Text('4', style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold)),
+              Text(
+                monthDate,
+                style: GoogleFonts.figtree(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black,
+                  height: 1.1,
                 ),
               ),
             ],
           ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.grey.shade100, width: 2),
+            ),
+            child: const CircleAvatar(
+              radius: 18,
+              backgroundColor: Colors.grey,
+              backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=arenaone_user'),
+            ),
+          ),
         ],
-      ),
-    );
-  }
-}
-
-class _BadgeIcon extends StatelessWidget {
-  final Color color;
-  const _BadgeIcon({required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2.0),
-      child: Container(
-        width: 16,
-        height: 16,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-        ),
       ),
     );
   }
