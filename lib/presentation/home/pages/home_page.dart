@@ -20,33 +20,48 @@ class HomeScreen extends StatelessWidget {
       builder: (context, vm) => DefaultTabController(
         length: 3,
         initialIndex: 1, // Today
-        child: Column(
-          children: [
-            const HomeTopBar(),
-            SportSelector(),
-            const TabBar(
-              dividerColor: Colors.transparent,
-              indicatorColor: Colors.black,
-              labelColor: Colors.black,
-              unselectedLabelColor: Colors.grey,
-              labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-              tabs: [
-                Tab(text: 'Yesterday'),
-                Tab(text: 'Today'),
-                Tab(text: 'Tomorrow'),
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF0D0D10),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                const Color(0xFFFF6A1A).withOpacity(0.12), // Bold orange tint
+                const Color(0xFF0D0D10),
               ],
+              stops: const [0.0, 0.3],
             ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  _buildGamesList(vm.yesterdayGames),
-                  _buildGamesList(vm.todayGames),
-                  _buildGamesList(vm.tomorrowGames),
+          ),
+          child: Column(
+            children: [
+              const HomeTopBar(),
+              SportSelector(),
+              const TabBar(
+                dividerColor: Colors.transparent,
+                indicatorColor: Color(0xFFFF6A1A), // Modern bold orange indicator
+                indicatorWeight: 3,
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.grey,
+                labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                tabs: [
+                  Tab(text: 'Yesterday'),
+                  Tab(text: 'Today'),
+                  Tab(text: 'Tomorrow'),
                 ],
               ),
-            ),
-          ],
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    _buildGamesList(vm.yesterdayGames),
+                    _buildGamesList(vm.todayGames),
+                    _buildGamesList(vm.tomorrowGames),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -101,15 +116,9 @@ class _GameCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: const Color(0xFF16161C), // Unified dark surface
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withOpacity(0.05), width: 1),
       ),
       child: Column(
         children: [
@@ -118,10 +127,10 @@ class _GameCard extends StatelessWidget {
             children: [
               Text(
                 game.leagueType ?? 'Regular Season',
-                style: const TextStyle(
-                  color: Colors.grey,
+                style: TextStyle(
+                  color: Colors.grey.shade500,
                   fontSize: 12,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               if (game.isLive)
@@ -160,7 +169,7 @@ class _GameCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
+                    color: Colors.white.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -168,7 +177,7 @@ class _GameCard extends StatelessWidget {
                         ? 'FINAL' 
                         : DateFormat('h:mm a').format(game.startTime),
                     style: TextStyle(
-                      color: game.status == 'Final' ? Colors.black : Colors.grey.shade700,
+                      color: game.status == 'Final' ? Colors.white : Colors.grey.shade400,
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
@@ -196,7 +205,7 @@ class _GameCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          const Divider(height: 1),
+          Divider(height: 1, color: Colors.white.withOpacity(0.08)),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

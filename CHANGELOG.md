@@ -2,6 +2,36 @@
 
 All notable changes to the Arena One project will be documented in this file.
 
+## [1.0.0-alpha.6] - 2026-02-22 15:45
+
+### Changed
+- Removed "Profile" from the redundant `BottomNavigationBar` tabs.
+- Integrated profile navigation directly into the top-right avatar in the `HomeTopBar`.
+- Implemented `IndexedStack` in `MainNavigation` for smooth transitions between primary tabs (Home, Explore, Scores, Following).
+- Modernized `PlaceholderScreen` to match the dark theme and brand identity.
+
+### Added
+- Created a dedicated `ProfileScreen` entry point.
+
+## [1.0.0-alpha.5] - 2026-02-22 15:30
+
+## [1.0.0-alpha.4] - 2026-02-22 15:15
+
+### Added
+- Transitioned the entire application to a high-performance **Dark Theme**.
+- Implemented a "Unified Dark" design language with background `#0D0D10` and surface `#16161C`.
+- Integrated a subtle orange gradient header (inspired by Apple Sports) at the top of the Home feed.
+- Updated brand identity colors using:
+  - Primary Brand: `#FF6A1A` (Modern & Bold)
+  - Secondary Brand: `#FF7A2F` (Warm)
+  - Accent Brand: `#FF5C00` (Strong Sports Identity)
+
+### Changed
+- Updated `SportSelector` and `TabBar` to use the new bold orange theme.
+- Redesigned `GameCard` for dark mode with subtle white borders and low-contrast dividers.
+- Fixed text readability across all screens for dark mode.
+- Optimized bottom navigation to match the dark theme and brand colors.
+
 ## [1.0.0-alpha.3] - 2026-02-22 14:45
 
 ### Added

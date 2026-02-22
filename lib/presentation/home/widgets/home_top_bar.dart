@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:async_redux/async_redux.dart';
+import '../../../redux/app_state.dart';
+import '../../../redux/actions/navigation_actions.dart';
 
 class HomeTopBar extends StatelessWidget {
   const HomeTopBar({super.key});
@@ -11,53 +14,76 @@ class HomeTopBar extends StatelessWidget {
     final dayName = DateFormat('EEEE').format(now);
     final monthDate = DateFormat('MMMM d').format(now);
 
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 48.0, bottom: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                dayName.toUpperCase(),
-                style: GoogleFonts.figtree(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.grey.shade500,
-                  letterSpacing: 1.5,
+    return StoreConnector<AppState, _ViewModel>(
+      vm: () => _Factory(this),
+      builder: (context, vm) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.transparent, // Background handled by parent HomeScreen
+        ),
+        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 48.0, bottom: 8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  dayName.toUpperCase(),
+                  style: GoogleFonts.instrumentSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.grey.shade500,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                Text(
+                  monthDate,
+                  style: GoogleFonts.instrumentSans(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white, // White text for dark mode
+                    height: 1.1,
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            GestureDetector(
+              onTap: vm.onNavigateToProfile,
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white.withOpacity(0.1), width: 2),
+                ),
+                child: const CircleAvatar(
+                  radius: 18,
+                  backgroundColor: Colors.grey,
+                  backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=arenaone_user'),
                 ),
               ),
-              Text(
-                monthDate,
-                style: GoogleFonts.figtree(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.black,
-                  height: 1.1,
-                ),
-              ),
-            ],
-          ),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.grey.shade100, width: 2),
             ),
-            child: const CircleAvatar(
-              radius: 18,
-              backgroundColor: Colors.grey,
-              backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=arenaone_user'),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+}
+
+class _Factory extends VmFactory<AppState, HomeTopBar, _ViewModel> {
+  _Factory(super.widget);
+
+  @override
+  _ViewModel fromStore() => _ViewModel(
+        onNavigateToProfile: () => dispatch(SetCurrentTabIndexAction(4)),
+      );
+}
+
+class _ViewModel extends Vm {
+  final VoidCallback onNavigateToProfile;
+
+  _ViewModel({required this.onNavigateToProfile});
 }
 
 class SportSelector extends StatelessWidget {
@@ -88,22 +114,22 @@ class SportSelector extends StatelessWidget {
           final isSelected = sport == 'NBA';
 
           return FilterChip(
-            avatar: Icon(icon, color: isSelected ? Colors.white : Colors.black, size: 16),
+            avatar: Icon(icon, color: isSelected ? Colors.black : Colors.white, size: 16),
             label: Text(sport),
             selected: isSelected,
             onSelected: (selected) {},
-            backgroundColor: Colors.grey.shade100,
-            selectedColor: Colors.black,
+            backgroundColor: const Color(0xFF16161C),
+            selectedColor: const Color(0xFFFF6A1A), // Using modern bold orange
             showCheckmark: false,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             labelStyle: TextStyle(
-              color: isSelected ? Colors.white : Colors.black,
+              color: isSelected ? Colors.black : Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 13,
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
-              side: BorderSide(color: isSelected ? Colors.black : Colors.transparent),
+              side: BorderSide(color: isSelected ? Colors.transparent : Colors.white.withOpacity(0.1)),
             ),
           );
         },

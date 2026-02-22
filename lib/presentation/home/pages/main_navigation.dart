@@ -12,17 +12,29 @@ class MainNavigation extends StatelessWidget {
     return StoreConnector<AppState, _ViewModel>(
       vm: () => _Factory(this),
       builder: (context, vm) => Scaffold(
-        backgroundColor: Colors.white,
-        body: HomeScreen(), // Removed const
+        backgroundColor: const Color(0xFF0D0D10), // Dark base
+        body: IndexedStack(
+          index: vm.currentTabIndex,
+          children: const [
+            HomeScreen(),
+            PlaceholderScreen(title: 'Explore'),
+            PlaceholderScreen(title: 'Scores'),
+            PlaceholderScreen(title: 'Following'),
+            PlaceholderScreen(title: 'Profile'),
+          ],
+        ),
         bottomNavigationBar: BottomNavigationBar(
-          currentIndex: vm.currentTabIndex,
+          currentIndex: vm.currentTabIndex > 3 ? 0 : vm.currentTabIndex,
           onTap: vm.onTabTapped,
+          backgroundColor: const Color(0xFF0D0D10),
+          selectedItemColor: const Color(0xFFFF6A1A),
+          unselectedItemColor: Colors.grey.shade600,
+          type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(icon: Icon(Icons.search_outlined), activeIcon: Icon(Icons.search), label: 'Explore'),
             BottomNavigationBarItem(icon: Icon(Icons.scoreboard_outlined), activeIcon: Icon(Icons.scoreboard), label: 'Scores'),
             BottomNavigationBarItem(icon: Icon(Icons.favorite_outline), activeIcon: Icon(Icons.favorite), label: 'Following'),
-            BottomNavigationBarItem(icon: Icon(Icons.person_outline), activeIcon: Icon(Icons.person), label: 'Profile'),
           ],
         ),
       ),
@@ -37,8 +49,19 @@ class PlaceholderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(child: Text(title)),
+      backgroundColor: const Color(0xFF0D0D10),
+      appBar: AppBar(
+        title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: Center(
+        child: Text(
+          title,
+          style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+      ),
     );
   }
 }

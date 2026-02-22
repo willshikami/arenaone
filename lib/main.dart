@@ -19,8 +19,8 @@ class ArenaOneApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Arena One',
         debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        home: MainNavigation(), // Removed const
+        theme: AppTheme.darkTheme, // Switched from lightTheme to darkTheme
+        home: const MainNavigation(),
       ),
     );
   }
