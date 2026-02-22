@@ -13,6 +13,7 @@ class AppState {
   final List<Team> followedTeams;
   final List<Game> games;
   final DateTime selectedDate;
+  final String selectedSport;
 
   AppState({
     required this.isLoading,
@@ -21,6 +22,7 @@ class AppState {
     required this.followedTeams,
     required this.games,
     required this.selectedDate,
+    required this.selectedSport,
   });
 
   AppState copyWith({
@@ -30,6 +32,7 @@ class AppState {
     List<Team>? followedTeams,
     List<Game>? games,
     DateTime? selectedDate,
+    String? selectedSport,
   }) {
     return AppState(
       isLoading: isLoading ?? this.isLoading,
@@ -38,6 +41,7 @@ class AppState {
       followedTeams: followedTeams ?? this.followedTeams,
       games: games ?? this.games,
       selectedDate: selectedDate ?? this.selectedDate,
+      selectedSport: selectedSport ?? this.selectedSport,
     );
   }
 
@@ -47,6 +51,7 @@ class AppState {
         followedTeams: [],
         games: [],
         selectedDate: DateTime.now(),
+        selectedSport: 'F1',
       );
 
   factory AppState.fromJson(Map<String, dynamic> json) => _$AppStateFromJson(json);

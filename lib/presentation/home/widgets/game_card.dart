@@ -17,10 +17,10 @@ class GameCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF16161C),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.06), width: 1),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.06), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -70,7 +70,7 @@ class GameCard extends StatelessWidget {
                   Container(
                     height: 1,
                     width: double.infinity,
-                    color: Colors.white.withOpacity(0.06),
+                    color: Colors.white.withValues(alpha: 0.06),
                   ),
                   const SizedBox(height: 12),
                   Row(
@@ -124,7 +124,7 @@ class TeamSection extends StatelessWidget {
           width: 44,
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.04),
+            color: Colors.white.withValues(alpha: 0.04),
             shape: BoxShape.circle,
           ),
           child: logoUrl != null
@@ -206,7 +206,7 @@ class MatchInfo extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.04),
+              color: Colors.white.withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Text(

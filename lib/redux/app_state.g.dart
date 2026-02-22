@@ -17,6 +17,7 @@ AppState _$AppStateFromJson(Map<String, dynamic> json) => AppState(
       .map((e) => Game.fromJson(e as Map<String, dynamic>))
       .toList(),
   selectedDate: DateTime.parse(json['selectedDate'] as String),
+  selectedSport: json['selectedSport'] as String,
 );
 
 Map<String, dynamic> _$AppStateToJson(AppState instance) => <String, dynamic>{
@@ -26,4 +27,5 @@ Map<String, dynamic> _$AppStateToJson(AppState instance) => <String, dynamic>{
   'followedTeams': instance.followedTeams,
   'games': instance.games,
   'selectedDate': instance.selectedDate.toIso8601String(),
+  'selectedSport': instance.selectedSport,
 };

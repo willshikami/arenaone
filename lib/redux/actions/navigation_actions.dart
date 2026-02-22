@@ -22,3 +22,14 @@ class SetSelectedDateAction extends ReduxAction<AppState> {
     return state.copyWith(selectedDate: date);
   }
 }
+
+class SetSelectedSportAction extends ReduxAction<AppState> {
+  final String sport;
+
+  SetSelectedSportAction(this.sport);
+
+  @override
+  AppState? reduce() {
+    return state.copyWith(selectedSport: sport);
+  }
+}

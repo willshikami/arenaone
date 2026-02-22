@@ -21,7 +21,7 @@ class HomeTopBar extends StatelessWidget {
         decoration: const BoxDecoration(
           color: Colors.transparent, // Background handled by parent HomeScreen
         ),
-        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 48.0, bottom: 8.0),
+        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 64.0, bottom: 8.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -41,8 +41,8 @@ class HomeTopBar extends StatelessWidget {
                 Text(
                   monthDate,
                   style: GoogleFonts.instrumentSans(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w900,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
                     color: Colors.white, // White text for dark mode
                     height: 1.1,
                   ),
@@ -56,12 +56,16 @@ class HomeTopBar extends StatelessWidget {
                 padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white.withOpacity(0.1), width: 2),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 2),
                 ),
-                child: const CircleAvatar(
+                child: CircleAvatar(
                   radius: 18,
-                  backgroundColor: Colors.grey,
-                  backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=arenaone_user'),
+                  backgroundColor: Colors.white.withValues(alpha: 0.05),
+                  child: const SFIcon(
+                    SFIcons.sf_person_fill,
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
                 ),
               ),
             ),
@@ -72,68 +76,97 @@ class HomeTopBar extends StatelessWidget {
   }
 }
 
-class _Factory extends VmFactory<AppState, HomeTopBar, _ViewModel> {
+class _Factory extends VmFactory<AppState, StatelessWidget, _ViewModel> {
   _Factory(super.widget);
 
   @override
   _ViewModel fromStore() => _ViewModel(
         onNavigateToProfile: () => dispatch(SetCurrentTabIndexAction(4)),
+        selectedSport: state.selectedSport,
+        onSportSelected: (sport) => dispatch(SetSelectedSportAction(sport)),
       );
 }
 
 class _ViewModel extends Vm {
   final VoidCallback onNavigateToProfile;
+  final String selectedSport;
+  final Function(String) onSportSelected;
 
-  _ViewModel({required this.onNavigateToProfile});
+  _ViewModel({
+    required this.onNavigateToProfile,
+    required this.selectedSport,
+    required this.onSportSelected,
+  }) : super(equals: [selectedSport]);
 }
 
 class SportSelector extends StatelessWidget {
-  final List<Map<String, dynamic>> sports = const [
-    {'name': 'NBA', 'icon': SFIcons.sf_basketball},
-    {'name': 'MLB', 'icon': SFIcons.sf_baseball},
-    {'name': 'NHL', 'icon': SFIcons.sf_hockey_puck},
-    {'name': 'NFL', 'icon': SFIcons.sf_figure_american_football},
-    {'name': 'EPL', 'icon': SFIcons.sf_soccerball},
-    {'name': 'Tennis', 'icon': SFIcons.sf_tennisball},
+  final List<Map<String, dynamic>> sports = [
+    {'name': 'F1', 'icon': SFIcons.sf_flag_2_crossed_fill},
+    {'name': 'Golf', 'icon': SFIcons.sf_figure_golf},
+    {'name': 'Tennis', 'icon': SFIcons.sf_tennisball_fill},
+    {'name': 'NBA', 'icon': SFIcons.sf_basketball_fill},
+    {'name': 'Rally', 'icon': SFIcons.sf_car_fill},
   ];
 
-  const SportSelector({super.key});
+  SportSelector({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      margin: const EdgeInsets.only(top: 8),
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        scrollDirection: Axis.horizontal,
-        itemCount: sports.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final sport = sports[index]['name'] as String;
-          final icon = sports[index]['icon'] as IconData;
-          final isSelected = sport == 'NBA';
+    return StoreConnector<AppState, _ViewModel>(
+      vm: () => _Factory(this),
+      builder: (context, vm) => Container(
+        height: 36,
+        margin: const EdgeInsets.symmetric(vertical: 16),
+        child: ListView.separated(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          scrollDirection: Axis.horizontal,
+          itemCount: sports.length,
+          separatorBuilder: (context, index) => const SizedBox(width: 8),
+          itemBuilder: (context, index) {
+            final sportData = sports[index];
+            final sport = sportData['name'] as String;
+            final icon = sportData['icon'] as IconData;
+            final isSelected = sport == vm.selectedSport;
 
-          return FilterChip(
-            avatar: SFIcon(icon, color: isSelected ? Colors.black : Colors.white, fontSize: 16),
-            label: Text(sport),
-            selected: isSelected,
-            onSelected: (selected) {},
-            backgroundColor: const Color(0xFF16161C),
-            selectedColor: const Color(0xFFFF6A1A), // Using modern bold orange
-            showCheckmark: false,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            labelStyle: TextStyle(
-              color: isSelected ? Colors.black : Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 13,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-              side: BorderSide(color: isSelected ? Colors.transparent : Colors.white.withOpacity(0.1)),
-            ),
-          );
-        },
+            // Ensure the first element (leftmost) is always visible and consistent
+            // by not using standard FilterChip which has internal padding/margin quirks
+            return GestureDetector(
+              onTap: () => vm.onSportSelected(sport),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                decoration: BoxDecoration(
+                  color: isSelected ? const Color(0xFFFF6A1A) : const Color(0xFF16161C),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isSelected ? Colors.transparent : Colors.white.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SFIcon(
+                      icon,
+                      color: isSelected ? Colors.black : Colors.white,
+                      fontSize: 16,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      sport,
+                      style: TextStyle(
+                        color: isSelected ? Colors.black : Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

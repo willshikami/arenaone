@@ -7,6 +7,7 @@ import '../../../redux/actions/navigation_actions.dart';
 import '../../../data/models/game.dart';
 import '../widgets/home_top_bar.dart';
 import '../widgets/game_card.dart';
+import '../widgets/f1_race_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -16,53 +17,72 @@ class HomeScreen extends StatelessWidget {
     return StoreConnector<AppState, _ViewModel>(
       onInit: (store) => store.dispatch(LoadMockGamesAction()),
       vm: () => _Factory(this),
-      builder: (context, vm) => DefaultTabController(
-        length: 3,
-        initialIndex: 1, // Today
-        child: Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF0D0D10),
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                const Color(0xFFFF6A1A).withOpacity(0.12), // Bold orange tint
-                const Color(0xFF0D0D10),
+      builder: (context, vm) {
+        final isF1 = vm.selectedSport == 'F1';
+        return DefaultTabController(
+          key: ValueKey(vm.selectedSport),
+          length: isF1 ? 2 : 3,
+          initialIndex: isF1 ? 0 : 0, // Previous or Yesterday
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF0D0D10),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  const Color(0xFFFF6A1A).withValues(alpha: 0.12), // Bold orange tint
+                  const Color(0xFF0D0D10),
+                ],
+                stops: const [0.0, 0.3],
+              ),
+            ),
+            child: Column(
+              children: [
+                const HomeTopBar(),
+                SportSelector(),
+                TabBar(
+                  dividerColor: Colors.transparent,
+                  indicatorColor: const Color(
+                    0xFFFF6A1A,
+                  ), // Modern bold orange indicator
+                  indicatorWeight: 3,
+                  labelColor: Colors.white,
+                  unselectedLabelColor: Colors.grey,
+                  labelStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  unselectedLabelStyle: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
+                  tabs: isF1
+                      ? const [Tab(text: 'Previous'), Tab(text: 'Upcoming')]
+                      : const [
+                          Tab(text: 'Yesterday'),
+                          Tab(text: 'Today'),
+                          Tab(text: 'Tomorrow'),
+                        ],
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: isF1
+                        ? [
+                            _buildGamesList(vm.yesterdayGames), // Previous
+                            _buildGamesList(vm.todayGames), // Upcoming
+                          ]
+                        : [
+                            _buildGamesList(vm.yesterdayGames),
+                            _buildGamesList(vm.todayGames),
+                            _buildGamesList(vm.tomorrowGames),
+                          ],
+                  ),
+                ),
               ],
-              stops: const [0.0, 0.3],
             ),
           ),
-          child: Column(
-            children: [
-              const HomeTopBar(),
-              SportSelector(),
-              const TabBar(
-                dividerColor: Colors.transparent,
-                indicatorColor: Color(0xFFFF6A1A), // Modern bold orange indicator
-                indicatorWeight: 3,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.grey,
-                labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-                tabs: [
-                  Tab(text: 'Yesterday'),
-                  Tab(text: 'Today'),
-                  Tab(text: 'Tomorrow'),
-                ],
-              ),
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    _buildGamesList(vm.yesterdayGames),
-                    _buildGamesList(vm.todayGames),
-                    _buildGamesList(vm.tomorrowGames),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -98,6 +118,47 @@ class HomeScreen extends StatelessWidget {
       itemCount: games.length,
       itemBuilder: (context, index) {
         final game = games[index];
+
+        if (game.sport == 'F1') {
+          if (game.status == 'Upcoming') {
+            return F1UpcomingCard(
+              raceName: game.stadium ?? 'TBD Grand Prix',
+              location: game.leagueType ?? 'TBD',
+              raceDate: game.startTime,
+              circuitImage: game.eventImageUrl,
+              broadcastChannel: game.broadcastChannel,
+              raceNumber: game.raceNumber ?? 0,
+              laps: game.laps ?? 0,
+              circuitLayoutUrl: game.circuitLayoutUrl ?? 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Circuit_Red_Bull_Ring.svg/1024px-Circuit_Red_Bull_Ring.svg.png',
+              trackLength: game.trackLength ?? '---',
+            );
+          } else {
+            return F1CompletedCard(
+              raceName: game.stadium ?? 'Grand Prix',
+              raceDate: game.startTime,
+              raceNumber: game.raceNumber ?? 0,
+              winnerName: game.winnerName ?? 'Unknown',
+              winnerTeam: game.winnerTeam ?? 'TBD',
+              winnerLogo: game.winnerImage ?? 'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
+              points: game.winnerPoints ?? '0',
+              winnerTotalPoints: game.winnerTotalPoints,
+              time: game.winningTime,
+              p2Name: game.p2Name,
+              p2Team: game.p2Team,
+              p2Image: game.p2Image,
+              p2Points: game.p2Points,
+              p2TotalPoints: game.p2TotalPoints,
+              p2Gap: game.p2Gap,
+              p3Name: game.p3Name,
+              p3Team: game.p3Team,
+              p3Image: game.p3Image,
+              p3Points: game.p3Points,
+              p3TotalPoints: game.p3TotalPoints,
+              p3Gap: game.p3Gap,
+            );
+          }
+        }
+
         return GameCard(game: game);
       },
     );
@@ -118,11 +179,45 @@ class _Factory extends VmFactory<AppState, HomeScreen, _ViewModel> {
       return a.year == b.year && a.month == b.month && a.day == b.day;
     }
 
+    if (state.selectedSport == 'F1') {
+      return _ViewModel(
+        yesterdayGames: state.games
+            .where((g) => g.sport == 'F1' && g.status == 'Final')
+            .toList(),
+        todayGames: state.games
+            .where((g) => g.sport == 'F1' && g.status == 'Upcoming')
+            .toList(),
+        tomorrowGames: [],
+        selectedDate: state.selectedDate,
+        selectedSport: state.selectedSport,
+        onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
+      );
+    }
+
     return _ViewModel(
-      yesterdayGames: state.games.where((g) => isSameDay(g.startTime, yesterdayDate)).toList(),
-      todayGames: state.games.where((g) => isSameDay(g.startTime, todayDate)).toList(),
-      tomorrowGames: state.games.where((g) => isSameDay(g.startTime, tomorrowDate)).toList(),
+      yesterdayGames: state.games
+          .where(
+            (g) =>
+                isSameDay(g.startTime, yesterdayDate) &&
+                g.sport == state.selectedSport,
+          )
+          .toList(),
+      todayGames: state.games
+          .where(
+            (g) =>
+                isSameDay(g.startTime, todayDate) &&
+                g.sport == state.selectedSport,
+          )
+          .toList(),
+      tomorrowGames: state.games
+          .where(
+            (g) =>
+                isSameDay(g.startTime, tomorrowDate) &&
+                g.sport == state.selectedSport,
+          )
+          .toList(),
       selectedDate: state.selectedDate,
+      selectedSport: state.selectedSport,
       onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
     );
   }
@@ -133,6 +228,7 @@ class _ViewModel extends Vm {
   final List<Game> todayGames;
   final List<Game> tomorrowGames;
   final DateTime selectedDate;
+  final String selectedSport;
   final Function(DateTime) onDateSelected;
 
   _ViewModel({
@@ -140,6 +236,15 @@ class _ViewModel extends Vm {
     required this.todayGames,
     required this.tomorrowGames,
     required this.selectedDate,
+    required this.selectedSport,
     required this.onDateSelected,
-  }) : super(equals: [yesterdayGames, todayGames, tomorrowGames, selectedDate]);
+  }) : super(
+         equals: [
+           yesterdayGames,
+           todayGames,
+           tomorrowGames,
+           selectedDate,
+           selectedSport,
+         ],
+       );
 }
