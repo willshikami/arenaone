@@ -2,6 +2,7 @@ import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'sport_category_page.dart';
 import '../../../redux/app_state.dart';
 import '../../../redux/actions/team_actions.dart';
 import '../../../data/models/game.dart';
@@ -44,19 +45,19 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               children: [
                 const HomeTopBar(),
-                const TabBar(
+                TabBar(
                   dividerColor: Colors.transparent,
-                  indicatorColor: Color(
+                  indicatorColor: const Color(
                     0xFFFF6A1A,
                   ), // Modern bold orange indicator
                   indicatorWeight: 3,
                   labelColor: Colors.white,
                   unselectedLabelColor: Colors.grey,
-                  labelStyle: TextStyle(
+                  labelStyle: GoogleFonts.instrumentSans(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
-                  unselectedLabelStyle: TextStyle(
+                  unselectedLabelStyle: GoogleFonts.instrumentSans(
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
                   ),
@@ -69,9 +70,9 @@ class HomeScreen extends StatelessWidget {
                 Expanded(
                   child: TabBarView(
                     children: [
-                      _buildGamesList(vm.upcomingGames),
-                      _buildGamesList(vm.liveGames),
-                      _buildGamesList(vm.resultsGames),
+                      _buildGamesList(context, vm.upcomingGames),
+                      _buildGamesList(context, vm.liveGames),
+                      _buildGamesList(context, vm.resultsGames),
                     ],
                   ),
                 ),
@@ -84,18 +85,18 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildEmptyState() {
-    return const Center(
+    return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SFIcon(SFIcons.sf_sportscourt, fontSize: 100, color: Colors.grey),
+            const SFIcon(SFIcons.sf_sportscourt, fontSize: 100, color: Colors.grey),
             const SizedBox(height: 16),
             Text(
               'No matches available at this time',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: GoogleFonts.instrumentSans(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -107,7 +108,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildGamesList(List<Game> games) {
+  Widget _buildGamesList(BuildContext context, List<Game> games) {
     if (games.isEmpty) return _buildEmptyState();
 
     // Sort games: descending for results (status 'Final'), ascending for others
@@ -121,11 +122,17 @@ class HomeScreen extends StatelessWidget {
 
     // Group by sport
     final groupedGames = <String, List<Game>>{};
+    final fullSportGames = <String, List<Game>>{};
+    
     for (var game in sortedGames) {
       final sport = game.sport;
-      if (!groupedGames.containsKey(sport)) {
+      if (!fullSportGames.containsKey(sport)) {
+        fullSportGames[sport] = [];
         groupedGames[sport] = [];
       }
+      
+      fullSportGames[sport]!.add(game);
+      
       if (groupedGames[sport]!.length < 2) {
         groupedGames[sport]!.add(game);
       }
@@ -135,7 +142,8 @@ class HomeScreen extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       children: groupedGames.entries.map((entry) {
         final sport = entry.key;
-        final sportGames = entry.value;
+        final sportDisplayGames = entry.value;
+        final allSportGames = fullSportGames[sport]!;
 
         IconData getSportIcon(String sport) {
           switch (sport.toUpperCase()) {
@@ -157,29 +165,65 @@ class HomeScreen extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12.0, top: 4.0),
-              child: Row(
-                children: [
-                  SFIcon(
-                    getSportIcon(sport),
-                    fontSize: 14,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    sport.toUpperCase(),
-                    style: GoogleFonts.spaceMono(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1.5,
+            InkWell(
+              onTap: () {
+                String category = "Upcoming";
+                if (allSportGames.isNotEmpty) {
+                  final status = allSportGames.first.status;
+                  if (status == 'Live') {
+                    category = "Live games";
+                  } else if (status == 'Final') {
+                    category = "Results";
+                  } else {
+                    category = "Upcoming race";
+                  }
+                }
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SportCategoryPage(
+                      sport: sport,
+                      categoryTitle: category,
+                      games: allSportGames,
                     ),
                   ),
-                ],
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 12.0, top: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        SFIcon(
+                          getSportIcon(sport),
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          sport.toUpperCase(),
+                          style: GoogleFonts.spaceMono(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.white,
+                      size: 14,
+                    ),
+                  ],
+                ),
               ),
             ),
-            ...sportGames.map((game) => _buildGameCard(game)),
+            ...sportDisplayGames.map((game) => _buildGameCard(game)),
             const SizedBox(height: 16),
           ],
         );

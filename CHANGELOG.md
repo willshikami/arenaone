@@ -2,6 +2,27 @@
 
 All notable changes to the Arena One project will be documented in this file.
 
+## [1.0.0-alpha.8] - 2026-02-24 10:15
+
+### Added
+- **Tab-Based Navigation**: Introduced "Upcoming", "Live", and "Results" tabs on the home screen for better event categorization.
+- **Sport Category Pages**: Created a new `SportCategoryPage` allowing users to see all events for a specific sport and status, accessible via a new "SHOW MORE" button.
+- **Date-Based Grouping**: Events on sport category pages are now grouped by date (Today, Yesterday, Tomorrow, etc.).
+- **F1 Live Card**: Specialized live racing card featuring leader tracking (name, team, image, lap info) and real-time P2/P3 gaps.
+
+### Changed
+- **Homepage Structure**: 
+  - Substituted sport selector chips for the new tab system.
+  - Events are now grouped by sport with `Space Mono` titles and `SFIcons`.
+  - Curated the homepage to show a maximum of two events per sport category.
+- **Standardized Card Headers**: 
+  - Standardized "Upcoming" event cards for Basketball, Tennis, Golf, and Rally to match F1's premium layout (League/Round on left, Date and formatted Time Box on right).
+  - Moved NBA "LIVE" indicator to the header, removing clutter from the center score area.
+- **Enhanced Results Visuals**:
+  - Implemented automatic winner detection for NBA games with bold highlighting and victory checkmarks.
+  - Expanded F1, Golf, and Rally results to always display the top 3 podium finishers with gap times and metadata.
+- **Improved Data Fidelity**: Updated mock data with high-resolution headshots for Tennis players and more comprehensive event stats for all sports.
+
 ## [1.0.0-alpha.7] - 2026-02-22 16:05
 
 ### Changed

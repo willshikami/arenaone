@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class F1UpcomingCard extends StatelessWidget {
@@ -32,7 +33,7 @@ class F1UpcomingCard extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: GoogleFonts.instrumentSans(
             color: Colors.grey.shade600,
             fontSize: 10,
             fontWeight: FontWeight.w900,
@@ -42,7 +43,7 @@ class F1UpcomingCard extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           value,
-          style: const TextStyle(
+          style: GoogleFonts.instrumentSans(
             color: Colors.white,
             fontSize: 14,
             fontWeight: FontWeight.w700,
@@ -74,23 +75,13 @@ class F1UpcomingCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2D7DFF).withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(
-                            color: const Color(0xFF2D7DFF).withValues(alpha: 0.15),
-                          ),
-                        ),
-                        child: Text(
-                          'ROUND $raceNumber',
-                          style: const TextStyle(
-                            color: Color(0xFF2D7DFF),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1,
-                          ),
+                      Text(
+                        'ROUND $raceNumber',
+                        style: GoogleFonts.instrumentSans(
+                          color: const Color(0xFF2D7DFF),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
                         ),
                       ),
                       Row(
@@ -137,7 +128,7 @@ class F1UpcomingCard extends StatelessWidget {
                           children: [
                             Text(
                               raceName,
-                              style: const TextStyle(
+                              style: GoogleFonts.instrumentSans(
                                 color: Colors.white,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w900,
@@ -146,9 +137,9 @@ class F1UpcomingCard extends StatelessWidget {
                             const SizedBox(height: 4),
                             Text(
                               location,
-                              style: TextStyle(
+                              style: GoogleFonts.instrumentSans(
                                 color: Colors.grey.shade400,
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -251,7 +242,7 @@ class F1CompletedCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -285,13 +276,13 @@ class F1CompletedCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(4),
+                        color: const Color(0xFF34C759).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Text(
                         'FINAL',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF34C759),
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
                         ),
@@ -577,7 +568,7 @@ class F1LiveCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
