@@ -9,12 +9,13 @@ import '../../../data/models/sports/f1_game.dart';
 import '../../../data/models/sports/golf_game.dart';
 import '../../../data/models/sports/tennis_game.dart';
 import '../../../data/models/sports/rally_game.dart';
-import '../widgets/home_top_bar.dart';
 import '../widgets/game_card.dart';
 import '../widgets/f1_race_card.dart';
 import '../widgets/golf_card.dart';
 import '../widgets/tennis_card.dart';
 import '../widgets/rally_card.dart';
+import '../widgets/calendar_header.dart';
+import '../widgets/sport_selector.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -25,71 +26,27 @@ class HomeScreen extends StatelessWidget {
       onInit: (store) => store.dispatch(LoadMockGamesAction()),
       vm: () => _Factory(this),
       builder: (context, vm) {
-        final isF1 = vm.selectedSport == 'F1';
-        final isGolf = vm.selectedSport == 'Golf';
-        final isTennis = vm.selectedSport == 'Tennis';
-        final isRally = vm.selectedSport == 'Rally';
-        return DefaultTabController(
-          key: ValueKey(vm.selectedSport),
-          length: (isF1 || isGolf || isTennis || isRally) ? 2 : 3,
-          initialIndex: 0,
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFF0D0D10),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  const Color(0xFFFF6A1A).withValues(alpha: 0.12), // Bold orange tint
-                  const Color(0xFF0D0D10),
-                ],
-                stops: const [0.0, 0.3],
-              ),
-            ),
-            child: Column(
-              children: [
-                const HomeTopBar(),
-                SportSelector(),
-                TabBar(
-                  dividerColor: Colors.transparent,
-                  indicatorColor: const Color(
-                    0xFFFF6A1A,
-                  ), // Modern bold orange indicator
-                  indicatorWeight: 3,
-                  labelColor: Colors.white,
-                  unselectedLabelColor: Colors.grey,
-                  labelStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  unselectedLabelStyle: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                  ),
-                  tabs: (isF1 || isGolf || isTennis || isRally)
-                      ? const [Tab(text: 'Previous'), Tab(text: 'Upcoming')]
-                      : const [
-                          Tab(text: 'Yesterday'),
-                          Tab(text: 'Today'),
-                          Tab(text: 'Tomorrow'),
-                        ],
-                ),
-                Expanded(
-                  child: TabBarView(
-                    children: (isF1 || isGolf || isTennis || isRally)
-                        ? [
-                            _buildGamesList(vm.yesterdayGames), // Previous
-                            _buildGamesList(vm.todayGames), // Upcoming
-                          ]
-                        : [
-                            _buildGamesList(vm.yesterdayGames),
-                            _buildGamesList(vm.todayGames),
-                            _buildGamesList(vm.tomorrowGames),
-                          ],
-                  ),
-                ),
+        return Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF0D0D10),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                const Color(0xFFFF6A1A).withValues(alpha: 0.12), // Bold orange tint
+                const Color(0xFF0D0D10),
               ],
+              stops: const [0.0, 0.3],
             ),
+          ),
+          child: Column(
+            children: [
+              const CalendarHeader(),
+              SportSelector(),
+              Expanded(
+                child: _buildGamesList(vm.games),
+              ),
+            ],
           ),
         );
       },
@@ -245,95 +202,16 @@ class _Factory extends VmFactory<AppState, HomeScreen, _ViewModel> {
 
   @override
   _ViewModel fromStore() {
-    final now = DateTime.now();
-    final todayDate = DateTime(now.year, now.month, now.day);
-    final yesterdayDate = todayDate.subtract(const Duration(days: 1));
-    final tomorrowDate = todayDate.add(const Duration(days: 1));
-
     bool isSameDay(DateTime a, DateTime b) {
       return a.year == b.year && a.month == b.month && a.day == b.day;
     }
 
-    if (state.selectedSport == 'F1') {
-      return _ViewModel(
-        yesterdayGames: state.games
-            .where((g) => g.sport == 'F1' && g.status == 'Final')
-            .toList(),
-        todayGames: state.games
-            .where((g) => g.sport == 'F1' && g.status == 'Upcoming')
-            .toList(),
-        tomorrowGames: [],
-        selectedDate: state.selectedDate,
-        selectedSport: state.selectedSport,
-        onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
-      );
-    }
+    final gamesForDate = state.games
+        .where((g) => g.sport == state.selectedSport && isSameDay(g.startTime, state.selectedDate))
+        .toList();
 
-    if (state.selectedSport == 'Golf') {
-      return _ViewModel(
-        yesterdayGames: state.games
-            .where((g) => g.sport == 'Golf' && g.status == 'Final')
-            .toList(),
-        todayGames: state.games
-            .where((g) => g.sport == 'Golf' && (g.status == 'Upcoming' || g.status == 'Live'))
-            .toList(),
-        tomorrowGames: [],
-        selectedDate: state.selectedDate,
-        selectedSport: state.selectedSport,
-        onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
-      );
-    }
-    if (state.selectedSport == 'Tennis') {
-      return _ViewModel(
-        yesterdayGames: state.games
-            .where((g) => g.sport == 'Tennis' && g.status == 'Final')
-            .toList(),
-        todayGames: state.games
-            .where((g) => g.sport == 'Tennis' && g.status != 'Final')
-            .toList(),
-        tomorrowGames: [],
-        selectedDate: state.selectedDate,
-        selectedSport: state.selectedSport,
-        onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
-      );
-    }
-
-    if (state.selectedSport == 'Rally') {
-      return _ViewModel(
-        yesterdayGames: state.games
-            .where((g) => g.sport == 'Rally' && g.status == 'Final')
-            .toList(),
-        todayGames: state.games
-            .where((g) => g.sport == 'Rally' && g.status != 'Final')
-            .toList(),
-        tomorrowGames: [],
-        selectedDate: state.selectedDate,
-        selectedSport: state.selectedSport,
-        onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
-      );
-    }
     return _ViewModel(
-      yesterdayGames: state.games
-          .where(
-            (g) =>
-                isSameDay(g.startTime, yesterdayDate) &&
-                g.sport == state.selectedSport,
-          )
-          .toList(),
-      todayGames: state.games
-          .where(
-            (g) =>
-                isSameDay(g.startTime, todayDate) &&
-                g.sport == state.selectedSport,
-          )
-          .toList(),
-      tomorrowGames: state.games
-          .where(
-            (g) =>
-                isSameDay(g.startTime, tomorrowDate) &&
-                g.sport == state.selectedSport,
-          )
-          .toList(),
+      games: gamesForDate,
       selectedDate: state.selectedDate,
       selectedSport: state.selectedSport,
       onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
@@ -342,25 +220,19 @@ class _Factory extends VmFactory<AppState, HomeScreen, _ViewModel> {
 }
 
 class _ViewModel extends Vm {
-  final List<Game> yesterdayGames;
-  final List<Game> todayGames;
-  final List<Game> tomorrowGames;
+  final List<Game> games;
   final DateTime selectedDate;
   final String selectedSport;
   final Function(DateTime) onDateSelected;
 
   _ViewModel({
-    required this.yesterdayGames,
-    required this.todayGames,
-    required this.tomorrowGames,
+    required this.games,
     required this.selectedDate,
     required this.selectedSport,
     required this.onDateSelected,
   }) : super(
          equals: [
-           yesterdayGames,
-           todayGames,
-           tomorrowGames,
+           games,
            selectedDate,
            selectedSport,
          ],
