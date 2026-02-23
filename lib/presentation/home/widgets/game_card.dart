@@ -70,17 +70,7 @@ class GameCard extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            (game.sport ?? 'NBA').toUpperCase(),
-                            style: GoogleFonts.instrumentSans(
-                              color: const Color(0xFFFF6A1A),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                          if (game.leagueType != null && game.leagueType != game.sport) ...[
-                            const SizedBox(height: 2),
+                          if (game.leagueType != null && game.leagueType != game.sport)
                             Text(
                               game.leagueType!.toUpperCase(),
                               style: TextStyle(
@@ -90,7 +80,6 @@ class GameCard extends StatelessWidget {
                                 letterSpacing: 1,
                               ),
                             ),
-                          ],
                         ],
                       ),
                       if (game.isLive)
@@ -183,18 +172,26 @@ class GameCard extends StatelessWidget {
                           Text(
                             baskGame?.homeTeamAbbr ?? '',
                             style: GoogleFonts.instrumentSans(
-                              color: Colors.white,
+                              color: game.status == 'Final' 
+                                ? (homeIsWinner ? Colors.white : Colors.grey.shade600)
+                                : Colors.white,
                               fontSize: 16,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: game.status == 'Final' && homeIsWinner 
+                                ? FontWeight.w900 
+                                : FontWeight.w700,
                             ),
                           ),
                           Text(
                             homeScoreValue,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: game.status == 'Final' 
+                                ? (homeIsWinner ? Colors.white : Colors.grey.shade700)
+                                : Colors.white,
                               fontSize: 36,
-                              fontWeight: FontWeight.w400,
-                              fontFeatures: [FontFeature.tabularFigures()],
+                              fontWeight: game.status == 'Final' && homeIsWinner 
+                                ? FontWeight.w600 
+                                : FontWeight.w400,
+                              fontFeatures: const [FontFeature.tabularFigures()],
                             ),
                           ),
                         ],
@@ -214,18 +211,26 @@ class GameCard extends StatelessWidget {
                           Text(
                             baskGame?.awayTeamAbbr ?? '',
                             style: GoogleFonts.instrumentSans(
-                              color: Colors.white,
+                              color: game.status == 'Final' 
+                                ? (awayIsWinner ? Colors.white : Colors.grey.shade600)
+                                : Colors.white,
                               fontSize: 16,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: game.status == 'Final' && awayIsWinner 
+                                ? FontWeight.w900 
+                                : FontWeight.w700,
                             ),
                           ),
                           Text(
                             awayScoreValue,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: game.status == 'Final' 
+                                ? (awayIsWinner ? Colors.white : Colors.grey.shade700)
+                                : Colors.white,
                               fontSize: 36,
-                              fontWeight: FontWeight.w400,
-                              fontFeatures: [FontFeature.tabularFigures()],
+                              fontWeight: game.status == 'Final' && awayIsWinner 
+                                ? FontWeight.w600 
+                                : FontWeight.w400,
+                              fontFeatures: const [FontFeature.tabularFigures()],
                             ),
                           ),
                         ],
@@ -276,20 +281,23 @@ class GameCard extends StatelessWidget {
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.04),
-        borderRadius: BorderRadius.circular(12),
+        shape: BoxShape.circle,
         border: isWinner ? Border.all(color: const Color(0xFFFF6A1A).withValues(alpha: 0.3), width: 1.5) : null,
       ),
       child: logoUrl != null
-          ? (logoUrl.endsWith('.svg')
-              ? SvgPicture.network(
-                  logoUrl,
-                  placeholderBuilder: (context) => const SizedBox.shrink(),
-                )
-              : Image.network(
-                  logoUrl,
-                  errorBuilder: (context, error, stackTrace) => 
-                      const SFIcon(SFIcons.sf_basketball, color: Colors.white24, fontSize: 30),
-                ))
+          ? ClipOval(
+              child: logoUrl.endsWith('.svg')
+                  ? SvgPicture.network(
+                      logoUrl,
+                      placeholderBuilder: (context) => const SizedBox.shrink(),
+                    )
+                  : Image.network(
+                      logoUrl,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => 
+                          const SFIcon(SFIcons.sf_basketball, color: Colors.white24, fontSize: 30),
+                    ),
+            )
           : const SFIcon(SFIcons.sf_basketball, color: Colors.white24, fontSize: 30),
     );
   }
