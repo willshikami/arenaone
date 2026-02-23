@@ -70,14 +70,37 @@ class RallyUpcomingCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Text(
-                        DateFormat('EEE, MMM d • HH:mm').format(game.startTime).toUpperCase(),
-                        style: TextStyle(
-                          color: Colors.grey.shade500,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.5,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            DateFormat('EEE, MMM d').format(game.startTime).toUpperCase(),
+                            style: TextStyle(
+                              color: Colors.grey.shade500,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.2),
+                              ),
+                            ),
+                            child: Text(
+                              DateFormat('h:mm a').format(game.startTime),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -246,13 +269,52 @@ class RallyLiveCard extends StatelessWidget {
 
   Widget _buildMiniLeaderRow(RallyLeader leader) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Row(
         children: [
-          Text('${leader.position}', style: TextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.w900, fontSize: 12)),
+          SizedBox(
+            width: 16,
+            child: Text('${leader.position}',
+                style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 12)),
+          ),
           const SizedBox(width: 16),
-          Expanded(child: Text(leader.name, style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w700, fontSize: 14))),
-          Text(leader.gap ?? '', style: TextStyle(color: Colors.grey.shade500, fontSize: 12, fontWeight: FontWeight.w600)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(leader.name,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14)),
+                Text(leader.team.toUpperCase(),
+                    style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5)),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(leader.time ?? leader.gap ?? '',
+                  style: const TextStyle(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13)),
+              if (leader.car != null)
+                Text(leader.car!,
+                    style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w600)),
+            ],
+          ),
         ],
       ),
     );

@@ -1,9 +1,9 @@
 import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../redux/app_state.dart';
 import '../../../redux/actions/team_actions.dart';
-import '../../../redux/actions/navigation_actions.dart';
 import '../../../data/models/game.dart';
 import '../../../data/models/sports/f1_game.dart';
 import '../../../data/models/sports/golf_game.dart';
@@ -25,14 +25,9 @@ class HomeScreen extends StatelessWidget {
       onInit: (store) => store.dispatch(LoadMockGamesAction()),
       vm: () => _Factory(this),
       builder: (context, vm) {
-        final isF1 = vm.selectedSport == 'F1';
-        final isGolf = vm.selectedSport == 'Golf';
-        final isTennis = vm.selectedSport == 'Tennis';
-        final isRally = vm.selectedSport == 'Rally';
         return DefaultTabController(
-          key: ValueKey(vm.selectedSport),
-          length: (isF1 || isGolf || isTennis || isRally) ? 2 : 3,
-          initialIndex: 0,
+          length: 3,
+          initialIndex: 1,
           child: Container(
             decoration: BoxDecoration(
               color: const Color(0xFF0D0D10),
@@ -49,43 +44,35 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               children: [
                 const HomeTopBar(),
-                SportSelector(),
-                TabBar(
+                const TabBar(
                   dividerColor: Colors.transparent,
-                  indicatorColor: const Color(
+                  indicatorColor: Color(
                     0xFFFF6A1A,
                   ), // Modern bold orange indicator
                   indicatorWeight: 3,
                   labelColor: Colors.white,
                   unselectedLabelColor: Colors.grey,
-                  labelStyle: const TextStyle(
+                  labelStyle: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 14,
                   ),
-                  unselectedLabelStyle: const TextStyle(
+                  unselectedLabelStyle: TextStyle(
                     fontWeight: FontWeight.w500,
-                    fontSize: 16,
+                    fontSize: 14,
                   ),
-                  tabs: (isF1 || isGolf || isTennis || isRally)
-                      ? const [Tab(text: 'Previous'), Tab(text: 'Upcoming')]
-                      : const [
-                          Tab(text: 'Yesterday'),
-                          Tab(text: 'Today'),
-                          Tab(text: 'Tomorrow'),
-                        ],
+                  tabs: [
+                    Tab(text: 'Upcoming'),
+                    Tab(text: 'Live'),
+                    Tab(text: 'Results'),
+                  ],
                 ),
                 Expanded(
                   child: TabBarView(
-                    children: (isF1 || isGolf || isTennis || isRally)
-                        ? [
-                            _buildGamesList(vm.yesterdayGames), // Previous
-                            _buildGamesList(vm.todayGames), // Upcoming
-                          ]
-                        : [
-                            _buildGamesList(vm.yesterdayGames),
-                            _buildGamesList(vm.todayGames),
-                            _buildGamesList(vm.tomorrowGames),
-                          ],
+                    children: [
+                      _buildGamesList(vm.upcomingGames),
+                      _buildGamesList(vm.liveGames),
+                      _buildGamesList(vm.resultsGames),
+                    ],
                   ),
                 ),
               ],
@@ -104,9 +91,9 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SFIcon(SFIcons.sf_sportscourt, fontSize: 100, color: Colors.grey),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
-              'There are no upcoming matches in this league',
+              'No matches available at this time',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
@@ -123,120 +110,210 @@ class HomeScreen extends StatelessWidget {
   Widget _buildGamesList(List<Game> games) {
     if (games.isEmpty) return _buildEmptyState();
 
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      itemCount: games.length,
-      itemBuilder: (context, index) {
-        final game = games[index];
+    // Sort games: descending for results (status 'Final'), ascending for others
+    final sortedGames = List<Game>.from(games)
+      ..sort((a, b) {
+        if (a.status == 'Final') {
+          return b.startTime.compareTo(a.startTime);
+        }
+        return a.startTime.compareTo(b.startTime);
+      });
 
-        if (game is F1Game) {
-          if (game.status == 'Upcoming') {
-            return F1UpcomingCard(
-              raceName: game.stadium ?? 'TBD Grand Prix',
-              location: game.leagueType ?? 'TBD',
-              raceDate: game.startTime,
-              circuitImage: game.eventImageUrl,
-              broadcastChannel: game.broadcastChannel,
-              raceNumber: game.raceNumber ?? 0,
-              laps: game.laps ?? 0,
-              circuitLayoutUrl: game.circuitLayoutUrl ?? 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Circuit_Red_Bull_Ring.svg/1024px-Circuit_Red_Bull_Ring.svg.png',
-              trackLength: game.trackLength ?? '---',
-            );
-          } else {
-            return F1CompletedCard(
-              raceName: game.stadium ?? 'Grand Prix',
-              raceDate: game.startTime,
-              raceNumber: game.raceNumber ?? 0,
-              winnerName: game.winnerName ?? 'Unknown',
-              winnerTeam: game.winnerTeam ?? 'TBD',
-              winnerLogo: game.winnerImage ?? 'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
-              points: game.winnerPoints ?? '0',
-              winnerTotalPoints: game.winnerTotalPoints,
-              time: game.winningTime,
-              p2Name: game.p2Name,
-              p2Team: game.p2Team,
-              p2Image: game.p2Image,
-              p2Points: game.p2Points,
-              p2TotalPoints: game.p2TotalPoints,
-              p2Gap: game.p2Gap,
-              p3Name: game.p3Name,
-              p3Team: game.p3Team,
-              p3Image: game.p3Image,
-              p3Points: game.p3Points,
-              p3TotalPoints: game.p3TotalPoints,
-              p3Gap: game.p3Gap,
-            );
+    // Group by sport
+    final groupedGames = <String, List<Game>>{};
+    for (var game in sortedGames) {
+      final sport = game.sport;
+      if (!groupedGames.containsKey(sport)) {
+        groupedGames[sport] = [];
+      }
+      if (groupedGames[sport]!.length < 2) {
+        groupedGames[sport]!.add(game);
+      }
+    }
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: groupedGames.entries.map((entry) {
+        final sport = entry.key;
+        final sportGames = entry.value;
+
+        IconData getSportIcon(String sport) {
+          switch (sport.toUpperCase()) {
+            case 'F1':
+              return SFIcons.sf_flag_2_crossed_fill;
+            case 'GOLF':
+              return SFIcons.sf_figure_golf;
+            case 'TENNIS':
+              return SFIcons.sf_tennisball_fill;
+            case 'NBA':
+              return SFIcons.sf_basketball_fill;
+            case 'RALLY':
+              return SFIcons.sf_car_fill;
+            default:
+              return SFIcons.sf_sportscourt;
           }
         }
 
-        if (game is GolfGame) {
-          final leaders = game.leaderboard ?? [];
-          if (game.status == 'Upcoming') {
-            return GolfUpcomingCard(
-              tournamentName: game.tournamentName ?? 'TBD Tournament',
-              location: game.stadium ?? 'TBD Course',
-              startDate: game.startTime,
-              par: game.par ?? '72',
-              tourType: game.tourType ?? 'PGA Tour',
-              broadcastChannel: game.broadcastChannel,
-              purse: game.purse,
-            );
-          } else if (game.status == 'Live') {
-            return GolfLiveCard(
-              tournamentName: game.tournamentName ?? 'TBD Tournament',
-              leaderName: leaders.isNotEmpty ? leaders[0].name : 'TBD',
-              leaderScore: leaders.isNotEmpty ? leaders[0].score : 'E',
-              thru: leaders.isNotEmpty ? leaders[0].thru : '-',
-              currentRound: game.round ?? 'Round 1',
-              tourType: game.tourType ?? 'PGA Tour',
-              leaderImage: leaders.isNotEmpty ? leaders[0].image : null,
-              purse: game.purse,
-              p2Name: leaders.length > 1 ? leaders[1].name : null,
-              p2Score: leaders.length > 1 ? leaders[1].score : null,
-              p2Thru: leaders.length > 1 ? leaders[1].thru : null,
-              p3Name: leaders.length > 2 ? leaders[2].name : null,
-              p3Score: leaders.length > 2 ? leaders[2].score : null,
-              p3Thru: leaders.length > 2 ? leaders[2].thru : null,
-            );
-          } else {
-            return GolfCompletedCard(
-              tournamentName: game.tournamentName ?? 'TBD Tournament',
-              winnerName: leaders.isNotEmpty ? leaders[0].name : 'Unknown',
-              winnerScore: leaders.isNotEmpty ? leaders[0].score : 'E',
-              winnerImage: leaders.isNotEmpty ? leaders[0].image : null,
-              tourType: game.tourType ?? 'PGA Tour',
-              winnerPurse: game.winnerPurse ?? game.purse,
-              p2Name: leaders.length > 1 ? leaders[1].name : null,
-              p2Score: leaders.length > 1 ? leaders[1].score : null,
-              p3Name: leaders.length > 2 ? leaders[2].name : null,
-              p3Score: leaders.length > 2 ? leaders[2].score : null,
-            );
-          }
-        }
-
-        if (game is TennisGame) {
-          if (game.status == 'Upcoming') {
-            return TennisUpcomingCard(game: game);
-          } else if (game.status == 'Live') {
-            return TennisLiveCard(game: game);
-          } else {
-            return TennisCompletedCard(game: game);
-          }
-        }
-
-        if (game is RallyGame) {
-          if (game.status == 'Upcoming') {
-            return RallyUpcomingCard(game: game);
-          } else if (game.status == 'Live') {
-            return RallyLiveCard(game: game);
-          } else {
-            return RallyCompletedCard(game: game);
-          }
-        }
-
-        return GameCard(game: game);
-      },
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12.0, top: 4.0),
+              child: Row(
+                children: [
+                  SFIcon(
+                    getSportIcon(sport),
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    sport.toUpperCase(),
+                    style: GoogleFonts.spaceMono(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ...sportGames.map((game) => _buildGameCard(game)),
+            const SizedBox(height: 16),
+          ],
+        );
+      }).toList(),
     );
+  }
+
+  Widget _buildGameCard(Game game) {
+    if (game is F1Game) {
+      if (game.status == 'Upcoming') {
+        return F1UpcomingCard(
+          raceName: game.stadium ?? 'TBD Grand Prix',
+          location: game.leagueType ?? 'TBD',
+          raceDate: game.startTime,
+          circuitImage: game.eventImageUrl,
+          broadcastChannel: game.broadcastChannel,
+          raceNumber: game.raceNumber ?? 0,
+          laps: game.laps ?? 0,
+          circuitLayoutUrl: game.circuitLayoutUrl ??
+              'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Circuit_Red_Bull_Ring.svg/1024px-Circuit_Red_Bull_Ring.svg.png',
+          trackLength: game.trackLength ?? '---',
+        );
+      } else if (game.status == 'Live') {
+        return F1LiveCard(
+          raceName: game.stadium ?? 'Grand Prix',
+          raceNumber: game.raceNumber ?? 0,
+          leaderName: game.winnerName ?? 'Unknown',
+          leaderTeam: game.winnerTeam ?? 'TBD',
+          leaderImage: game.winnerImage ??
+              'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
+          lapInfo: game.winningTime ?? 'LAP --/--',
+          p2Name: game.p2Name,
+          p2Team: game.p2Team,
+          p2Image: game.p2Image,
+          p2Gap: game.p2Gap,
+          p3Name: game.p3Name,
+          p3Team: game.p3Team,
+          p3Image: game.p3Image,
+          p3Gap: game.p3Gap,
+        );
+      } else {
+        return F1CompletedCard(
+          raceName: game.stadium ?? 'Grand Prix',
+          raceDate: game.startTime,
+          raceNumber: game.raceNumber ?? 0,
+          winnerName: game.winnerName ?? 'Unknown',
+          winnerTeam: game.winnerTeam ?? 'TBD',
+          winnerLogo: game.winnerImage ??
+              'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
+          points: game.winnerPoints ?? '0',
+          winnerTotalPoints: game.winnerTotalPoints,
+          time: game.winningTime,
+          p2Name: game.p2Name,
+          p2Team: game.p2Team,
+          p2Image: game.p2Image,
+          p2Points: game.p2Points,
+          p2TotalPoints: game.p2TotalPoints,
+          p2Gap: game.p2Gap,
+          p3Name: game.p3Name,
+          p3Team: game.p3Team,
+          p3Image: game.p3Image,
+          p3Points: game.p3Points,
+          p3TotalPoints: game.p3TotalPoints,
+          p3Gap: game.p3Gap,
+        );
+      }
+    }
+
+    if (game is GolfGame) {
+      final leaders = game.leaderboard ?? [];
+      if (game.status == 'Upcoming') {
+        return GolfUpcomingCard(
+          tournamentName: game.tournamentName ?? 'TBD Tournament',
+          location: game.stadium ?? 'TBD Course',
+          startDate: game.startTime,
+          par: game.par ?? '72',
+          tourType: game.tourType ?? 'PGA Tour',
+          broadcastChannel: game.broadcastChannel,
+          purse: game.purse,
+        );
+      } else if (game.status == 'Live') {
+        return GolfLiveCard(
+          tournamentName: game.tournamentName ?? 'TBD Tournament',
+          leaderName: leaders.isNotEmpty ? leaders[0].name : 'TBD',
+          leaderScore: leaders.isNotEmpty ? leaders[0].score : 'E',
+          thru: leaders.isNotEmpty ? leaders[0].thru : '-',
+          currentRound: game.round ?? 'Round 1',
+          tourType: game.tourType ?? 'PGA Tour',
+          leaderImage: leaders.isNotEmpty ? leaders[0].image : null,
+          purse: game.purse,
+          p2Name: leaders.length > 1 ? leaders[1].name : null,
+          p2Score: leaders.length > 1 ? leaders[1].score : null,
+          p2Thru: leaders.length > 1 ? leaders[1].thru : null,
+          p3Name: leaders.length > 2 ? leaders[2].name : null,
+          p3Score: leaders.length > 2 ? leaders[2].score : null,
+          p3Thru: leaders.length > 2 ? leaders[2].thru : null,
+        );
+      } else {
+        return GolfCompletedCard(
+          tournamentName: game.tournamentName ?? 'TBD Tournament',
+          winnerName: leaders.isNotEmpty ? leaders[0].name : 'Unknown',
+          winnerScore: leaders.isNotEmpty ? leaders[0].score : 'E',
+          winnerImage: leaders.isNotEmpty ? leaders[0].image : null,
+          tourType: game.tourType ?? 'PGA Tour',
+          winnerPurse: game.winnerPurse ?? game.purse,
+          p2Name: leaders.length > 1 ? leaders[1].name : null,
+          p2Score: leaders.length > 1 ? leaders[1].score : null,
+          p3Name: leaders.length > 2 ? leaders[2].name : null,
+          p3Score: leaders.length > 2 ? leaders[2].score : null,
+        );
+      }
+    }
+
+    if (game is TennisGame) {
+      if (game.status == 'Upcoming') {
+        return TennisUpcomingCard(game: game);
+      } else if (game.status == 'Live') {
+        return TennisLiveCard(game: game);
+      } else {
+        return TennisCompletedCard(game: game);
+      }
+    }
+
+    if (game is RallyGame) {
+      if (game.status == 'Upcoming') {
+        return RallyUpcomingCard(game: game);
+      } else if (game.status == 'Live') {
+        return RallyLiveCard(game: game);
+      } else {
+        return RallyCompletedCard(game: game);
+      }
+    }
+
+    return GameCard(game: game);
   }
 }
 
@@ -245,124 +322,28 @@ class _Factory extends VmFactory<AppState, HomeScreen, _ViewModel> {
 
   @override
   _ViewModel fromStore() {
-    final now = DateTime.now();
-    final todayDate = DateTime(now.year, now.month, now.day);
-    final yesterdayDate = todayDate.subtract(const Duration(days: 1));
-    final tomorrowDate = todayDate.add(const Duration(days: 1));
-
-    bool isSameDay(DateTime a, DateTime b) {
-      return a.year == b.year && a.month == b.month && a.day == b.day;
-    }
-
-    if (state.selectedSport == 'F1') {
-      return _ViewModel(
-        yesterdayGames: state.games
-            .where((g) => g.sport == 'F1' && g.status == 'Final')
-            .toList(),
-        todayGames: state.games
-            .where((g) => g.sport == 'F1' && g.status == 'Upcoming')
-            .toList(),
-        tomorrowGames: [],
-        selectedDate: state.selectedDate,
-        selectedSport: state.selectedSport,
-        onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
-      );
-    }
-
-    if (state.selectedSport == 'Golf') {
-      return _ViewModel(
-        yesterdayGames: state.games
-            .where((g) => g.sport == 'Golf' && g.status == 'Final')
-            .toList(),
-        todayGames: state.games
-            .where((g) => g.sport == 'Golf' && (g.status == 'Upcoming' || g.status == 'Live'))
-            .toList(),
-        tomorrowGames: [],
-        selectedDate: state.selectedDate,
-        selectedSport: state.selectedSport,
-        onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
-      );
-    }
-    if (state.selectedSport == 'Tennis') {
-      return _ViewModel(
-        yesterdayGames: state.games
-            .where((g) => g.sport == 'Tennis' && g.status == 'Final')
-            .toList(),
-        todayGames: state.games
-            .where((g) => g.sport == 'Tennis' && g.status != 'Final')
-            .toList(),
-        tomorrowGames: [],
-        selectedDate: state.selectedDate,
-        selectedSport: state.selectedSport,
-        onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
-      );
-    }
-
-    if (state.selectedSport == 'Rally') {
-      return _ViewModel(
-        yesterdayGames: state.games
-            .where((g) => g.sport == 'Rally' && g.status == 'Final')
-            .toList(),
-        todayGames: state.games
-            .where((g) => g.sport == 'Rally' && g.status != 'Final')
-            .toList(),
-        tomorrowGames: [],
-        selectedDate: state.selectedDate,
-        selectedSport: state.selectedSport,
-        onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
-      );
-    }
     return _ViewModel(
-      yesterdayGames: state.games
-          .where(
-            (g) =>
-                isSameDay(g.startTime, yesterdayDate) &&
-                g.sport == state.selectedSport,
-          )
-          .toList(),
-      todayGames: state.games
-          .where(
-            (g) =>
-                isSameDay(g.startTime, todayDate) &&
-                g.sport == state.selectedSport,
-          )
-          .toList(),
-      tomorrowGames: state.games
-          .where(
-            (g) =>
-                isSameDay(g.startTime, tomorrowDate) &&
-                g.sport == state.selectedSport,
-          )
-          .toList(),
-      selectedDate: state.selectedDate,
-      selectedSport: state.selectedSport,
-      onDateSelected: (date) => dispatch(SetSelectedDateAction(date)),
+      liveGames: state.games.where((g) => g.status == 'Live').toList(),
+      upcomingGames: state.games.where((g) => g.status == 'Upcoming').toList(),
+      resultsGames: state.games.where((g) => g.status == 'Final').toList(),
     );
   }
 }
 
 class _ViewModel extends Vm {
-  final List<Game> yesterdayGames;
-  final List<Game> todayGames;
-  final List<Game> tomorrowGames;
-  final DateTime selectedDate;
-  final String selectedSport;
-  final Function(DateTime) onDateSelected;
+  final List<Game> liveGames;
+  final List<Game> upcomingGames;
+  final List<Game> resultsGames;
 
   _ViewModel({
-    required this.yesterdayGames,
-    required this.todayGames,
-    required this.tomorrowGames,
-    required this.selectedDate,
-    required this.selectedSport,
-    required this.onDateSelected,
+    required this.liveGames,
+    required this.upcomingGames,
+    required this.resultsGames,
   }) : super(
          equals: [
-           yesterdayGames,
-           todayGames,
-           tomorrowGames,
-           selectedDate,
-           selectedSport,
+           liveGames,
+           upcomingGames,
+           resultsGames,
          ],
        );
 }
