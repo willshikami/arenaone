@@ -13,7 +13,14 @@ class TennisUpcomingCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16161C),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF1C1C26),
+            const Color(0xFF16161C),
+          ],
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
       ),
@@ -25,31 +32,59 @@ class TennisUpcomingCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
-                  ),
-                  child: Text(
-                    (game.tournamentName ?? 'ATP TOUR').toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.blue,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1,
+                Row(
+                  children: [
+                    Container(
+                      width: 2,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    Text(
+                      (game.tournamentName ?? 'ATP TOUR').toUpperCase(),
+                      style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  DateFormat('EEE, MMM d • HH:mm').format(game.startTime).toUpperCase(),
-                  style: TextStyle(
-                    color: Colors.grey.shade500,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.5,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      DateFormat('EEE, MMM d').format(game.startTime).toUpperCase(),
+                      style: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Text(
+                        DateFormat('h:mm a').format(game.startTime),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -216,22 +251,56 @@ class TennisCompletedCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16161C),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF1C1C26),
+            const Color(0xFF16161C),
+          ],
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
       ),
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(24),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '${game.tournamentName} • FINAL'.toUpperCase(),
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
+                Row(
+                  children: [
+                    Container(
+                      width: 2,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${game.tournamentName} • FINAL'.toUpperCase(),
+                      style: TextStyle(color: Colors.grey.shade400, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
+                    ),
+                  ],
                 ),
-                const Icon(SFIcons.sf_checkmark_circle_fill, color: Colors.green, size: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF34C759).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Text(
+                    'FINAL',
+                    style: TextStyle(
+                      color: Color(0xFF34C759),
+                      fontSize: 9,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

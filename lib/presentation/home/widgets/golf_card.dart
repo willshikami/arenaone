@@ -27,7 +27,14 @@ class GolfUpcomingCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16161C),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF1C1C26),
+            const Color(0xFF16161C),
+          ],
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
       ),
@@ -39,31 +46,59 @@ class GolfUpcomingCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Colors.green.withValues(alpha: 0.2)),
-                  ),
-                  child: Text(
-                    tourType.toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.green,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1,
+                Row(
+                  children: [
+                    Container(
+                      width: 2,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    Text(
+                      tourType.toUpperCase(),
+                      style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  DateFormat('EEE, MMM d').format(startDate).toUpperCase(),
-                  style: TextStyle(
-                    color: Colors.grey.shade500,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.5,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      DateFormat('EEE, MMM d').format(startDate).toUpperCase(),
+                      style: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Text(
+                        DateFormat('h:mm a').format(startDate),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -175,28 +210,48 @@ class GolfLiveCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16161C),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF1C1C26),
+            const Color(0xFF16161C),
+          ],
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
       ),
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      tournamentName.toUpperCase(),
-                      style: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1,
-                      ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 2,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          tournamentName.toUpperCase(),
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -422,36 +477,56 @@ class GolfCompletedCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16161C),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF1C1C26),
+            const Color(0xFF16161C),
+          ],
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
       ),
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(24),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  tournamentName.toUpperCase(),
-                  style: TextStyle(
-                    color: Colors.grey.shade500,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1,
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      width: 2,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      tournamentName.toUpperCase(),
+                      style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(4),
+                    color: const Color(0xFF34C759).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Text(
                     'FINAL',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF34C759),
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
                     ),

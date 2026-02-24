@@ -1,11 +1,16 @@
 import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
 import 'redux/store.dart';
+import 'redux/actions/navigation_actions.dart';
 import 'utils/app_theme.dart';
 import 'presentation/home/pages/main_navigation.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Load preferences before showing the UI
+  await store.dispatchAndWait(LoadUserPreferencesAction());
+  
   runApp(const ArenaOneApp());
 }
 

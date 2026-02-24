@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class F1UpcomingCard extends StatelessWidget {
@@ -32,7 +33,7 @@ class F1UpcomingCard extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: GoogleFonts.instrumentSans(
             color: Colors.grey.shade600,
             fontSize: 10,
             fontWeight: FontWeight.w900,
@@ -42,7 +43,7 @@ class F1UpcomingCard extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           value,
-          style: const TextStyle(
+          style: GoogleFonts.instrumentSans(
             color: Colors.white,
             fontSize: 14,
             fontWeight: FontWeight.w700,
@@ -57,7 +58,14 @@ class F1UpcomingCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16161C),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF1C1C26),
+            const Color(0xFF16161C),
+          ],
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
       ),
@@ -74,24 +82,27 @@ class F1UpcomingCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2D7DFF).withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(
-                            color: const Color(0xFF2D7DFF).withValues(alpha: 0.15),
+                      Row(
+                        children: [
+                          Container(
+                            width: 2,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF2D7DFF),
+                              borderRadius: BorderRadius.circular(2),
+                            ),
                           ),
-                        ),
-                        child: Text(
-                          'ROUND $raceNumber',
-                          style: const TextStyle(
-                            color: Color(0xFF2D7DFF),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1,
+                          const SizedBox(width: 8),
+                          Text(
+                            'ROUND $raceNumber',
+                            style: GoogleFonts.instrumentSans(
+                              color: Colors.grey.shade400,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1,
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                       Row(
                         children: [
@@ -99,7 +110,7 @@ class F1UpcomingCard extends StatelessWidget {
                             DateFormat('EEE, MMM d').format(raceDate).toUpperCase(),
                             style: TextStyle(
                               color: Colors.grey.shade500,
-                              fontSize: 11,
+                              fontSize: 12,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.5,
                             ),
@@ -118,7 +129,7 @@ class F1UpcomingCard extends StatelessWidget {
                               DateFormat('h:mm a').format(raceDate),
                               style: const TextStyle(
                                 color: Color(0xFFFFFFFF),
-                                fontSize: 11,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w900,
                               ),
                             ),
@@ -137,18 +148,18 @@ class F1UpcomingCard extends StatelessWidget {
                           children: [
                             Text(
                               raceName,
-                              style: const TextStyle(
+                              style: GoogleFonts.instrumentSans(
                                 color: Colors.white,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               location,
-                              style: TextStyle(
+                              style: GoogleFonts.instrumentSans(
                                 color: Colors.grey.shade400,
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -243,7 +254,14 @@ class F1CompletedCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16161C),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF1C1C26),
+            const Color(0xFF16161C),
+          ],
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
       ),
@@ -251,21 +269,34 @@ class F1CompletedCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'ROUND $raceNumber',
-                      style: TextStyle(
-                        color: Color(0xFF2D7DFF),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1,
-                      ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 2,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2D7DFF),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'ROUND $raceNumber',
+                          style: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -285,13 +316,13 @@ class F1CompletedCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(4),
+                        color: const Color(0xFF34C759).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Text(
                         'FINAL',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF34C759),
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
                         ),
@@ -519,6 +550,310 @@ class F1CompletedCard extends StatelessWidget {
                 style: const TextStyle(
                   color: Color(0xFF00FF00),
                   fontSize: 9,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class F1LiveCard extends StatelessWidget {
+  final String raceName;
+  final int raceNumber;
+  final String leaderName;
+  final String leaderTeam;
+  final String leaderImage;
+  final String lapInfo;
+  final String? p2Name;
+  final String? p2Team;
+  final String? p2Image;
+  final String? p2Gap;
+  final String? p3Name;
+  final String? p3Team;
+  final String? p3Image;
+  final String? p3Gap;
+
+  const F1LiveCard({
+    super.key,
+    required this.raceName,
+    required this.raceNumber,
+    required this.leaderName,
+    required this.leaderTeam,
+    required this.leaderImage,
+    required this.lapInfo,
+    this.p2Name,
+    this.p2Team,
+    this.p2Image,
+    this.p2Gap,
+    this.p3Name,
+    this.p3Team,
+    this.p3Image,
+    this.p3Gap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF1C1C26),
+            const Color(0xFF16161C),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 2,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2D7DFF),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'ROUND $raceNumber',
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      raceName.toUpperCase(),
+                      style: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.circle, color: Colors.red, size: 8),
+                      SizedBox(width: 6),
+                      Text(
+                        'LIVE',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          _buildLeaderSection(),
+          if (p2Name != null)
+            _buildDriverRow(2, p2Name!, p2Team!, p2Image!, p2Gap ?? '---'),
+          if (p3Name != null)
+            _buildDriverRow(3, p3Name!, p3Team!, p3Image!, p3Gap ?? '---'),
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLeaderSection() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.red.withValues(alpha: 0.03),
+        border: Border.symmetric(
+          horizontal: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
+        ),
+      ),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 24, 110, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'LEADER',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  leaderName,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    height: 1.1,
+                  ),
+                ),
+                Text(
+                  leaderTeam.toUpperCase(),
+                  style: TextStyle(
+                    color: Colors.grey.shade400,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildStat('LAP INFO', lapInfo),
+              ],
+            ),
+          ),
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: SizedBox(
+              height: 130,
+              width: 150,
+              child: Image.network(
+                leaderImage,
+                fit: BoxFit.contain,
+                alignment: Alignment.bottomCenter,
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.person, color: Colors.white24, size: 60),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStat(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.grey.shade600,
+            fontSize: 8,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDriverRow(int rank, String name, String team, String imageUrl, String gap) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 18,
+            child: Text(
+              '$rank',
+              style: TextStyle(
+                color: Colors.grey.shade500,
+                fontSize: 13,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Container(
+            height: 32,
+            width: 32,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withValues(alpha: 0.05),
+              image: DecorationImage(
+                image: NetworkImage(imageUrl),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  team.toUpperCase(),
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                gap,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const Text(
+                'GAP',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 8,
                   fontWeight: FontWeight.w800,
                 ),
               ),

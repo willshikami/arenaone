@@ -14,6 +14,9 @@ class AppState {
   final List<Game> games;
   final DateTime selectedDate;
   final String selectedSport;
+  final List<String> selectedSports;
+  final bool isOnboardingCompleted;
+  final bool liveActivitiesEnabled;
 
   AppState({
     required this.isLoading,
@@ -23,6 +26,9 @@ class AppState {
     required this.games,
     required this.selectedDate,
     required this.selectedSport,
+    required this.selectedSports,
+    required this.isOnboardingCompleted,
+    required this.liveActivitiesEnabled,
   });
 
   AppState copyWith({
@@ -33,6 +39,9 @@ class AppState {
     List<Game>? games,
     DateTime? selectedDate,
     String? selectedSport,
+    List<String>? selectedSports,
+    bool? isOnboardingCompleted,
+    bool? liveActivitiesEnabled,
   }) {
     return AppState(
       isLoading: isLoading ?? this.isLoading,
@@ -42,6 +51,9 @@ class AppState {
       games: games ?? this.games,
       selectedDate: selectedDate ?? this.selectedDate,
       selectedSport: selectedSport ?? this.selectedSport,
+      selectedSports: selectedSports ?? this.selectedSports,
+      isOnboardingCompleted: isOnboardingCompleted ?? this.isOnboardingCompleted,
+      liveActivitiesEnabled: liveActivitiesEnabled ?? this.liveActivitiesEnabled,
     );
   }
 
@@ -52,6 +64,9 @@ class AppState {
         games: [],
         selectedDate: DateTime.now(),
         selectedSport: 'F1',
+        selectedSports: [],
+        isOnboardingCompleted: false,
+        liveActivitiesEnabled: true,
       );
 
   factory AppState.fromJson(Map<String, dynamic> json) => _$AppStateFromJson(json);
@@ -66,6 +81,9 @@ class AppState {
           error == other.error &&
           currentTabIndex == other.currentTabIndex &&
           selectedDate == other.selectedDate &&
+          isOnboardingCompleted == other.isOnboardingCompleted &&
+          liveActivitiesEnabled == other.liveActivitiesEnabled &&
+          listEquals(selectedSports, other.selectedSports) &&
           listEquals(followedTeams, other.followedTeams) &&
           listEquals(games, other.games);
 
@@ -76,5 +94,8 @@ class AppState {
       currentTabIndex.hashCode ^ 
       followedTeams.hashCode ^
       games.hashCode ^
-      selectedDate.hashCode;
+      selectedDate.hashCode ^
+      selectedSports.hashCode ^
+      isOnboardingCompleted.hashCode ^
+      liveActivitiesEnabled.hashCode;
 }
