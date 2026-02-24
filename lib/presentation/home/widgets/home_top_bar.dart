@@ -74,7 +74,7 @@ class HomeTopBar extends StatelessWidget {
             ),
             const Spacer(),
             GestureDetector(
-              onTap: vm.onNavigateToProfile,
+              onTap: vm.onNavigateToSettings,
               child: Container(
                 padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
@@ -85,7 +85,7 @@ class HomeTopBar extends StatelessWidget {
                   radius: 18,
                   backgroundColor: Colors.white.withValues(alpha: 0.05),
                   child: const SFIcon(
-                    SFIcons.sf_person_fill,
+                    SFIcons.sf_gearshape_fill,
                     color: Colors.white,
                     fontSize: 18,
                   ),
@@ -104,14 +104,14 @@ class _Factory extends VmFactory<AppState, StatelessWidget, _ViewModel> {
 
   @override
   _ViewModel fromStore() => _ViewModel(
-        onNavigateToProfile: () => dispatch(SetCurrentTabIndexAction(4)),
+        onNavigateToSettings: () => dispatch(SetCurrentTabIndexAction(4)),
       );
 }
 
 class _ViewModel extends Vm {
-  final VoidCallback onNavigateToProfile;
+  final VoidCallback onNavigateToSettings;
 
   _ViewModel({
-    required this.onNavigateToProfile,
+    required this.onNavigateToSettings,
   }) : super(equals: []);
 }

@@ -1,4 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'sports/basketball_game.dart';
 import 'sports/f1_game.dart';
 import 'sports/golf_game.dart';
@@ -6,10 +5,7 @@ import 'sports/tennis_game.dart';
 import 'sports/rally_game.dart';
 import 'sports/football_game.dart';
 
-part 'game.g.dart';
-
-@JsonSerializable()
-class Game {
+abstract class Game {
   final String id;
   final String sport;
   final DateTime startTime;
@@ -48,35 +44,5 @@ class Game {
     }
   }
 
-  Map<String, dynamic> toJson() {
-    if (this is F1Game) return (this as F1Game).toJson();
-    if (this is GolfGame) return (this as GolfGame).toJson();
-    if (this is TennisGame) return (this as TennisGame).toJson();
-    if (this is RallyGame) return (this as RallyGame).toJson();
-    if (this is FootballGame) return (this as FootballGame).toJson();
-    if (this is BasketballGame) return (this as BasketballGame).toJson();
-    return _$GameToJson(this);
-  }
-
-  Game copyWith({
-    String? id,
-    String? sport,
-    DateTime? startTime,
-    bool? isLive,
-    String? status,
-    String? leagueType,
-    String? stadium,
-    String? broadcastChannel,
-  }) {
-    return Game(
-      id: id ?? this.id,
-      sport: sport ?? this.sport,
-      startTime: startTime ?? this.startTime,
-      isLive: isLive ?? this.isLive,
-      status: status ?? this.status,
-      leagueType: leagueType ?? this.leagueType,
-      stadium: stadium ?? this.stadium,
-      broadcastChannel: broadcastChannel ?? this.broadcastChannel,
-    );
-  }
+  Map<String, dynamic> toJson();
 }

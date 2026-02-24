@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
 import '../../../redux/app_state.dart';
 import 'home_page.dart';
+import 'following_page.dart';
+import 'profile_page.dart';
 import '../../auth/pages/sport_selection_page.dart';
 import '../../../redux/actions/navigation_actions.dart';
 
@@ -26,12 +28,12 @@ class MainNavigation extends StatelessWidget {
               HomeScreen(),
               PlaceholderScreen(title: 'Explore'),
               PlaceholderScreen(title: 'Scores'),
-              PlaceholderScreen(title: 'Following'),
-              PlaceholderScreen(title: 'Profile'),
+              FollowingPage(),
+              ProfilePage(),
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
-            currentIndex: vm.currentTabIndex > 3 ? 0 : vm.currentTabIndex,
+            currentIndex: vm.currentTabIndex,
             onTap: vm.onTabTapped,
             backgroundColor: const Color(0xFF0D0D10),
             selectedItemColor: const Color(0xFFFF6A1A),
@@ -59,6 +61,11 @@ class MainNavigation extends StatelessWidget {
                 icon: SFIcon(SFIcons.sf_star, fontSize: 24),
                 activeIcon: SFIcon(SFIcons.sf_star_fill, fontSize: 24),
                 label: 'Following',
+              ),
+              BottomNavigationBarItem(
+                icon: SFIcon(SFIcons.sf_person, fontSize: 24),
+                activeIcon: SFIcon(SFIcons.sf_person_fill, fontSize: 24),
+                label: 'Profile',
               ),
             ],
           ),

@@ -22,6 +22,7 @@ AppState _$AppStateFromJson(Map<String, dynamic> json) => AppState(
       .map((e) => e as String)
       .toList(),
   isOnboardingCompleted: json['isOnboardingCompleted'] as bool,
+  liveActivitiesEnabled: json['liveActivitiesEnabled'] as bool,
 );
 
 Map<String, dynamic> _$AppStateToJson(AppState instance) => <String, dynamic>{
@@ -34,4 +35,5 @@ Map<String, dynamic> _$AppStateToJson(AppState instance) => <String, dynamic>{
   'selectedSport': instance.selectedSport,
   'selectedSports': instance.selectedSports,
   'isOnboardingCompleted': instance.isOnboardingCompleted,
+  'liveActivitiesEnabled': instance.liveActivitiesEnabled,
 };

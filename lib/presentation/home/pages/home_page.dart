@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'sport_category_page.dart';
+import 'profile_page.dart';
 import '../../../redux/app_state.dart';
 import '../../../redux/actions/team_actions.dart';
 import '../../../data/models/game.dart';
@@ -378,6 +379,7 @@ class _Factory extends VmFactory<AppState, HomeScreen, _ViewModel> {
     final filteredGames = state.games.where((g) => selectedSports.contains(g.sport)).toList();
 
     return _ViewModel(
+      currentTabIndex: state.currentTabIndex,
       liveGames: filteredGames.where((g) => g.status == 'Live').toList(),
       upcomingGames: filteredGames.where((g) => g.status == 'Upcoming').toList(),
       resultsGames: filteredGames.where((g) => g.status == 'Final').toList(),
@@ -386,19 +388,22 @@ class _Factory extends VmFactory<AppState, HomeScreen, _ViewModel> {
 }
 
 class _ViewModel extends Vm {
+  final int currentTabIndex;
   final List<Game> liveGames;
   final List<Game> upcomingGames;
   final List<Game> resultsGames;
 
   _ViewModel({
+    required this.currentTabIndex,
     required this.liveGames,
     required this.upcomingGames,
     required this.resultsGames,
   }) : super(
-         equals: [
-           liveGames,
-           upcomingGames,
-           resultsGames,
-         ],
-       );
+          equals: [
+            currentTabIndex,
+            liveGames,
+            upcomingGames,
+            resultsGames,
+          ],
+        );
 }
