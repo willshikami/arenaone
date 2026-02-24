@@ -35,6 +35,36 @@ class DatabaseHelper {
         isFollowing INTEGER
       )
     ''');
+    
+    await db.execute('''
+      CREATE TABLE user_preferences(
+        key TEXT PRIMARY KEY,
+        value TEXT
+      )
+    ''');
+  }
+
+  // Generic key-value persistence
+  Future<void> setPreference(String key, String value) async {
+    final db = await database;
+    await db.insert(
+      'user_preferences',
+      {'key': key, 'value': value},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<String?> getPreference(String key) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'user_preferences',
+      where: 'key = ?',
+      whereArgs: [key],
+    );
+    if (maps.isNotEmpty) {
+      return maps.first['value'] as String;
+    }
+    return null;
   }
 
   // Example: Persisting a Team using json_serializable mapping

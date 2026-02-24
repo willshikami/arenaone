@@ -151,7 +151,7 @@ class F1UpcomingCard extends StatelessWidget {
                               style: GoogleFonts.instrumentSans(
                                 color: Colors.white,
                                 fontSize: 18,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                             const SizedBox(height: 4),

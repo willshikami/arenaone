@@ -18,6 +18,10 @@ AppState _$AppStateFromJson(Map<String, dynamic> json) => AppState(
       .toList(),
   selectedDate: DateTime.parse(json['selectedDate'] as String),
   selectedSport: json['selectedSport'] as String,
+  selectedSports: (json['selectedSports'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  isOnboardingCompleted: json['isOnboardingCompleted'] as bool,
 );
 
 Map<String, dynamic> _$AppStateToJson(AppState instance) => <String, dynamic>{
@@ -28,4 +32,6 @@ Map<String, dynamic> _$AppStateToJson(AppState instance) => <String, dynamic>{
   'games': instance.games,
   'selectedDate': instance.selectedDate.toIso8601String(),
   'selectedSport': instance.selectedSport,
+  'selectedSports': instance.selectedSports,
+  'isOnboardingCompleted': instance.isOnboardingCompleted,
 };

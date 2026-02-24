@@ -14,6 +14,8 @@ class AppState {
   final List<Game> games;
   final DateTime selectedDate;
   final String selectedSport;
+  final List<String> selectedSports;
+  final bool isOnboardingCompleted;
 
   AppState({
     required this.isLoading,
@@ -23,6 +25,8 @@ class AppState {
     required this.games,
     required this.selectedDate,
     required this.selectedSport,
+    required this.selectedSports,
+    required this.isOnboardingCompleted,
   });
 
   AppState copyWith({
@@ -33,6 +37,8 @@ class AppState {
     List<Game>? games,
     DateTime? selectedDate,
     String? selectedSport,
+    List<String>? selectedSports,
+    bool? isOnboardingCompleted,
   }) {
     return AppState(
       isLoading: isLoading ?? this.isLoading,
@@ -42,6 +48,8 @@ class AppState {
       games: games ?? this.games,
       selectedDate: selectedDate ?? this.selectedDate,
       selectedSport: selectedSport ?? this.selectedSport,
+      selectedSports: selectedSports ?? this.selectedSports,
+      isOnboardingCompleted: isOnboardingCompleted ?? this.isOnboardingCompleted,
     );
   }
 
@@ -52,6 +60,8 @@ class AppState {
         games: [],
         selectedDate: DateTime.now(),
         selectedSport: 'F1',
+        selectedSports: [],
+        isOnboardingCompleted: false,
       );
 
   factory AppState.fromJson(Map<String, dynamic> json) => _$AppStateFromJson(json);
@@ -66,6 +76,8 @@ class AppState {
           error == other.error &&
           currentTabIndex == other.currentTabIndex &&
           selectedDate == other.selectedDate &&
+          isOnboardingCompleted == other.isOnboardingCompleted &&
+          listEquals(selectedSports, other.selectedSports) &&
           listEquals(followedTeams, other.followedTeams) &&
           listEquals(games, other.games);
 
@@ -76,5 +88,7 @@ class AppState {
       currentTabIndex.hashCode ^ 
       followedTeams.hashCode ^
       games.hashCode ^
-      selectedDate.hashCode;
+      selectedDate.hashCode ^
+      selectedSports.hashCode ^
+      isOnboardingCompleted.hashCode;
 }

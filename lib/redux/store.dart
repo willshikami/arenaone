@@ -3,5 +3,4 @@ import 'app_state.dart';
 
 final store = Store<AppState>(
   initialState: AppState.initialState(),
-  // removing formatter to avoid version mismatch
 );

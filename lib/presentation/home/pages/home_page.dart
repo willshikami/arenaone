@@ -374,10 +374,13 @@ class _Factory extends VmFactory<AppState, HomeScreen, _ViewModel> {
 
   @override
   _ViewModel fromStore() {
+    final selectedSports = state.selectedSports;
+    final filteredGames = state.games.where((g) => selectedSports.contains(g.sport)).toList();
+
     return _ViewModel(
-      liveGames: state.games.where((g) => g.status == 'Live').toList(),
-      upcomingGames: state.games.where((g) => g.status == 'Upcoming').toList(),
-      resultsGames: state.games.where((g) => g.status == 'Final').toList(),
+      liveGames: filteredGames.where((g) => g.status == 'Live').toList(),
+      upcomingGames: filteredGames.where((g) => g.status == 'Upcoming').toList(),
+      resultsGames: filteredGames.where((g) => g.status == 'Final').toList(),
     );
   }
 }
