@@ -13,7 +13,7 @@ class HomeTopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final now = DateTime.now();
     final dayName = DateFormat('EEEE').format(now);
-    final monthDate = DateFormat('MMMM d').format(now);
+    final monthDate = DateFormat('d MMMM').format(now);
 
     return StoreConnector<AppState, _ViewModel>(
       vm: () => _Factory(this),
@@ -21,7 +21,7 @@ class HomeTopBar extends StatelessWidget {
         decoration: const BoxDecoration(
           color: Colors.transparent, // Background handled by parent HomeScreen
         ),
-        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 64.0, bottom: 8.0),
+        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 72.0, bottom: 8.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -45,7 +45,7 @@ class HomeTopBar extends StatelessWidget {
                       width: 3,
                       height: 3,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade700,
+                        color: Colors.white.withValues(alpha: 0.5),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -55,20 +55,19 @@ class HomeTopBar extends StatelessWidget {
                       style: GoogleFonts.instrumentSans(
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
-                        color: Colors.grey.shade500,
+                        color: Colors.white.withValues(alpha: 0.5),
                         letterSpacing: 1.5,
                       ),
                     ),
                   ],
                 ),
                 Text(
-                  monthDate.toUpperCase(),
+                  monthDate,
                   style: GoogleFonts.instrumentSans(
-                    fontSize: 28,
+                    fontSize: 24,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
                     height: 1.2,
-                    letterSpacing: -0.5,
                   ),
                 ),
               ],

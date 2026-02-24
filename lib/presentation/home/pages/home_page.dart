@@ -32,14 +32,14 @@ class HomeScreen extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: const Color(0xFF0D0D10),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+              gradient: RadialGradient(
+                center: const Alignment(0, -1.8),
+                radius: 2.2,
                 colors: [
-                  const Color(0xFFFF6A1A).withValues(alpha: 0.05), // More subtle orange tint
+                  const Color(0xFFFF6A1A).withValues(alpha: 0.12),
                   const Color(0xFF0D0D10),
                 ],
-                stops: const [0.0, 0.4],
+                stops: const [0.0, 0.5],
               ),
             ),
             child: Column(

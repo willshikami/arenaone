@@ -110,7 +110,7 @@ class F1UpcomingCard extends StatelessWidget {
                             DateFormat('EEE, MMM d').format(raceDate).toUpperCase(),
                             style: TextStyle(
                               color: Colors.grey.shade500,
-                              fontSize: 11,
+                              fontSize: 12,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.5,
                             ),
@@ -129,7 +129,7 @@ class F1UpcomingCard extends StatelessWidget {
                               DateFormat('h:mm a').format(raceDate),
                               style: const TextStyle(
                                 color: Color(0xFFFFFFFF),
-                                fontSize: 11,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w900,
                               ),
                             ),
