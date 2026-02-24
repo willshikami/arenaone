@@ -36,10 +36,10 @@ class HomeScreen extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  const Color(0xFFFF6A1A).withValues(alpha: 0.12), // Bold orange tint
+                  const Color(0xFFFF6A1A).withValues(alpha: 0.05), // More subtle orange tint
                   const Color(0xFF0D0D10),
                 ],
-                stops: const [0.0, 0.3],
+                stops: const [0.0, 0.4],
               ),
             ),
             child: Column(

@@ -13,7 +13,14 @@ class RallyUpcomingCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16161C),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF1C1C26),
+            const Color(0xFF16161C),
+          ],
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
       ),
@@ -38,8 +45,8 @@ class RallyUpcomingCard extends StatelessWidget {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        const Color(0xFF16161C).withValues(alpha: 0.8),
-                        const Color(0xFF16161C),
+                        const Color(0xFF16161C).withValues(alpha: 0.4),
+                        const Color(0xFF16161C).withValues(alpha: 0.9),
                       ],
                     ),
                   ),
@@ -53,23 +60,21 @@ class RallyUpcomingCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
                         children: [
-                          Text(
-                            'RALLY',
-                            style: const TextStyle(
-                              color: Color(0xFFFFD100),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1,
+                          Container(
+                            width: 2,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFFD100),
+                              borderRadius: BorderRadius.circular(2),
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          const SizedBox(width: 8),
                           Text(
                             (game.leagueType ?? 'WRC').toUpperCase(),
                             style: TextStyle(
-                              color: Colors.grey.shade500,
+                              color: Colors.grey.shade400,
                               fontSize: 10,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1,
@@ -340,7 +345,14 @@ class RallyCompletedCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16161C),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF1C1C26),
+            const Color(0xFF16161C),
+          ],
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
       ),
@@ -355,9 +367,22 @@ class RallyCompletedCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      game.leagueType?.toUpperCase() ?? 'WRC',
-                      style: const TextStyle(color: Color(0xFFFFD100), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1),
+                    Row(
+                      children: [
+                        Container(
+                          width: 2,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFD100),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          game.leagueType?.toUpperCase() ?? 'WRC',
+                          style: const TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 2),
                     Text(

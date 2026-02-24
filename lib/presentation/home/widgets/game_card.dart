@@ -42,7 +42,14 @@ class GameCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16161C),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF1C1C26),
+            const Color(0xFF16161C),
+          ],
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.06), width: 1),
         boxShadow: [
@@ -67,19 +74,28 @@ class GameCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
                         children: [
-                          if (game.leagueType != null && game.leagueType != game.sport)
+                          if (game.leagueType != null && game.leagueType != game.sport) ...[
+                            Container(
+                              width: 2,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFF6A1A),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
                             Text(
                               game.leagueType!.toUpperCase(),
                               style: TextStyle(
-                                color: Colors.grey.shade500,
+                                color: Colors.grey.shade400,
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 1,
                               ),
                             ),
+                          ],
                         ],
                       ),
                       if (game.isLive)
@@ -309,10 +325,11 @@ class GameCard extends StatelessWidget {
     if (game.isLive) {
       centerText = '82:24'; // Mocked live clock consistent with image
     } else if (game.status == 'Final') {
-      centerText = 'FINAL';
+      centerText = 'VS';
       textColor = Colors.grey.shade500;
     } else {
-      centerText = DateFormat('h:mm').format(game.startTime);
+      centerText = 'VS';
+      textColor = Colors.grey.shade500;
     }
 
     return Text(

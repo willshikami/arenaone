@@ -29,22 +29,46 @@ class HomeTopBar extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  dayName.toUpperCase(),
-                  style: GoogleFonts.instrumentSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.grey.shade500,
-                    letterSpacing: 1.5,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      'TODAY',
+                      style: GoogleFonts.instrumentSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                        color: const Color(0xFFFF6A1A),
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 3,
+                      height: 3,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade700,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      dayName.toUpperCase(),
+                      style: GoogleFonts.instrumentSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.grey.shade500,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                  ],
                 ),
                 Text(
-                  monthDate,
+                  monthDate.toUpperCase(),
                   style: GoogleFonts.instrumentSans(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white, // White text for dark mode
-                    height: 1.1,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    height: 1.2,
+                    letterSpacing: -0.5,
                   ),
                 ),
               ],
