@@ -7,6 +7,7 @@ import '../../data/models/sports/f1_game.dart';
 import '../../data/models/sports/golf_game.dart';
 import '../../data/models/sports/tennis_game.dart';
 import '../../data/models/sports/rally_game.dart';
+import '../../data/models/sports/football_game.dart';
 import '../../data/assets/track_assets.dart';
 
 class LoadMockGamesAction extends ReduxAction<AppState> {
@@ -117,6 +118,59 @@ class LoadMockGamesAction extends ReduxAction<AppState> {
         startTime: tomorrow.add(const Duration(hours: 22)),
         status: 'Upcoming',
         broadcastChannel: 'TNT',
+      ),
+
+      // Football (Premier League)
+      // Results
+      FootballGame(
+        id: 'f1',
+        homeTeamName: 'Arsenal',
+        awayTeamName: 'Liverpool',
+        homeTeamAbbr: 'ARS',
+        awayTeamAbbr: 'LIV',
+        homeTeamLogo: 'https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg',
+        awayTeamLogo: 'https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg',
+        sport: 'Football',
+        leagueType: 'Premier League',
+        stadium: 'Emirates Stadium',
+        startTime: yesterday.add(const Duration(hours: 15)),
+        status: 'Final',
+        score: '2-1',
+        broadcastChannel: 'Sky Sports',
+      ),
+      // Live
+      FootballGame(
+        id: 'f2',
+        homeTeamName: 'Man City',
+        awayTeamName: 'Chelsea',
+        homeTeamAbbr: 'MCI',
+        awayTeamAbbr: 'CHE',
+        homeTeamLogo: 'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg',
+        awayTeamLogo: 'https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg',
+        sport: 'Football',
+        leagueType: 'Premier League',
+        stadium: 'Etihad Stadium',
+        startTime: today.add(const Duration(hours: 14)),
+        status: 'Live',
+        isLive: true,
+        score: '1-1',
+        broadcastChannel: 'NBC Sports',
+      ),
+      // Upcoming
+      FootballGame(
+        id: 'f3',
+        homeTeamName: 'Tottenham',
+        awayTeamName: 'Man Utd',
+        homeTeamAbbr: 'TOT',
+        awayTeamAbbr: 'MUN',
+        homeTeamLogo: 'https://upload.wikimedia.org/wikipedia/en/b/b4/Tottenham_Hotspur.svg',
+        awayTeamLogo: 'https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg',
+        sport: 'Football',
+        leagueType: 'Premier League',
+        stadium: 'Tottenham Hotspur Stadium',
+        startTime: tomorrow.add(const Duration(hours: 16, minutes: 30)),
+        status: 'Upcoming',
+        broadcastChannel: 'USA Network',
       ),
 
       // F1

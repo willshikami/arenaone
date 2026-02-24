@@ -6,11 +6,13 @@ import '../../../data/models/sports/f1_game.dart';
 import '../../../data/models/sports/golf_game.dart';
 import '../../../data/models/sports/tennis_game.dart';
 import '../../../data/models/sports/rally_game.dart';
+import '../../../data/models/sports/football_game.dart';
 import '../widgets/game_card.dart';
 import '../widgets/f1_race_card.dart';
 import '../widgets/golf_card.dart';
 import '../widgets/tennis_card.dart';
 import '../widgets/rally_card.dart';
+import '../widgets/football_card.dart';
 
 class SportCategoryPage extends StatelessWidget {
   final String sport;
@@ -242,6 +244,10 @@ class SportCategoryPage extends StatelessWidget {
       } else {
         return RallyCompletedCard(game: game);
       }
+    }
+
+    if (game is FootballGame) {
+      return FootballCard(game: game);
     }
 
     return GameCard(game: game);

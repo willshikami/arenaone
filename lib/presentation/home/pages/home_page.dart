@@ -10,12 +10,14 @@ import '../../../data/models/sports/f1_game.dart';
 import '../../../data/models/sports/golf_game.dart';
 import '../../../data/models/sports/tennis_game.dart';
 import '../../../data/models/sports/rally_game.dart';
+import '../../../data/models/sports/football_game.dart';
 import '../widgets/home_top_bar.dart';
 import '../widgets/game_card.dart';
 import '../widgets/f1_race_card.dart';
 import '../widgets/golf_card.dart';
 import '../widgets/tennis_card.dart';
 import '../widgets/rally_card.dart';
+import '../widgets/football_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -157,6 +159,8 @@ class HomeScreen extends StatelessWidget {
               return SFIcons.sf_basketball_fill;
             case 'RALLY':
               return SFIcons.sf_car_fill;
+            case 'FOOTBALL':
+              return SFIcons.sf_sportscourt;
             default:
               return SFIcons.sf_sportscourt;
           }
@@ -355,6 +359,10 @@ class HomeScreen extends StatelessWidget {
       } else {
         return RallyCompletedCard(game: game);
       }
+    }
+
+    if (game is FootballGame) {
+      return FootballCard(game: game);
     }
 
     return GameCard(game: game);
