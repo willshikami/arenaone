@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'sport_category_page.dart';
-import 'profile_page.dart';
 import '../../../redux/app_state.dart';
 import '../../../redux/actions/team_actions.dart';
 import '../../../data/models/game.dart';
