@@ -25,7 +25,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _ViewModel>(
-      onInit: (store) => store.dispatch(LoadMockGamesAction()),
+      onInit: (store) {
+        store.dispatch(LoadMockGamesAction());
+        store.dispatch(LoadNBAGamesAction());
+      },
       vm: () => _Factory(this),
       builder: (context, vm) {
         return DefaultTabController(
@@ -135,7 +138,7 @@ class HomeScreen extends StatelessWidget {
       
       fullSportGames[sport]!.add(game);
       
-      if (groupedGames[sport]!.length < 2) {
+      if (groupedGames[sport]!.length < 5) {
         groupedGames[sport]!.add(game);
       }
     }

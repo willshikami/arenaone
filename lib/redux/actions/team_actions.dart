@@ -1,6 +1,7 @@
 import 'package:async_redux/async_redux.dart';
 import '../app_state.dart';
 import '../../data/services/database_helper.dart';
+import '../../data/services/supabase_service.dart';
 import '../../data/models/team.dart';
 import '../../data/models/sports/basketball_game.dart';
 import '../../data/models/sports/f1_game.dart';
@@ -9,6 +10,19 @@ import '../../data/models/sports/tennis_game.dart';
 import '../../data/models/sports/rally_game.dart';
 import '../../data/models/sports/football_game.dart';
 import '../../data/assets/track_assets.dart';
+
+class LoadNBAGamesAction extends ReduxAction<AppState> {
+  @override
+  Future<AppState?> reduce() async {
+    final nbaGames = await SupabaseService().fetchNBAGames();
+    
+    // We clear current NBA games and replace them with whatever Supabase returned.
+    // This ensures mock data is removed once the app connects to the real backend,
+    // even if the database is currently empty.
+    final filteredGames = state.games.where((g) => g.sport != 'NBA').toList();
+    return state.copyWith(games: [...filteredGames, ...nbaGames]);
+  }
+}
 
 class LoadMockGamesAction extends ReduxAction<AppState> {
   @override
