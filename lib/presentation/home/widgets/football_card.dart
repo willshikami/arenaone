@@ -74,26 +74,24 @@ class FootballCard extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          if (game.leagueType != null) ...[
-                            Container(
-                              width: 2,
-                              height: 12,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF3A66A7), // Premier League blue-ish color
-                                borderRadius: BorderRadius.circular(2),
-                              ),
+                          Container(
+                            width: 2,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF3A66A7), // Premier League blue-ish color
+                              borderRadius: BorderRadius.circular(2),
                             ),
-                            const SizedBox(width: 8),
-                            Text(
-                              game.leagueType!.toUpperCase(),
-                              style: TextStyle(
-                                color: Colors.grey.shade400,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 1,
-                              ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${game.sport} ${game.leagueType ?? ''}'.toUpperCase().trim(),
+                            style: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1,
                             ),
-                          ],
+                          ),
                         ],
                       ),
                       if (game.isLive)

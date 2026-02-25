@@ -8,7 +8,6 @@ class SupabaseService {
 
   Future<List<Game>> fetchNBAGames() async {
     try {
-      print('DEBUG: Fetching NBA games from Supabase...');
       // Fetch NBA games by filtering the 'events' table joined with 'sports' (slug = 'nba')
       final List<dynamic> response = await _client
           .from('events')
@@ -32,7 +31,6 @@ class SupabaseService {
           .eq('sports.slug', 'nba')
           .order('start_time', ascending: true);
 
-      print('DEBUG: Supabase response received: ${response.length} events');
       return response.map((eventJson) {
         final participants = eventJson['event_participants'] as List<dynamic>;
         

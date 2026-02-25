@@ -382,8 +382,8 @@ class _Factory extends VmFactory<AppState, HomeScreen, _ViewModel> {
 
     return _ViewModel(
       currentTabIndex: state.currentTabIndex,
-      liveGames: filteredGames.where((g) => g.status == 'Live').toList(),
-      upcomingGames: filteredGames.where((g) => g.status == 'Upcoming').toList(),
+      liveGames: filteredGames.where((g) => g.isLive || g.status == 'Live').toList(),
+      upcomingGames: filteredGames.where((g) => g.status == 'Upcoming' && !g.isLive).toList(),
       resultsGames: filteredGames.where((g) => g.status == 'Final').toList(),
     );
   }
