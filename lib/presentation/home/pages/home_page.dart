@@ -134,11 +134,28 @@ class HomeScreen extends StatelessWidget {
     // Sort games: descending for results (status 'Final'), ascending for others
     final sortedGames = List<Game>.from(games)
       ..sort((a, b) {
+        // Special safety for Tennis: if player names include 'TBD', put them at the end of the day's group
+        if (a is TennisGame && b is TennisGame) {
+          final aIsTBD = a.player1Name == 'TBD' || a.player2Name == 'TBD';
+          final bIsTBD = b.player1Name == 'TBD' || b.player2Name == 'TBD';
+          if (aIsTBD != bIsTBD) return aIsTBD ? 1 : -1;
+        }
+
         if (a.status == 'Final') {
           return b.startTime.compareTo(a.startTime);
         }
         return a.startTime.compareTo(b.startTime);
       });
+
+    // Debugging print
+    if (games.any((g) => g.sport == 'Tennis')) {
+      debugPrint('HOME_PAGE: Processing ${games.where((g) => g.sport == 'Tennis').length} Tennis matches');
+      for (var g in games.where((g) => g.sport == 'Tennis')) {
+        debugPrint('  - Event: ${g.stadium ?? "Unknown"} | Status: ${g.status} | Time: ${g.startTime}');
+      }
+    } else if (games.isNotEmpty) {
+       debugPrint('HOME_PAGE: No Tennis games among ${games.length} games. Sports present: ${games.map((g) => g.sport).toSet().toList()}');
+    }
 
     // Group by sport
     final groupedGames = <String, List<Game>>{};
@@ -272,6 +289,7 @@ class HomeScreen extends StatelessWidget {
         return F1LiveCard(
           raceName: game.stadium ?? 'Grand Prix',
           raceNumber: game.raceNumber ?? 0,
+          circuitImage: game.eventImageUrl,
           leaderName: game.winnerName ?? 'Unknown',
           leaderTeam: game.winnerTeam ?? 'TBD',
           leaderImage: game.winnerImage ??
@@ -291,6 +309,7 @@ class HomeScreen extends StatelessWidget {
           raceName: game.stadium ?? 'Grand Prix',
           raceDate: game.startTime,
           raceNumber: game.raceNumber ?? 0,
+          circuitImage: game.eventImageUrl,
           winnerName: game.winnerName ?? 'Unknown',
           winnerTeam: game.winnerTeam ?? 'TBD',
           winnerLogo: game.winnerImage ??
@@ -327,22 +346,7 @@ class HomeScreen extends StatelessWidget {
           purse: game.purse,
         );
       } else if (game.status == 'Live') {
-        return GolfLiveCard(
-          tournamentName: game.tournamentName ?? 'TBD Tournament',
-          leaderName: leaders.isNotEmpty ? leaders[0].name : 'TBD',
-          leaderScore: leaders.isNotEmpty ? leaders[0].score : 'E',
-          thru: leaders.isNotEmpty ? leaders[0].thru : '-',
-          currentRound: game.round ?? 'Round 1',
-          tourType: game.tourType ?? 'PGA Tour',
-          leaderImage: leaders.isNotEmpty ? leaders[0].image : null,
-          purse: game.purse,
-          p2Name: leaders.length > 1 ? leaders[1].name : null,
-          p2Score: leaders.length > 1 ? leaders[1].score : null,
-          p2Thru: leaders.length > 1 ? leaders[1].thru : null,
-          p3Name: leaders.length > 2 ? leaders[2].name : null,
-          p3Score: leaders.length > 2 ? leaders[2].score : null,
-          p3Thru: leaders.length > 2 ? leaders[2].thru : null,
-        );
+        return GolfLiveCard(game: game);
       } else {
         return GolfCompletedCard(
           tournamentName: game.tournamentName ?? 'TBD Tournament',
@@ -393,6 +397,20 @@ class _Factory extends VmFactory<AppState, HomeScreen, _ViewModel> {
   @override
   _ViewModel fromStore() {
     final selectedSports = state.selectedSports;
+    
+    // DEBUG: Check what's in the state
+    if (state.games.isNotEmpty) {
+      final sportsInState = state.games.map((g) => g.sport).toSet().toList();
+      debugPrint('REDUX_STATE: Total games: ${state.games.length}, Sports: $sportsInState');
+      final tennisGames = state.games.where((g) => g.sport == 'Tennis').toList();
+      if (tennisGames.isNotEmpty) {
+        debugPrint('REDUX_STATE: Found ${tennisGames.length} Tennis games');
+        for (var tg in tennisGames) {
+          debugPrint('  - ${tg.id}: ${tg.status} (isLive: ${tg.isLive})');
+        }
+      }
+    }
+
     // If no sports selected, show all games
     final filteredGames = selectedSports.isEmpty 
       ? state.games 

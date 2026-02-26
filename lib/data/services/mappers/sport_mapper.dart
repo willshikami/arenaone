@@ -19,7 +19,8 @@ abstract class SportMapper {
 
   bool isLive(bool? is_live, String? state) {
     if (is_live == true) return true;
-    return state == 'in';
+    final s = state?.toLowerCase() ?? '';
+    return s == 'in' || s == 'live' || s == 'inprogress';
   }
 
   String? getScore(String? state, dynamic homeScore, dynamic awayScore) {
@@ -37,7 +38,8 @@ abstract class SportMapper {
   }
 
   Map<String, dynamic>? findHomeAwayTeams(List<dynamic> eventParticipants, String? eventName) {
-    if (eventParticipants.isEmpty) return null;
+    // REMOVED early return: process even if participants are empty
+    // if (eventParticipants.isEmpty) return null;
 
     dynamic homeData;
     dynamic awayData;
@@ -123,13 +125,13 @@ abstract class SportMapper {
       awayData = eventParticipants.length > 1 ? eventParticipants[1] : (eventParticipants.isNotEmpty ? eventParticipants[0] : null);
     }
 
-    if (homeData == null || awayData == null) return null;
-
+    // REMOVED: If we have no participants, we return a shell with TBDs instead of null
+    // so the event actually appears in the UI.
     return {
-      'home': getParticipantMap(homeData['participants']),
-      'away': getParticipantMap(awayData['participants']),
-      'homeData': homeData,
-      'awayData': awayData,
+      'home': homeData != null ? getParticipantMap(homeData['participants']) : null,
+      'away': awayData != null ? getParticipantMap(awayData['participants']) : null,
+      'homeData': homeData ?? {},
+      'awayData': awayData ?? {},
     };
   }
 
@@ -138,6 +140,19 @@ abstract class SportMapper {
     final parts = name.trim().split(' ');
     if (parts.length > 1) {
       return parts.last;
+    }
+    return name;
+  }
+
+  static String getInitialName(String? name) {
+    if (name == null || name.isEmpty) return 'TBD';
+    final parts = name.trim().split(' ');
+    if (parts.length > 1) {
+      final firstName = parts[0];
+      final lastName = parts.last;
+      if (firstName.isNotEmpty) {
+        return "${firstName[0]}.$lastName";
+      }
     }
     return name;
   }

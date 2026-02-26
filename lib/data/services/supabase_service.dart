@@ -85,10 +85,13 @@ class SupabaseService {
       }
       debugPrint('-----------------------------');
 
-      return response
+      final mappedGames = response
           .map((eventJson) => mapper.map(eventJson as Map<String, dynamic>))
           .whereType<Game>()
           .toList();
+
+      debugPrint('SUCCESS: Mapped ${mappedGames.length} games for $slug');
+      return mappedGames;
     } catch (e) {
       print('DEBUG: SupabaseService fetch failed for $slug: $e');
       return [];

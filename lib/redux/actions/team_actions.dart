@@ -1,4 +1,5 @@
 import 'package:async_redux/async_redux.dart';
+import 'package:flutter/foundation.dart';
 import '../app_state.dart';
 import '../../data/services/database_helper.dart';
 import '../../data/services/supabase_service.dart';
@@ -73,6 +74,7 @@ class LoadTennisGamesAction extends ReduxAction<AppState> {
   Future<AppState?> reduce() async {
     try {
       final games = await SupabaseService().fetchTennisGames();
+      debugPrint('REDUX: Loaded ${games.length} Tennis games into state');
       final filteredGames = state.games.where((g) => g.sport != 'Tennis').toList();
       return state.copyWith(games: [...filteredGames, ...games], error: null);
     } catch (e) {
@@ -99,14 +101,13 @@ class LoadAllGamesAction extends ReduxAction<AppState> {
   Future<AppState?> reduce() async {
     dispatch(UpdateLoadingAction(true));
     try {
-      await Future.wait([
-        dispatchAndWait(LoadNBAGamesAction()),
-        dispatchAndWait(LoadFootballGamesAction()),
-        dispatchAndWait(LoadF1GamesAction()),
-        dispatchAndWait(LoadGolfGamesAction()),
-        dispatchAndWait(LoadTennisGamesAction()),
-        dispatchAndWait(LoadRallyGamesAction()),
-      ]);
+      // Run sequentially to avoid race conditions where one sport wipes out another
+      await dispatchAndWait(LoadNBAGamesAction());
+      await dispatchAndWait(LoadFootballGamesAction());
+      await dispatchAndWait(LoadF1GamesAction());
+      await dispatchAndWait(LoadGolfGamesAction());
+      await dispatchAndWait(LoadTennisGamesAction());
+      await dispatchAndWait(LoadRallyGamesAction());
     } finally {
       dispatch(UpdateLoadingAction(false));
     }
