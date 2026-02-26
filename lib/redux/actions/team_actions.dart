@@ -14,61 +14,111 @@ import '../../data/assets/track_assets.dart';
 class LoadNBAGamesAction extends ReduxAction<AppState> {
   @override
   Future<AppState?> reduce() async {
-    final nbaGames = await SupabaseService().fetchNBAGames();
-    
-    // We clear current NBA games and replace them with whatever Supabase returned.
-    // This ensures mock data is removed once the app connects to the real backend,
-    // even if the database is currently empty.
-    final filteredGames = state.games.where((g) => g.sport != 'NBA').toList();
-    return state.copyWith(games: [...filteredGames, ...nbaGames]);
+    try {
+      final nbaGames = await SupabaseService().fetchNBAGames();
+      
+      // We clear current NBA games and replace them with whatever Supabase returned.
+      // This ensures mock data is removed once the app connects to the real backend,
+      // even if the database is currently empty.
+      final filteredGames = state.games.where((g) => g.sport != 'NBA').toList();
+      return state.copyWith(games: [...filteredGames, ...nbaGames], error: null);
+    } catch (e) {
+      return state.copyWith(error: 'Failed to fetch NBA games: $e');
+    }
   }
 }
 
 class LoadFootballGamesAction extends ReduxAction<AppState> {
   @override
   Future<AppState?> reduce() async {
-    final footballGames = await SupabaseService().fetchFootballGames();
-    
-    // Similarly, clear mock Football data once real data is fetched
-    final filteredGames = state.games.where((g) => g.sport != 'Football').toList();
-    return state.copyWith(games: [...filteredGames, ...footballGames]);
+    try {
+      final footballGames = await SupabaseService().fetchFootballGames();
+      
+      final filteredGames = state.games.where((g) => g.sport != 'Football').toList();
+      return state.copyWith(games: [...filteredGames, ...footballGames], error: null);
+    } catch (e) {
+      return state.copyWith(error: 'Failed to fetch Football games: $e');
+    }
   }
 }
 
 class LoadF1GamesAction extends ReduxAction<AppState> {
   @override
   Future<AppState?> reduce() async {
-    final games = await SupabaseService().fetchF1Games();
-    final filteredGames = state.games.where((g) => g.sport != 'F1').toList();
-    return state.copyWith(games: [...filteredGames, ...games]);
+    try {
+      final games = await SupabaseService().fetchF1Games();
+      final filteredGames = state.games.where((g) => g.sport != 'F1').toList();
+      return state.copyWith(games: [...filteredGames, ...games], error: null);
+    } catch (e) {
+      return state.copyWith(error: 'Failed to fetch F1 games: $e');
+    }
   }
 }
 
 class LoadGolfGamesAction extends ReduxAction<AppState> {
   @override
   Future<AppState?> reduce() async {
-    final games = await SupabaseService().fetchGolfGames();
-    final filteredGames = state.games.where((g) => g.sport != 'Golf').toList();
-    return state.copyWith(games: [...filteredGames, ...games]);
+    try {
+      final games = await SupabaseService().fetchGolfGames();
+      final filteredGames = state.games.where((g) => g.sport != 'Golf').toList();
+      return state.copyWith(games: [...filteredGames, ...games], error: null);
+    } catch (e) {
+      return state.copyWith(error: 'Failed to fetch Golf games: $e');
+    }
   }
 }
 
 class LoadTennisGamesAction extends ReduxAction<AppState> {
   @override
   Future<AppState?> reduce() async {
-    final games = await SupabaseService().fetchTennisGames();
-    final filteredGames = state.games.where((g) => g.sport != 'Tennis').toList();
-    return state.copyWith(games: [...filteredGames, ...games]);
+    try {
+      final games = await SupabaseService().fetchTennisGames();
+      final filteredGames = state.games.where((g) => g.sport != 'Tennis').toList();
+      return state.copyWith(games: [...filteredGames, ...games], error: null);
+    } catch (e) {
+      return state.copyWith(error: 'Failed to fetch Tennis games: $e');
+    }
   }
 }
 
 class LoadRallyGamesAction extends ReduxAction<AppState> {
   @override
   Future<AppState?> reduce() async {
-    final games = await SupabaseService().fetchRallyGames();
-    final filteredGames = state.games.where((g) => g.sport != 'Rally').toList();
-    return state.copyWith(games: [...filteredGames, ...games]);
+    try {
+      final games = await SupabaseService().fetchRallyGames();
+      final filteredGames = state.games.where((g) => g.sport != 'Rally').toList();
+      return state.copyWith(games: [...filteredGames, ...games], error: null);
+    } catch (e) {
+      return state.copyWith(error: 'Failed to fetch Rally games: $e');
+    }
   }
+}
+
+class LoadAllGamesAction extends ReduxAction<AppState> {
+  @override
+  Future<AppState?> reduce() async {
+    dispatch(UpdateLoadingAction(true));
+    try {
+      await Future.wait([
+        dispatchAndWait(LoadNBAGamesAction()),
+        dispatchAndWait(LoadFootballGamesAction()),
+        dispatchAndWait(LoadF1GamesAction()),
+        dispatchAndWait(LoadGolfGamesAction()),
+        dispatchAndWait(LoadTennisGamesAction()),
+        dispatchAndWait(LoadRallyGamesAction()),
+      ]);
+    } finally {
+      dispatch(UpdateLoadingAction(false));
+    }
+    return null;
+  }
+}
+
+class UpdateLoadingAction extends ReduxAction<AppState> {
+  final bool isLoading;
+  UpdateLoadingAction(this.isLoading);
+  @override
+  AppState? reduce() => state.copyWith(isLoading: isLoading);
 }
 
 class LoadMockGamesAction extends ReduxAction<AppState> {

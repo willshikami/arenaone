@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../../data/models/game.dart';
 import '../../../data/models/sports/football_game.dart';
+import '../../../data/services/mappers/sport_mapper.dart';
 
 class FootballCard extends StatelessWidget {
   final Game game;
@@ -180,7 +181,7 @@ class FootballCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            footGame?.homeTeamAbbr ?? '',
+                            SportMapper.getShortName(footGame?.homeTeamName),
                             style: GoogleFonts.instrumentSans(
                               color: game.status == 'Final' 
                                 ? (homeIsWinner ? Colors.white : Colors.grey.shade600)
@@ -217,7 +218,7 @@ class FootballCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            footGame?.awayTeamAbbr ?? '',
+                            SportMapper.getShortName(footGame?.awayTeamName),
                             style: GoogleFonts.instrumentSans(
                               color: game.status == 'Final' 
                                 ? (awayIsWinner ? Colors.white : Colors.grey.shade600)

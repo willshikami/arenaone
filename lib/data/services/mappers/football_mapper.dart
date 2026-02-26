@@ -16,17 +16,17 @@ class FootballMapper extends SportMapper {
       id: json['id'].toString(),
       sport: 'Football',
       startTime: DateTime.parse(json['start_time']),
-      status: mapStatus(json['status']),
-      isLive: isLive(json['status']),
-      stadium: json['venue'],
+      status: mapStatus(json['status_state'], json['status_type']),
+      isLive: isLive(json['is_live'], json['status_state']),
+      stadium: json['venue_name'],
       homeTeamName: home?['name'] ?? 'TBD',
       awayTeamName: away?['name'] ?? 'TBD',
-      homeTeamAbbr: _getAbbreviation(home?['name'] ?? 'TBD'),
-      awayTeamAbbr: _getAbbreviation(away?['name'] ?? 'TBD'),
+      homeTeamAbbr: home?['abbreviation'] ?? _getAbbreviation(home?['name'] ?? 'TBD'),
+      awayTeamAbbr: away?['abbreviation'] ?? _getAbbreviation(away?['name'] ?? 'TBD'),
       homeTeamLogo: home?['logo'],
       awayTeamLogo: away?['logo'],
-      score: getScore(json['status'], teams['homeData']['score'], teams['awayData']['score']),
-      leagueType: json['leagues']?['name'] ?? 'Premier League',
+      score: getScore(json['status_state'], teams['homeData']['score'], teams['awayData']['score']),
+      leagueType: 'Premier League', // leagues table removed
     );
   }
 

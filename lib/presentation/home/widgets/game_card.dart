@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../../data/models/game.dart';
 import '../../../data/models/sports/basketball_game.dart';
+import '../../../data/services/mappers/sport_mapper.dart';
 
 class GameCard extends StatelessWidget {
   final Game game;
@@ -184,7 +185,7 @@ class GameCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            baskGame?.homeTeamAbbr ?? '',
+                            SportMapper.getShortName(baskGame?.homeTeamName),
                             style: GoogleFonts.instrumentSans(
                               color: game.status == 'Final' 
                                 ? (homeIsWinner ? Colors.white : Colors.grey.shade600)
@@ -223,7 +224,7 @@ class GameCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            baskGame?.awayTeamAbbr ?? '',
+                            SportMapper.getShortName(baskGame?.awayTeamName),
                             style: GoogleFonts.instrumentSans(
                               color: game.status == 'Final' 
                                 ? (awayIsWinner ? Colors.white : Colors.grey.shade600)

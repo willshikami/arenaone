@@ -11,7 +11,7 @@ class TennisMapper extends SportMapper {
     // If it's a result (Final) and we still have no participants, 
     // it's likely a tournament entry in the DB, not a match.
     // We might want to filter these out of the "Results" tab if they are TBD vs TBD.
-    final status = mapStatus(json['status']);
+    final status = mapStatus(json['status_state'], json['status_type']);
     final home = teams?['home'];
     final away = teams?['away'];
 
@@ -24,14 +24,14 @@ class TennisMapper extends SportMapper {
       sport: 'Tennis',
       startTime: DateTime.parse(json['start_time']),
       status: status,
-      isLive: isLive(json['status']),
-      stadium: json['venue'] ?? json['name'],
+      isLive: isLive(json['is_live'], json['status_state']),
+      stadium: json['venue_name'] ?? json['name'],
       player1Name: home?['name'] ?? 'TBD',
       player2Name: away?['name'] ?? 'TBD',
       player1Image: home?['logo'],
       player2Image: away?['logo'],
-      score: getScore(json['status'], teams?['homeData']?['score'], teams?['awayData']?['score']),
-      tournamentName: json['leagues']?['name'] ?? json['name'] ?? 'ATP Tour',
+      score: getScore(json['status_state'], teams?['homeData']?['score'], teams?['awayData']?['score']),
+      tournamentName: json['name'] ?? 'ATP Tour',
     );
   }
 }

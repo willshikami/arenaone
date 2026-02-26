@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
 import '../../../data/models/sports/tennis_game.dart';
+import '../../../data/services/mappers/sport_mapper.dart';
 
 class TennisUpcomingCard extends StatelessWidget {
   final TennisGame game;
@@ -125,7 +126,7 @@ class TennisUpcomingCard extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          name,
+          SportMapper.getShortName(name),
           textAlign: TextAlign.center,
           style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w900),
         ),
@@ -223,7 +224,10 @@ class TennisLiveCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900)),
+                Text(
+                  SportMapper.getShortName(name),
+                  style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900),
+                ),
                 if (country != null) Text(country.toUpperCase(), style: TextStyle(color: Colors.grey.shade600, fontSize: 9, fontWeight: FontWeight.w800)),
               ],
             ),
@@ -366,7 +370,10 @@ class TennisCompletedCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(name, style: TextStyle(color: isWinner ? Colors.white : Colors.grey.shade500, fontSize: 15, fontWeight: isWinner ? FontWeight.w900 : FontWeight.w600)),
+                    Text(
+                      SportMapper.getShortName(name),
+                      style: TextStyle(color: isWinner ? Colors.white : Colors.grey.shade500, fontSize: 15, fontWeight: isWinner ? FontWeight.w900 : FontWeight.w600),
+                    ),
                     if (isWinner) ...[
                       const SizedBox(width: 6),
                       const SFIcon(SFIcons.sf_trophy_fill, color: Color(0xFFFFD100), fontSize: 12),

@@ -22,9 +22,9 @@ class RallyMapper extends SportMapper {
       id: json['id'].toString(),
       sport: 'Rally',
       startTime: DateTime.parse(json['start_time']),
-      status: mapStatus(json['status']),
-      isLive: isLive(json['status']),
-      stadium: json['venue'],
+      status: mapStatus(json['status_state'], json['status_type']),
+      isLive: isLive(json['is_live'], json['status_state']),
+      stadium: json['venue_name'],
       eventName: json['name'],
       leaderboard: leaders,
     );

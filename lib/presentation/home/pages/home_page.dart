@@ -26,13 +26,10 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _ViewModel>(
       onInit: (store) {
-        store.dispatch(LoadMockGamesAction());
-        store.dispatch(LoadNBAGamesAction());
-        store.dispatch(LoadFootballGamesAction());
-        store.dispatch(LoadF1GamesAction());
-        store.dispatch(LoadGolfGamesAction());
-        store.dispatch(LoadTennisGamesAction());
-        store.dispatch(LoadRallyGamesAction());
+        if (store.state.games.isEmpty) {
+          store.dispatch(LoadMockGamesAction());
+        }
+        store.dispatch(LoadAllGamesAction());
       },
       vm: () => _Factory(this),
       builder: (context, vm) {
@@ -71,19 +68,32 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
                   ),
-                  tabs: [
+                  tabs: const [
                     Tab(text: 'Upcoming'),
                     Tab(text: 'Live'),
                     Tab(text: 'Results'),
                   ],
                 ),
                 Expanded(
-                  child: TabBarView(
-                    children: [
-                      _buildGamesList(context, vm.upcomingGames),
-                      _buildGamesList(context, vm.liveGames),
-                      _buildGamesList(context, vm.resultsGames),
-                    ],
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      await vm.refreshGames();
+                    },
+                    color: const Color(0xFFFF6A1A),
+                    backgroundColor: const Color(0xFF1A1A1E),
+                    child: vm.isLoading && vm.upcomingGames.isEmpty && vm.liveGames.isEmpty && vm.resultsGames.isEmpty
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xFFFF6A1A),
+                            ),
+                          )
+                        : TabBarView(
+                            children: [
+                              _buildGamesList(context, vm.upcomingGames),
+                              _buildGamesList(context, vm.liveGames),
+                              _buildGamesList(context, vm.resultsGames),
+                            ],
+                          ),
                   ),
                 ),
               ],
@@ -383,13 +393,18 @@ class _Factory extends VmFactory<AppState, HomeScreen, _ViewModel> {
   @override
   _ViewModel fromStore() {
     final selectedSports = state.selectedSports;
-    final filteredGames = state.games.where((g) => selectedSports.contains(g.sport)).toList();
+    // If no sports selected, show all games
+    final filteredGames = selectedSports.isEmpty 
+      ? state.games 
+      : state.games.where((g) => selectedSports.contains(g.sport)).toList();
 
     return _ViewModel(
       currentTabIndex: state.currentTabIndex,
       liveGames: filteredGames.where((g) => g.isLive || g.status == 'Live').toList(),
       upcomingGames: filteredGames.where((g) => g.status == 'Upcoming' && !g.isLive).toList(),
       resultsGames: filteredGames.where((g) => g.status == 'Final').toList(),
+      isLoading: state.isLoading,
+      refreshGames: () => dispatch(LoadAllGamesAction()),
     );
   }
 }
@@ -399,18 +414,23 @@ class _ViewModel extends Vm {
   final List<Game> liveGames;
   final List<Game> upcomingGames;
   final List<Game> resultsGames;
+  final bool isLoading;
+  final Function() refreshGames;
 
   _ViewModel({
     required this.currentTabIndex,
     required this.liveGames,
     required this.upcomingGames,
     required this.resultsGames,
+    required this.isLoading,
+    required this.refreshGames,
   }) : super(
           equals: [
             currentTabIndex,
             liveGames,
             upcomingGames,
             resultsGames,
+            isLoading,
           ],
         );
 }

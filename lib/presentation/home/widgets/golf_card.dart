@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
+import '../../../data/services/mappers/sport_mapper.dart';
 
 class GolfUpcomingCard extends StatelessWidget {
   final String tournamentName;
@@ -315,7 +316,7 @@ class GolfLiveCard extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              name,
+              SportMapper.getShortName(name),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 14,
@@ -377,7 +378,7 @@ class GolfLiveCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  leaderName,
+                  SportMapper.getShortName(leaderName),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -574,7 +575,7 @@ class GolfCompletedCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  winnerName,
+                  SportMapper.getShortName(winnerName),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -676,7 +677,7 @@ class GolfCompletedCard extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              name,
+              SportMapper.getShortName(name),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 14,

@@ -14,6 +14,9 @@ class MainNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _ViewModel>(
+      onInit: (store) {
+        // Initial setup if needed
+      },
       vm: () => _Factory(this),
       builder: (context, vm) {
         if (!vm.isOnboardingCompleted) {
@@ -22,13 +25,51 @@ class MainNavigation extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: const Color(0xFF0D0D10), // Dark base
-          body: IndexedStack(
-            index: vm.currentTabIndex,
-            children: const [
-              HomeScreen(),
-              PlaceholderScreen(title: 'Scores'),
-              FollowingPage(),
-              ProfilePage(),
+          body: Stack(
+            children: [
+              IndexedStack(
+                index: vm.currentTabIndex,
+                children: const [
+                  HomeScreen(),
+                  PlaceholderScreen(title: 'Scores'),
+                  FollowingPage(),
+                  ProfilePage(),
+                ],
+              ),
+              if (vm.error != null)
+                Positioned(
+                  top: 100,
+                  left: 16,
+                  right: 16,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.redAccent,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.error_outline, color: Colors.white),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              vm.error!,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close, color: Colors.white),
+                            onPressed: () {
+                              // Optional: dispatch clear error action
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
@@ -100,6 +141,7 @@ class _Factory extends VmFactory<AppState, MainNavigation, _ViewModel> {
   _ViewModel fromStore() => _ViewModel(
         currentTabIndex: state.currentTabIndex,
         isOnboardingCompleted: state.isOnboardingCompleted,
+        error: state.error,
         onTabTapped: (index) => dispatch(SetCurrentTabIndexAction(index)),
       );
 }
@@ -107,11 +149,13 @@ class _Factory extends VmFactory<AppState, MainNavigation, _ViewModel> {
 class _ViewModel extends Vm {
   final int currentTabIndex;
   final bool isOnboardingCompleted;
+  final String? error;
   final ValueChanged<int> onTabTapped;
 
   _ViewModel({
     required this.currentTabIndex,
     required this.isOnboardingCompleted,
+    this.error,
     required this.onTabTapped,
-  }) : super(equals: [currentTabIndex, isOnboardingCompleted]);
+  }) : super(equals: [currentTabIndex, isOnboardingCompleted, error]);
 }

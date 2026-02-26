@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
 import '../../../data/models/sports/rally_game.dart';
+import '../../../data/services/mappers/sport_mapper.dart';
 
 class RallyUpcomingCard extends StatelessWidget {
   final RallyGame game;
@@ -266,7 +267,7 @@ class RallyLiveCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(leader.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16)),
+                          Text(SportMapper.getShortName(leader.name), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16)),
                           Text(leader.team.toUpperCase(), style: TextStyle(color: Colors.grey.shade600, fontSize: 10, fontWeight: FontWeight.w800)),
                         ],
                       ),
@@ -303,7 +304,7 @@ class RallyLiveCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(leader.name,
+                Text(SportMapper.getShortName(leader.name),
                     style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
@@ -463,7 +464,7 @@ class RallyCompletedCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(winner.name, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
+                    Text(SportMapper.getShortName(winner.name), style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
                     const SizedBox(width: 8),
                     const SFIcon(SFIcons.sf_trophy_fill, color: Color(0xFFFFD100), fontSize: 14),
                   ],
@@ -498,7 +499,7 @@ class RallyCompletedCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(leader.name, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
+                Text(SportMapper.getShortName(leader.name), style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
                 Text(leader.team.toUpperCase(), style: TextStyle(color: Colors.grey.shade600, fontSize: 9, fontWeight: FontWeight.w800)),
               ],
             ),

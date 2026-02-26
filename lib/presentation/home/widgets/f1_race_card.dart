@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import '../../../data/services/mappers/sport_mapper.dart';
 
 class F1UpcomingCard extends StatelessWidget {
   final String raceName;
@@ -381,7 +382,7 @@ class F1CompletedCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  name,
+                  SportMapper.getShortName(name),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -499,7 +500,7 @@ class F1CompletedCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  SportMapper.getShortName(name),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 13,
