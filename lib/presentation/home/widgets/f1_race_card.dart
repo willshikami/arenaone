@@ -424,7 +424,9 @@ class F1CompletedCard extends StatelessWidget {
                 fit: BoxFit.contain,
                 alignment: Alignment.bottomCenter,
                 errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.person, color: Colors.white24, size: 60),
+                    const Center(
+                      child: Icon(Icons.person, color: Colors.white24, size: 60),
+                    ),
               ),
             ),
           ),
@@ -480,9 +482,14 @@ class F1CompletedCard extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.white.withValues(alpha: 0.05),
-              image: DecorationImage(
-                image: NetworkImage(imageUrl),
+            ),
+            child: ClipOval(
+              child: Image.network(
+                imageUrl,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => const Center(
+                  child: Icon(Icons.person, color: Colors.white24, size: 20),
+                ),
               ),
             ),
           ),
@@ -752,7 +759,9 @@ class F1LiveCard extends StatelessWidget {
                 fit: BoxFit.contain,
                 alignment: Alignment.bottomCenter,
                 errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.person, color: Colors.white24, size: 60),
+                    const Center(
+                      child: Icon(Icons.person, color: Colors.white24, size: 60),
+                    ),
               ),
             ),
           ),
@@ -808,9 +817,14 @@ class F1LiveCard extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.white.withValues(alpha: 0.05),
-              image: DecorationImage(
-                image: NetworkImage(imageUrl),
+            ),
+            child: ClipOval(
+              child: Image.network(
+                imageUrl,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => const Center(
+                  child: Icon(Icons.person, color: Colors.white24, size: 20),
+                ),
               ),
             ),
           ),

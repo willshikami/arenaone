@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:async_redux/async_redux.dart';
-import 'package:flutter_sficon/flutter_sficon.dart';
 import '../../../redux/app_state.dart';
-import '../../../redux/actions/navigation_actions.dart';
 
 class HomeTopBar extends StatelessWidget {
   const HomeTopBar({super.key});
@@ -72,26 +70,6 @@ class HomeTopBar extends StatelessWidget {
                 ),
               ],
             ),
-            const Spacer(),
-            GestureDetector(
-              onTap: vm.onNavigateToSettings,
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 2),
-                ),
-                child: CircleAvatar(
-                  radius: 18,
-                  backgroundColor: Colors.white.withValues(alpha: 0.05),
-                  child: const SFIcon(
-                    SFIcons.sf_gearshape_fill,
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
@@ -99,19 +77,13 @@ class HomeTopBar extends StatelessWidget {
   }
 }
 
-class _Factory extends VmFactory<AppState, StatelessWidget, _ViewModel> {
+class _Factory extends VmFactory<AppState, HomeTopBar, _ViewModel> {
   _Factory(super.widget);
 
   @override
-  _ViewModel fromStore() => _ViewModel(
-        onNavigateToSettings: () => dispatch(SetCurrentTabIndexAction(4)),
-      );
+  _ViewModel fromStore() => _ViewModel();
 }
 
 class _ViewModel extends Vm {
-  final VoidCallback onNavigateToSettings;
-
-  _ViewModel({
-    required this.onNavigateToSettings,
-  }) : super(equals: []);
+  _ViewModel() : super(equals: []);
 }

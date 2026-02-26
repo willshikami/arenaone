@@ -57,11 +57,12 @@ class SportCategoryPage extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          '$sport - $categoryTitle',
+          sport == 'All Sports' ? categoryTitle.toUpperCase() : '$sport - $categoryTitle',
           style: GoogleFonts.instrumentSans(
             color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.w900,
+            letterSpacing: sport == 'All Sports' ? 1.5 : 0,
           ),
         ),
         centerTitle: true,

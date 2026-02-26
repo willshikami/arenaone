@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'sport_category_page.dart';
-import 'profile_page.dart';
 import '../../../redux/app_state.dart';
 import '../../../redux/actions/team_actions.dart';
 import '../../../data/models/game.dart';
@@ -26,7 +25,15 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _ViewModel>(
-      onInit: (store) => store.dispatch(LoadMockGamesAction()),
+      onInit: (store) {
+        store.dispatch(LoadMockGamesAction());
+        store.dispatch(LoadNBAGamesAction());
+        store.dispatch(LoadFootballGamesAction());
+        store.dispatch(LoadF1GamesAction());
+        store.dispatch(LoadGolfGamesAction());
+        store.dispatch(LoadTennisGamesAction());
+        store.dispatch(LoadRallyGamesAction());
+      },
       vm: () => _Factory(this),
       builder: (context, vm) {
         return DefaultTabController(
@@ -136,7 +143,7 @@ class HomeScreen extends StatelessWidget {
       
       fullSportGames[sport]!.add(game);
       
-      if (groupedGames[sport]!.length < 2) {
+      if (groupedGames[sport]!.length < 5) {
         groupedGames[sport]!.add(game);
       }
     }
@@ -380,8 +387,8 @@ class _Factory extends VmFactory<AppState, HomeScreen, _ViewModel> {
 
     return _ViewModel(
       currentTabIndex: state.currentTabIndex,
-      liveGames: filteredGames.where((g) => g.status == 'Live').toList(),
-      upcomingGames: filteredGames.where((g) => g.status == 'Upcoming').toList(),
+      liveGames: filteredGames.where((g) => g.isLive || g.status == 'Live').toList(),
+      upcomingGames: filteredGames.where((g) => g.status == 'Upcoming' && !g.isLive).toList(),
       resultsGames: filteredGames.where((g) => g.status == 'Final').toList(),
     );
   }

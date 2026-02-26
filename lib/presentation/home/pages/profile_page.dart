@@ -107,6 +107,27 @@ class ProfilePage extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                              const SizedBox(height: 16),
+                              TextButton.icon(
+                                onPressed: () {},
+                                icon: const SFIcon(SFIcons.sf_pencil, fontSize: 14, color: Color(0xFFFF6A1A)),
+                                label: Text(
+                                  'EDIT PROFILE',
+                                  style: GoogleFonts.spaceMono(
+                                    color: const Color(0xFFFF6A1A),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                  backgroundColor: const Color(0xFFFF6A1A).withValues(alpha: 0.1),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -133,16 +154,7 @@ class ProfilePage extends StatelessWidget {
                           subtitle: 'Manage alerts and reminders',
                           onTap: () {},
                         ),
-                        const SizedBox(height: 32),
-                        
-                        _buildSectionHeader('ACCOUNT'),
-                        const SizedBox(height: 16),
-                        _buildSettingTile(
-                          icon: SFIcons.sf_person_fill,
-                          title: 'Personal Information',
-                          onTap: () {},
-                        ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 48),
                         
                         // Log out button
                         SizedBox(

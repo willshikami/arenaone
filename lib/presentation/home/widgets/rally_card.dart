@@ -245,7 +245,13 @@ class RallyLiveCard extends StatelessWidget {
                       child: leader.image != null
                           ? ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Image.network(leader.image!, fit: BoxFit.cover),
+                              child: Image.network(
+                                leader.image!, 
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) => const Center(
+                                  child: Icon(Icons.person, color: Colors.white24, size: 24),
+                                ),
+                              ),
                             )
                           : const Center(
                               child: Text('1',
@@ -436,8 +442,19 @@ class RallyCompletedCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: winner.image != null 
-              ? ClipRRect(borderRadius: BorderRadius.circular(16), child: Image.network(winner.image!, fit: BoxFit.cover))
-              : const Icon(SFIcons.sf_person_fill, color: Colors.white24, size: 30),
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(16), 
+                  child: Image.network(
+                    winner.image!, 
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const Center(
+                      child: Icon(SFIcons.sf_person_fill, color: Colors.white24, size: 30),
+                    ),
+                  ),
+                )
+              : const Center(
+                  child: Icon(SFIcons.sf_person_fill, color: Colors.white24, size: 30),
+                ),
           ),
           const SizedBox(width: 16),
           Expanded(

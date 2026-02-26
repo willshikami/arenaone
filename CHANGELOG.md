@@ -2,6 +2,37 @@
 
 All notable changes to the Arena One project will be documented in this file.
 
+## [1.0.0-alpha.9] - 2026-02-25 15:30
+
+### Added
+- **Onboarding Experience**: Introduced a high-fidelity `SportSelectionPage` grid that allows new users to follow their favorite sports on first launch.
+- **Following Management**: Replaced the "Following" placeholder with a live sync grid, allowing users to update their feed preferences at any time.
+- **Persistent Storage**: Integrated `sqflite` for local data persistence, ensuring user sport selections and settings survive app restarts.
+- **Profile & Settings**: Created a new `ProfilePage` featuring:
+  - User bio section with an "Edit Profile" action button.
+  - "Live Activities" toggle with state persistence (tracked via Redux and SQLite).
+  - Streamlined preferences layout with unified card design.
+- **Premier League Support**: Added specialized horizontal `FootballCard` logic featuring circular SVG team logos and match-specific minute indicators.
+
+### Changed
+- **Navigation Architecture**: 
+  - Simplified the bottom navigation to a 4-tab system: **Home**, **Scores**, **Following**, and **Profile**.
+  - Removed the "Explore" tab to focus on personalized content.
+  - Connected navigation to Redux for robust tab switching across different screens.
+- **Visual Improvements**:
+  - Implemented a global `RadialGradient` background for a premium "dark mode glow" effect.
+  - Standardized horizontal padding to 24px across all main pages.
+  - Cleaned up the `HomeTopBar` by removing redundant settings icons now accessible via the Profile tab.
+- **Code Architecture**:
+  - Refactored the `Game` model into an `abstract` polymorphic class system.
+  - Replaced boilerplate code-generation with a manual factory pattern for better handling of diverse sport types.
+  - Optimized Redux actions for better async performance and database synchronization.
+
+### Fixed
+- Resolved serialization issues with polymorphic sport models.
+- Fixed `SFIcons` reference errors and improved icon fallback logic.
+- Cleaned up unused imports and obsolete generated files (`game.g.dart`).
+
 ## [1.0.0-alpha.8] - 2026-02-24 10:15
 
 ### Added
