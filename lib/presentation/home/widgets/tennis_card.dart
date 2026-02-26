@@ -160,6 +160,17 @@ class TennisLiveCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<String>? p1Scores = game.player1SetScores;
+    List<String>? p2Scores = game.player2SetScores;
+    
+    if ((p1Scores == null || p1Scores.isEmpty) && game.score != null) {
+      final parts = game.score!.split('-');
+      if (parts.length >= 2) {
+        p1Scores = [parts[0]];
+        p2Scores = [parts[1]];
+      }
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -173,9 +184,9 @@ class TennisLiveCard extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              children:[
                 Text(
-                  '${game.tournamentName} • ${game.round}'.toUpperCase(),
+                  '${game.tournamentName} • ${game.round ?? 'LIVE'}'.toUpperCase(),
                   style: TextStyle(color: Colors.grey.shade500, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
                 ),
                 Container(
@@ -192,9 +203,9 @@ class TennisLiveCard extends StatelessWidget {
               ],
             ),
           ),
-          _buildScoreRow(game.player1Name, game.player1Country, game.player1SetScores, game.player1CurrentPoints, game.player1HasService ?? false),
+          _buildScoreRow(game.player1Name, game.player1Country, p1Scores, game.player1CurrentPoints, game.player1HasService ?? false),
           const Divider(height: 1, color: Colors.white12),
-          _buildScoreRow(game.player2Name, game.player2Country, game.player2SetScores, game.player2CurrentPoints, !(game.player1HasService ?? false)),
+          _buildScoreRow(game.player2Name, game.player2Country, p2Scores, game.player2CurrentPoints, !(game.player1HasService ?? false)),
           const SizedBox(height: 16),
         ],
       ),
@@ -246,7 +257,18 @@ class TennisCompletedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool p1Won = _didPlayerWin(game.player1SetScores, game.player2SetScores);
+    List<String>? p1Scores = game.player1SetScores;
+    List<String>? p2Scores = game.player2SetScores;
+    
+    if ((p1Scores == null || p1Scores.isEmpty) && game.score != null) {
+      final parts = game.score!.split('-');
+      if (parts.length >= 2) {
+        p1Scores = [parts[0]];
+        p2Scores = [parts[1]];
+      }
+    }
+
+    final bool p1Won = _didPlayerWin(p1Scores, p2Scores);
     
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -304,12 +326,12 @@ class TennisCompletedCard extends StatelessWidget {
               ],
             ),
           ),
-          _buildResultRow(game.player1Name, game.player1Image, game.player1Country, game.player1SetScores, p1Won),
+          _buildResultRow(game.player1Name, game.player1Image, game.player1Country, p1Scores, p1Won),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Divider(height: 1, color: Colors.white12),
           ),
-          _buildResultRow(game.player2Name, game.player2Image, game.player2Country, game.player2SetScores, !p1Won),
+          _buildResultRow(game.player2Name, game.player2Image, game.player2Country, p2Scores, !p1Won),
           const SizedBox(height: 16),
         ],
       ),

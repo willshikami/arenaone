@@ -303,16 +303,20 @@ class GameCard extends StatelessWidget {
               child: logoUrl.endsWith('.svg')
                   ? SvgPicture.network(
                       logoUrl,
-                      placeholderBuilder: (context) => const SizedBox.shrink(),
+                      placeholderBuilder: (context) => const Center(child: SizedBox.shrink()),
                     )
                   : Image.network(
                       logoUrl,
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) => 
-                          const SFIcon(SFIcons.sf_basketball, color: Colors.white24, fontSize: 30),
+                          const Center(
+                            child: SFIcon(SFIcons.sf_basketball, color: Colors.white24, fontSize: 30),
+                          ),
                     ),
             )
-          : const SFIcon(SFIcons.sf_basketball, color: Colors.white24, fontSize: 30),
+          : const Center(
+              child: SFIcon(SFIcons.sf_basketball, color: Colors.white24, fontSize: 30),
+            ),
     );
   }
 

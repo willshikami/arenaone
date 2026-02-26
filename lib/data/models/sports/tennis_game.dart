@@ -32,6 +32,7 @@ class TennisGame extends Game {
   final String? tournamentName;
   final String? round;
   final String? surface;
+  final String? score;
   
   // Live score fields
   final List<String>? player1SetScores;
@@ -59,6 +60,7 @@ class TennisGame extends Game {
     this.tournamentName,
     this.round,
     this.surface,
+    this.score,
     this.player1SetScores,
     this.player2SetScores,
     this.player1CurrentPoints,

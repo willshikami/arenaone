@@ -28,6 +28,11 @@ class HomeScreen extends StatelessWidget {
       onInit: (store) {
         store.dispatch(LoadMockGamesAction());
         store.dispatch(LoadNBAGamesAction());
+        store.dispatch(LoadFootballGamesAction());
+        store.dispatch(LoadF1GamesAction());
+        store.dispatch(LoadGolfGamesAction());
+        store.dispatch(LoadTennisGamesAction());
+        store.dispatch(LoadRallyGamesAction());
       },
       vm: () => _Factory(this),
       builder: (context, vm) {

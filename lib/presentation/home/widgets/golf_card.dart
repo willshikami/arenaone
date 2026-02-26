@@ -412,7 +412,9 @@ class GolfLiveCard extends StatelessWidget {
                   fit: BoxFit.contain,
                   alignment: Alignment.bottomCenter,
                   errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.person, color: Colors.white24, size: 60),
+                      const Center(
+                        child: Icon(Icons.person, color: Colors.white24, size: 60),
+                      ),
                 ),
               ),
             ),
@@ -645,7 +647,9 @@ class GolfCompletedCard extends StatelessWidget {
                   fit: BoxFit.contain,
                   alignment: Alignment.bottomCenter,
                   errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.person, color: Colors.white24, size: 60),
+                      const Center(
+                        child: Icon(Icons.person, color: Colors.white24, size: 60),
+                      ),
                 ),
               ),
             ),
