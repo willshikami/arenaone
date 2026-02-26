@@ -39,13 +39,23 @@ class F1Mapper extends SportMapper {
   Game? map(Map<String, dynamic> json) {
     final participants = json['event_participants'] as List<dynamic>? ?? [];
     
-    final winner = participants.isNotEmpty ? participants[0] : null;
-    final p2 = participants.length > 1 ? participants[1] : null;
-    final p3 = participants.length > 2 ? participants[2] : null;
+    final drivers = participants.map((p) {
+      final pInfo = getParticipantMap(p['participants']);
+      return F1Driver(
+        position: p['position'] ?? 0,
+        name: pInfo?['name'] ?? 'Unknown',
+        team: pInfo?['team'] ?? 'TBD',
+        image: pInfo?['logo'] ?? 'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
+        points: p['score']?.toString() ?? '0',
+        gap: p['record']?.toString(), // Sometimes gap is in record
+      );
+    }).toList();
 
-    final winnerInfo = getParticipantMap(winner?['participants']);
-    final p2Info = getParticipantMap(p2?['participants']);
-    final p3Info = getParticipantMap(p3?['participants']);
+    drivers.sort((a, b) => a.position.compareTo(b.position));
+
+    final winner = drivers.isNotEmpty ? drivers[0] : null;
+    final p2 = drivers.length > 1 ? drivers[1] : null;
+    final p3 = drivers.length > 2 ? drivers[2] : null;
 
     final venueName = json['venue_name'];
     final eventName = json['name'];
@@ -60,18 +70,19 @@ class F1Mapper extends SportMapper {
       isLive: isLive(json['is_live'], json['status_state']),
       stadium: venueName ?? eventName,
       leagueType: 'Formula 1',
-      winnerName: winnerInfo?['name'],
-      winnerTeam: winnerInfo?['team'] ?? 'TBD',
-      winnerImage: winnerInfo?['logo'],
-      winnerPoints: winner?['score']?.toString(),
-      p2Name: p2Info?['name'],
-      p2Team: p2Info?['team'],
-      p2Image: p2Info?['logo'],
-      p3Name: p3Info?['name'],
-      p3Team: p3Info?['team'],
-      p3Image: p3Info?['logo'],
+      winnerName: winner?.name,
+      winnerTeam: winner?.team ?? 'TBD',
+      winnerImage: winner?.image,
+      winnerPoints: winner?.points,
+      p2Name: p2?.name,
+      p2Team: p2?.team,
+      p2Image: p2?.image,
+      p3Name: p3?.name,
+      p3Team: p3?.team,
+      p3Image: p3?.image,
       raceNumber: 1,
       eventImageUrl: trackAsset,
+      drivers: drivers,
     );
   }
 }

@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
@@ -6,7 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../../data/models/game.dart';
 import '../../../data/models/sports/basketball_game.dart';
+import '../../../data/models/sports/football_game.dart';
+import '../../../data/models/sports/golf_game.dart';
 import '../../../data/services/mappers/sport_mapper.dart';
+import '../../widgets/score_flip_text.dart';
 
 class GameCard extends StatelessWidget {
   final Game game;
@@ -15,18 +17,24 @@ class GameCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // If it's a basketball game, we use its fields. 
-    // Otherwise we provide defaults to avoid crashes if used generically.
-    final baskGame = game is BasketballGame ? (game as BasketballGame) : null;
-    
-    // Determine winner for Results view
+    // Determine winner and scores based on sport type
     bool homeIsWinner = false;
     bool awayIsWinner = false;
     String homeScoreValue = '0';
     String awayScoreValue = '0';
+    String? homeTeamName;
+    String? awayTeamName;
+    String? homeLogo;
+    String? awayLogo;
 
-    if (baskGame?.score != null) {
-      final scores = baskGame!.score!.split('-');
+    if (game is BasketballGame) {
+      final baskGame = game as BasketballGame;
+      homeTeamName = baskGame.homeTeamName;
+      awayTeamName = baskGame.awayTeamName;
+      homeLogo = baskGame.homeTeamLogo;
+      awayLogo = baskGame.awayTeamLogo;
+      
+      final scores = (baskGame.score ?? '0-0').split('-');
       if (scores.length >= 2) {
         homeScoreValue = scores[0];
         awayScoreValue = scores[1];
@@ -38,6 +46,28 @@ class GameCard extends StatelessWidget {
           awayIsWinner = aScore > hScore;
         }
       }
+    } else if (game is FootballGame) {
+      final footGame = game as FootballGame;
+      homeTeamName = footGame.homeTeamName;
+      awayTeamName = footGame.awayTeamName;
+      homeLogo = footGame.homeTeamLogo;
+      awayLogo = footGame.awayTeamLogo;
+      
+      final scores = (footGame.score ?? '0-0').split('-');
+      if (scores.length >= 2) {
+        homeScoreValue = scores[0];
+        awayScoreValue = scores[1];
+        
+        if (game.status == 'Final') {
+          final hScore = int.tryParse(homeScoreValue) ?? 0;
+          final aScore = int.tryParse(awayScoreValue) ?? 0;
+          homeIsWinner = hScore > aScore;
+          awayIsWinner = aScore > hScore;
+        }
+      }
+    } else if (game is GolfGame) {
+      final golfGame = game as GolfGame;
+      return _buildGolfCard(context, golfGame);
     }
 
     return Container(
@@ -66,7 +96,7 @@ class GameCard extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: () {}, // Enhanced with interaction surface
+            onTap: () {},
             borderRadius: BorderRadius.circular(24),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -178,14 +208,14 @@ class GameCard extends StatelessWidget {
                   Row(
                     children: [
                       // Home Logo
-                      _buildTeamLogo(baskGame?.homeTeamLogo, homeIsWinner),
+                      _buildTeamLogo(homeLogo, homeIsWinner, game.sport),
                       const SizedBox(width: 16),
                       // Home Stats
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            SportMapper.getShortName(baskGame?.homeTeamName),
+                            SportMapper.getShortName(homeTeamName),
                             style: GoogleFonts.instrumentSans(
                               color: game.status == 'Final' 
                                 ? (homeIsWinner ? Colors.white : Colors.grey.shade600)
@@ -196,8 +226,8 @@ class GameCard extends StatelessWidget {
                                 : FontWeight.w700,
                             ),
                           ),
-                          Text(
-                            homeScoreValue,
+                          ScoreFlipText(
+                            score: homeScoreValue,
                             style: TextStyle(
                               color: game.status == 'Final' 
                                 ? (homeIsWinner ? Colors.white : Colors.grey.shade700)
@@ -224,7 +254,7 @@ class GameCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            SportMapper.getShortName(baskGame?.awayTeamName),
+                            SportMapper.getShortName(awayTeamName),
                             style: GoogleFonts.instrumentSans(
                               color: game.status == 'Final' 
                                 ? (awayIsWinner ? Colors.white : Colors.grey.shade600)
@@ -235,8 +265,8 @@ class GameCard extends StatelessWidget {
                                 : FontWeight.w700,
                             ),
                           ),
-                          Text(
-                            awayScoreValue,
+                          ScoreFlipText(
+                            score: awayScoreValue,
                             style: TextStyle(
                               color: game.status == 'Final' 
                                 ? (awayIsWinner ? Colors.white : Colors.grey.shade700)
@@ -252,7 +282,7 @@ class GameCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 16),
                       // Away Logo
-                      _buildTeamLogo(baskGame?.awayTeamLogo, awayIsWinner),
+                      _buildTeamLogo(awayLogo, awayIsWinner, game.sport),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -278,6 +308,64 @@ class GameCard extends StatelessWidget {
     );
   }
 
+  Widget _buildGolfCard(BuildContext context, GolfGame golf) {
+    // Basic implementation for Golf, can be expanded
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF1C1C26), Color(0xFF16161C)],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  golf.tournamentName?.toUpperCase() ?? 'GOLF',
+                  style: TextStyle(color: Colors.grey.shade400, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
+                ),
+                if (golf.isLive)
+                  const Row(
+                    children: [
+                      Icon(Icons.circle, color: Colors.red, size: 8),
+                      SizedBox(width: 6),
+                      Text('LIVE', style: TextStyle(color: Colors.red, fontSize: 10, fontWeight: FontWeight.w900)),
+                    ],
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (golf.leaderboard != null && golf.leaderboard!.isNotEmpty)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(golf.leaderboard![0].name, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700)),
+                      Text('POSITION ${golf.leaderboard![0].position}', style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+                    ],
+                  ),
+                  ScoreFlipText(
+                    score: golf.leaderboard![0].score,
+                    style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w400),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildFooterInfo(String label) {
     return Text(
       label,
@@ -289,7 +377,9 @@ class GameCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTeamLogo(String? logoUrl, bool isWinner) {
+  Widget _buildTeamLogo(String? logoUrl, bool isWinner, String sport) {
+    IconData defaultIcon = sport == 'Football' ? SFIcons.sf_sportscourt : SFIcons.sf_basketball;
+    
     return Container(
       height: 54,
       width: 54,
@@ -310,13 +400,13 @@ class GameCard extends StatelessWidget {
                       logoUrl,
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) => 
-                          const Center(
-                            child: SFIcon(SFIcons.sf_basketball, color: Colors.white24, fontSize: 30),
+                          Center(
+                            child: SFIcon(defaultIcon, color: Colors.white24, fontSize: 30),
                           ),
                     ),
             )
-          : const Center(
-              child: SFIcon(SFIcons.sf_basketball, color: Colors.white24, fontSize: 30),
+          : Center(
+              child: SFIcon(defaultIcon, color: Colors.white24, fontSize: 30),
             ),
     );
   }
@@ -326,7 +416,7 @@ class GameCard extends StatelessWidget {
     Color textColor = Colors.white;
 
     if (game.isLive) {
-      centerText = '82:24'; // Mocked live clock consistent with image
+      centerText = 'LIVE'; // Use generic LIVE instead of hardcoded clock
     } else if (game.status == 'Final') {
       centerText = 'VS';
       textColor = Colors.grey.shade500;
@@ -345,3 +435,4 @@ class GameCard extends StatelessWidget {
     );
   }
 }
+

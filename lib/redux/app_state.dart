@@ -58,7 +58,7 @@ class AppState {
   }
 
   static AppState initialState() => AppState(
-        isLoading: false,
+        isLoading: true, // Start in loading state to avoid flicker on first frame
         currentTabIndex: 0,
         followedTeams: [],
         games: [],

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
 import '../../../data/models/sports/golf_game.dart';
 import '../../../data/services/mappers/sport_mapper.dart';
+import '../../widgets/score_flip_text.dart';
 
 class GolfUpcomingCard extends StatelessWidget {
   final String tournamentName;
@@ -367,9 +368,8 @@ class GolfLiveCard extends StatelessWidget {
           // Score Column
           SizedBox(
             width: 40,
-            child: Text(
-              player.score,
-              textAlign: TextAlign.center,
+            child: ScoreFlipText(
+              score: player.score,
               style: const TextStyle(
                 color: Colors.green,
                 fontSize: 13,
@@ -501,14 +501,25 @@ class GolfLiveCard extends StatelessWidget {
             fontWeight: FontWeight.w900,
           ),
         ),
-        Text(
-          value,
-          style: TextStyle(
-            color: isHighlight ? Colors.green : Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w900,
+        if (label == 'SCORE')
+          ScoreFlipText(
+            score: value,
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              color: isHighlight ? Colors.green : Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+            ),
+          )
+        else
+          Text(
+            value,
+            style: TextStyle(
+              color: isHighlight ? Colors.green : Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+            ),
           ),
-        ),
       ],
     );
   }

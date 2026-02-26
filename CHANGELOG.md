@@ -2,6 +2,21 @@
 
 All notable changes to the Arena One project will be documented in this file.
 
+## [1.0.0-alpha.10] - 2026-02-26
+
+### Added
+- **iOS Live Activities**: Fully implemented ActivityKit integration for real-time score tracking on Lock Screen and Dynamic Island.
+  - Added `LiveActivityService` for Flutter-to-Native communication.
+  - Created specialized Swift UI (`ArenaOneWidgetLiveActivity.swift`) for native iOS widgets.
+  - Support for Football, NBA, and Golf live tracking.
+- **Silent Background Refresh**: Added a 3-minute periodic timer to `HomeScreen` that updates scores without showing shimmers, providing a seamless live experience.
+- **Flip-Down Animations**: Implemented a 3D "Flip-down" effect for score updates in `GameCard` to make value changes feel tactile and non-jarring.
+- **Shimmer Skeletons**: Created custom loading skeletons for all sport types (F1, NBA, Football, Golf, Rally) to match specific card geometries.
+
+### Changed
+- **Data Fidelity**: Removed all mock and placeholder data. The app now fetches exclusively from Supabase, with automatic fail-safe mappings for different sport types.
+- **State Management**: Enhanced `LoadAllGamesAction` to support background parallel fetches, significantly reducing UI "blinking" during refreshes.
+
 ## [1.0.0-alpha.9] - 2026-02-25 15:30
 
 ### Added
