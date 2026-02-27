@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
 import '../../../data/models/sports/tennis_game.dart';
+import '../../../data/services/mappers/sport_mapper.dart';
 
 class TennisUpcomingCard extends StatelessWidget {
   final TennisGame game;
@@ -32,29 +33,37 @@ class TennisUpcomingCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 2,
-                      height: 12,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(2),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 2,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      (game.tournamentName ?? 'ATP TOUR').toUpperCase(),
-                      style: TextStyle(
-                        color: Colors.grey.shade400,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1,
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          (game.tournamentName ?? 'ATP TOUR').toUpperCase(),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 16),
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       DateFormat('EEE, MMM d').format(game.startTime).toUpperCase(),
@@ -105,7 +114,6 @@ class TennisUpcomingCard extends StatelessWidget {
               children: [
                 _buildTechLabel('ROUND', game.round ?? 'TBD'),
                 _buildTechLabel('SURFACE', game.surface ?? 'Hard'),
-                _buildTechLabel('COURT', game.stadium ?? 'Main Court'),
               ],
             ),
           ],
@@ -115,18 +123,21 @@ class TennisUpcomingCard extends StatelessWidget {
   }
 
   Widget _buildPlayerPortrait(String name, String? image, String? country) {
+    final bool hasImage = image != null && image.isNotEmpty;
     return Column(
       children: [
         CircleAvatar(
           radius: 32,
           backgroundColor: Colors.white.withValues(alpha: 0.04),
-          backgroundImage: image != null ? NetworkImage(image) : null,
-          child: image == null ? const Icon(Icons.person, color: Colors.white24, size: 30) : null,
+          backgroundImage: hasImage ? NetworkImage(image) : null,
+          child: !hasImage ? const Icon(Icons.person, color: Colors.white24, size: 30) : null,
         ),
         const SizedBox(height: 12),
         Text(
-          name,
+          SportMapper.getShortName(name),
           textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
           style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w900),
         ),
         if (country != null)
@@ -185,10 +196,15 @@ class TennisLiveCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children:[
-                Text(
-                  '${game.tournamentName} • ${game.round ?? 'LIVE'}'.toUpperCase(),
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
+                Expanded(
+                  child: Text(
+                    '${game.tournamentName} • ${game.round ?? 'LIVE'}'.toUpperCase(),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(color: Colors.grey.shade500, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(color: Colors.red.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
@@ -223,7 +239,12 @@ class TennisLiveCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900)),
+                Text(
+                  SportMapper.getShortName(name),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900),
+                ),
                 if (country != null) Text(country.toUpperCase(), style: TextStyle(color: Colors.grey.shade600, fontSize: 9, fontWeight: FontWeight.w800)),
               ],
             ),
@@ -291,23 +312,30 @@ class TennisCompletedCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 2,
-                      height: 12,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(2),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 2,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${game.tournamentName} • FINAL'.toUpperCase(),
-                      style: TextStyle(color: Colors.grey.shade400, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          '${game.tournamentName} • FINAL'.toUpperCase(),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(color: Colors.grey.shade400, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 16),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
@@ -339,17 +367,25 @@ class TennisCompletedCard extends StatelessWidget {
   }
 
   bool _didPlayerWin(List<String>? s1, List<String>? s2) {
-    if (s1 == null || s2 == null) return false;
+    if (s1 == null || s2 == null || s1.isEmpty || s2.isEmpty) return false;
     int sets1 = 0;
     int sets2 = 0;
-    for (int i = 0; i < s1.length; i++) {
-      if (int.parse(s1[i]) > int.parse(s2[i])) sets1++;
-      else sets2++;
+    final int minLength = s1.length < s2.length ? s1.length : s2.length;
+    
+    for (int i = 0; i < minLength; i++) {
+      final val1 = int.tryParse(s1[i]) ?? 0;
+      final val2 = int.tryParse(s2[i]) ?? 0;
+      if (val1 > val2) {
+        sets1++;
+      } else if (val2 > val1) {
+        sets2++;
+      }
     }
     return sets1 > sets2;
   }
 
   Widget _buildResultRow(String name, String? image, String? country, List<String>? sets, bool isWinner) {
+    final bool hasImage = image != null && image.isNotEmpty;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       child: Row(
@@ -357,7 +393,8 @@ class TennisCompletedCard extends StatelessWidget {
           CircleAvatar(
             radius: 20,
             backgroundColor: Colors.white10,
-            backgroundImage: image != null ? NetworkImage(image) : null,
+            backgroundImage: hasImage ? NetworkImage(image) : null,
+            child: !hasImage ? const Icon(Icons.person, color: Colors.white24, size: 16) : null,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -366,7 +403,14 @@ class TennisCompletedCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(name, style: TextStyle(color: isWinner ? Colors.white : Colors.grey.shade500, fontSize: 15, fontWeight: isWinner ? FontWeight.w900 : FontWeight.w600)),
+                    Flexible(
+                      child: Text(
+                        SportMapper.getShortName(name),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: TextStyle(color: isWinner ? Colors.white : Colors.grey.shade500, fontSize: 15, fontWeight: isWinner ? FontWeight.w900 : FontWeight.w600),
+                      ),
+                    ),
                     if (isWinner) ...[
                       const SizedBox(width: 6),
                       const SFIcon(SFIcons.sf_trophy_fill, color: Color(0xFFFFD100), fontSize: 12),

@@ -140,6 +140,7 @@ class SportCategoryPage extends StatelessWidget {
         return F1LiveCard(
           raceName: game.stadium ?? 'Grand Prix',
           raceNumber: game.raceNumber ?? 0,
+          circuitImage: game.eventImageUrl,
           leaderName: game.winnerName ?? 'Unknown',
           leaderTeam: game.winnerTeam ?? 'TBD',
           leaderImage: game.winnerImage ??
@@ -159,6 +160,7 @@ class SportCategoryPage extends StatelessWidget {
           raceName: game.stadium ?? 'Grand Prix',
           raceDate: game.startTime,
           raceNumber: game.raceNumber ?? 0,
+          circuitImage: game.eventImageUrl,
           winnerName: game.winnerName ?? 'Unknown',
           winnerTeam: game.winnerTeam ?? 'TBD',
           winnerLogo: game.winnerImage ??
@@ -196,20 +198,8 @@ class SportCategoryPage extends StatelessWidget {
         );
       } else if (game.status == 'Live') {
         return GolfLiveCard(
-          tournamentName: game.tournamentName ?? 'TBD Tournament',
-          leaderName: leaders.isNotEmpty ? leaders[0].name : 'TBD',
-          leaderScore: leaders.isNotEmpty ? leaders[0].score : 'E',
-          thru: leaders.isNotEmpty ? leaders[0].thru : '-',
-          currentRound: game.round ?? 'Round 1',
-          tourType: game.tourType ?? 'PGA Tour',
-          leaderImage: leaders.isNotEmpty ? leaders[0].image : null,
-          purse: game.purse,
-          p2Name: leaders.length > 1 ? leaders[1].name : null,
-          p2Score: leaders.length > 1 ? leaders[1].score : null,
-          p2Thru: leaders.length > 1 ? leaders[1].thru : null,
-          p3Name: leaders.length > 2 ? leaders[2].name : null,
-          p3Score: leaders.length > 2 ? leaders[2].score : null,
-          p3Thru: leaders.length > 2 ? leaders[2].thru : null,
+          game: game,
+          showFullLeaderboard: true,
         );
       } else {
         return GolfCompletedCard(

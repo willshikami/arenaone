@@ -72,6 +72,7 @@ class GolfLeader {
   final String score;
   final String thru;
   final String image;
+  final String? currentRound;
   final String? careerPoints;
   final String? totalPoints;
   final String? purse;
@@ -83,6 +84,7 @@ class GolfLeader {
     required this.score,
     required this.thru,
     required this.image,
+    this.currentRound,
     this.careerPoints,
     this.totalPoints,
     this.purse,

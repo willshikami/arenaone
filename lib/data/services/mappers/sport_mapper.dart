@@ -3,31 +3,29 @@ import '../../models/game.dart';
 abstract class SportMapper {
   Game? map(Map<String, dynamic> json);
 
-  String mapStatus(String? status) {
-    if (status == null) return 'Upcoming';
-    final s = status.toLowerCase();
+  String mapStatus(String? state, String? type) {
+    if (state == 'pre') return 'Upcoming';
+    if (state == 'in') return 'Live';
+    if (state == 'post') return 'Final';
+    
+    if (type == null) return 'Upcoming';
+    final s = type.toLowerCase();
     if (s == 'final' || s == 'status_final' || s == 'finished' || s == 'complete') return 'Final';
     if (s.contains('live') || s.contains('progress') || s.contains('playing') || s.contains('quarter') || s.contains('half')) {
       return 'Live';
     }
-    if (s.contains('final') || s.contains('finished') || s.contains('complete')) return 'Final';
     return 'Upcoming';
   }
 
-  bool isLive(String? status) {
-    if (status == null) return false;
-    final s = status.toLowerCase();
-    return s.contains('live') || s.contains('progress') || s.contains('playing') || s.contains('quarter') || s.contains('half');
+  bool isLive(bool? is_live, String? state) {
+    if (is_live == true) return true;
+    final s = state?.toLowerCase() ?? '';
+    return s == 'in' || s == 'live' || s == 'inprogress';
   }
 
-  String? getScore(String? status, dynamic homeScore, dynamic awayScore) {
-    if (status == null) return null;
-    final s = status.toLowerCase();
-    if (s.contains('final') || s.contains('finished') || s.contains('complete') || 
-        s.contains('live') || s.contains('progress') || s.contains('playing') || s.contains('quarter') || s.contains('half')) {
-      return "${homeScore ?? '0'}-${awayScore ?? '0'}";
-    }
-    return null;
+  String? getScore(String? state, dynamic homeScore, dynamic awayScore) {
+    if (state == 'pre') return null;
+    return "${homeScore ?? '0'}-${awayScore ?? '0'}";
   }
 
   Map<String, dynamic>? getParticipantMap(dynamic participantsField) {
@@ -40,11 +38,24 @@ abstract class SportMapper {
   }
 
   Map<String, dynamic>? findHomeAwayTeams(List<dynamic> eventParticipants, String? eventName) {
+    // REMOVED early return: process even if participants are empty
+    // if (eventParticipants.isEmpty) return null;
+
     dynamic homeData;
     dynamic awayData;
 
-    // 1. Try to find by explicit position (1=Home, 2=Away)
-    if (eventParticipants.isNotEmpty) {
+    // 1. Try to find by explicit home_away field (new schema)
+    homeData = eventParticipants.firstWhere(
+      (p) => p['home_away'] == 'home',
+      orElse: () => null,
+    );
+    awayData = eventParticipants.firstWhere(
+      (p) => p['home_away'] == 'away',
+      orElse: () => null,
+    );
+
+    // 2. Try to find by explicit position (1=Home, 2=Away)
+    if (homeData == null || awayData == null) {
       homeData = eventParticipants.firstWhere(
         (p) => p['position'] == 1,
         orElse: () => null,
@@ -114,13 +125,35 @@ abstract class SportMapper {
       awayData = eventParticipants.length > 1 ? eventParticipants[1] : (eventParticipants.isNotEmpty ? eventParticipants[0] : null);
     }
 
-    if (homeData == null || awayData == null) return null;
-
+    // REMOVED: If we have no participants, we return a shell with TBDs instead of null
+    // so the event actually appears in the UI.
     return {
-      'home': getParticipantMap(homeData['participants']),
-      'away': getParticipantMap(awayData['participants']),
-      'homeData': homeData,
-      'awayData': awayData,
+      'home': homeData != null ? getParticipantMap(homeData['participants']) : null,
+      'away': awayData != null ? getParticipantMap(awayData['participants']) : null,
+      'homeData': homeData ?? {},
+      'awayData': awayData ?? {},
     };
+  }
+
+  static String getShortName(String? name) {
+    if (name == null || name.isEmpty) return 'TBD';
+    final parts = name.trim().split(' ');
+    if (parts.length > 1) {
+      return parts.last;
+    }
+    return name;
+  }
+
+  static String getInitialName(String? name) {
+    if (name == null || name.isEmpty) return 'TBD';
+    final parts = name.trim().split(' ');
+    if (parts.length > 1) {
+      final firstName = parts[0];
+      final lastName = parts.last;
+      if (firstName.isNotEmpty) {
+        return "${firstName[0]}.$lastName";
+      }
+    }
+    return name;
   }
 }

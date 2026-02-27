@@ -2,6 +2,7 @@ import 'package:async_redux/async_redux.dart';
 import 'dart:convert';
 import '../app_state.dart';
 import '../../data/services/database_helper.dart';
+import '../../data/services/live_activity_service.dart';
 
 class SetCurrentTabIndexAction extends ReduxAction<AppState> {
   final int index;
@@ -63,6 +64,11 @@ class SetLiveActivitiesAction extends ReduxAction<AppState> {
   @override
   Future<AppState?> reduce() async {
     await DatabaseHelper().setPreference('live_activities_enabled', enabled.toString());
+    
+    if (!enabled) {
+      await LiveActivityService().endAllActivities();
+    }
+    
     return state.copyWith(liveActivitiesEnabled: enabled);
   }
 }

@@ -5,6 +5,7 @@ import 'redux/actions/navigation_actions.dart';
 import 'utils/app_theme.dart';
 import 'presentation/home/pages/main_navigation.dart';
 import 'data/services/supabase_config.dart';
+import 'data/services/live_activity_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
@@ -20,6 +21,9 @@ Future<void> main() async {
   } catch (e) {
     debugPrint('❌ Supabase initialization failed: $e');
   }
+
+  // Initialize Live Activity Service
+  await LiveActivityService().init();
   
   // Load preferences before showing the UI
   await store.dispatchAndWait(LoadUserPreferencesAction());

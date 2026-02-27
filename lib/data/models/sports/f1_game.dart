@@ -3,6 +3,24 @@ import '../game.dart';
 
 part 'f1_game.g.dart';
 
+class F1Driver {
+  final int position;
+  final String name;
+  final String team;
+  final String image;
+  final String points;
+  final String? gap;
+
+  F1Driver({
+    required this.position,
+    required this.name,
+    required this.team,
+    required this.image,
+    required this.points,
+    this.gap,
+  });
+}
+
 @JsonSerializable()
 class F1Game extends Game {
   @override
@@ -45,6 +63,9 @@ class F1Game extends Game {
   final String? winnerTotalPoints;
   final String? p2TotalPoints;
   final String? p3TotalPoints;
+  
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final List<F1Driver>? drivers;
 
   F1Game({
     required this.id,
@@ -78,6 +99,7 @@ class F1Game extends Game {
     this.winnerTotalPoints,
     this.p2TotalPoints,
     this.p3TotalPoints,
+    this.drivers,
   }) : super(
           id: id,
           sport: sport,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import '../../../data/services/mappers/sport_mapper.dart';
 
 class F1UpcomingCard extends StatelessWidget {
   final String raceName;
@@ -74,6 +75,19 @@ class F1UpcomingCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (circuitImage != null)
+              Container(
+                height: 160,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.03),
+                ),
+                child: Image(
+                  image: circuitImage!.startsWith('assets/') ? AssetImage(circuitImage!) : NetworkImage(circuitImage!) as ImageProvider,
+                  fit: BoxFit.contain,
+                ),
+              ),
             Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -174,21 +188,6 @@ class F1UpcomingCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Container(
-                        height: 90,
-                        width: 90,
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: Colors.white.withValues(alpha: 0.03),
-                        ),
-                        child: Image.asset(
-                          circuitLayoutUrl,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Icon(Icons.map, color: Colors.white24, size: 32),
-                        ),
-                      ),
                     ],
                   ),
                 ],
@@ -205,6 +204,7 @@ class F1CompletedCard extends StatelessWidget {
   final String raceName;
   final DateTime raceDate;
   final int raceNumber;
+  final String? circuitImage;
   final String winnerName;
   final String winnerTeam;
   final String winnerLogo;
@@ -229,6 +229,7 @@ class F1CompletedCard extends StatelessWidget {
     required this.raceName,
     required this.raceDate,
     required this.raceNumber,
+    this.circuitImage,
     required this.winnerName,
     required this.winnerTeam,
     required this.winnerLogo,
@@ -265,90 +266,106 @@ class F1CompletedCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 2,
-                          height: 10,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF2D7DFF),
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'ROUND $raceNumber',
-                          style: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      raceName.toUpperCase(),
-                      style: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (circuitImage != null)
+              Container(
+                height: 160,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.03),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF34C759).withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(6),
+                child: Image(
+                  image: circuitImage!.startsWith('assets/') ? AssetImage(circuitImage!) : NetworkImage(circuitImage!) as ImageProvider,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 2,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF2D7DFF),
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'ROUND $raceNumber',
+                            style: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ],
                       ),
-                      child: const Text(
-                        'FINAL',
+                      const SizedBox(height: 2),
+                      Text(
+                        raceName.toUpperCase(),
                         style: TextStyle(
-                          color: Color(0xFF34C759),
-                          fontSize: 9,
-                          fontWeight: FontWeight.w900,
+                          color: Colors.grey.shade500,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      DateFormat('MMM d, yyyy • h:mm a').format(raceDate),
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF34C759).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          'FINAL',
+                          style: TextStyle(
+                            color: Color(0xFF34C759),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      const SizedBox(height: 4),
+                      Text(
+                        DateFormat('MMM d, yyyy • h:mm a').format(raceDate),
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          _buildWinnerSection(winnerName, winnerTeam, winnerLogo, time ?? '1:41.223', points, winnerTotalPoints),
-          if (p2Name != null)
-            _buildDriverRow(2, p2Name!, p2Team!, p2Image!, p2Gap ?? '+0.222s', p2Points ?? '18', p2TotalPoints),
-          if (p3Name != null)
-            _buildDriverRow(3, p3Name!, p3Team!, p3Image!, p3Gap ?? '+0.254s', p3Points ?? '15', p3TotalPoints),
-          const SizedBox(height: 8),
-        ],
+            _buildWinnerSection(winnerName, winnerTeam, winnerLogo, time ?? '1:41.223', points, winnerTotalPoints),
+            if (p2Name != null)
+              _buildDriverRow(2, p2Name!, p2Team!, p2Image!, p2Gap ?? '+0.222s', p2Points ?? '18', p2TotalPoints),
+            if (p3Name != null)
+              _buildDriverRow(3, p3Name!, p3Team!, p3Image!, p3Gap ?? '+0.254s', p3Points ?? '15', p3TotalPoints),
+            const SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }
@@ -381,7 +398,7 @@ class F1CompletedCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  name,
+                  SportMapper.getShortName(name),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -499,7 +516,7 @@ class F1CompletedCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  SportMapper.getShortName(name),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 13,
@@ -571,6 +588,7 @@ class F1CompletedCard extends StatelessWidget {
 class F1LiveCard extends StatelessWidget {
   final String raceName;
   final int raceNumber;
+  final String? circuitImage;
   final String leaderName;
   final String leaderTeam;
   final String leaderImage;
@@ -588,6 +606,7 @@ class F1LiveCard extends StatelessWidget {
     super.key,
     required this.raceName,
     required this.raceNumber,
+    this.circuitImage,
     required this.leaderName,
     required this.leaderTeam,
     required this.leaderImage,
@@ -618,82 +637,98 @@ class F1LiveCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 2,
-                          height: 10,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF2D7DFF),
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'ROUND $raceNumber',
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      raceName.toUpperCase(),
-                      style: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (circuitImage != null)
+              Container(
+                height: 160,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.03),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: const Row(
+                child: Image(
+                  image: circuitImage!.startsWith('assets/') ? AssetImage(circuitImage!) : NetworkImage(circuitImage!) as ImageProvider,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.circle, color: Colors.red, size: 8),
-                      SizedBox(width: 6),
+                      Row(
+                        children: [
+                          Container(
+                            width: 2,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF2D7DFF),
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'ROUND $raceNumber',
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
                       Text(
-                        'LIVE',
+                        raceName.toUpperCase(),
                         style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900,
+                          color: Colors.grey.shade500,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1,
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.circle, color: Colors.red, size: 8),
+                        SizedBox(width: 6),
+                        Text(
+                          'LIVE',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          _buildLeaderSection(),
-          if (p2Name != null)
-            _buildDriverRow(2, p2Name!, p2Team!, p2Image!, p2Gap ?? '---'),
-          if (p3Name != null)
-            _buildDriverRow(3, p3Name!, p3Team!, p3Image!, p3Gap ?? '---'),
-          const SizedBox(height: 8),
-        ],
+            _buildLeaderSection(),
+            if (p2Name != null)
+              _buildDriverRow(2, p2Name!, p2Team!, p2Image!, p2Gap ?? '---'),
+            if (p3Name != null)
+              _buildDriverRow(3, p3Name!, p3Team!, p3Image!, p3Gap ?? '---'),
+            const SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }

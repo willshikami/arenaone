@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
+import '../../../data/models/sports/golf_game.dart';
+import '../../../data/services/mappers/sport_mapper.dart';
+import '../../widgets/score_flip_text.dart';
 
 class GolfUpcomingCard extends StatelessWidget {
   final String tournamentName;
@@ -172,41 +175,26 @@ class GolfUpcomingCard extends StatelessWidget {
 }
 
 class GolfLiveCard extends StatelessWidget {
-  final String tournamentName;
-  final String leaderName;
-  final String leaderScore;
-  final String thru;
-  final String currentRound;
-  final String? leaderImage;
-  final String tourType;
-  final String? purse;
-  final String? p2Name;
-  final String? p2Score;
-  final String? p2Thru;
-  final String? p3Name;
-  final String? p3Score;
-  final String? p3Thru;
+  final GolfGame game;
+  final bool showFullLeaderboard;
 
   const GolfLiveCard({
     super.key,
-    required this.tournamentName,
-    required this.leaderName,
-    required this.leaderScore,
-    required this.thru,
-    required this.currentRound,
-    this.leaderImage,
-    required this.tourType,
-    this.purse,
-    this.p2Name,
-    this.p2Score,
-    this.p2Thru,
-    this.p3Name,
-    this.p3Score,
-    this.p3Thru,
+    required this.game,
+    this.showFullLeaderboard = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final tournamentName = game.tournamentName ?? 'TBD Tournament';
+    final currentRound = game.round ?? 'Round 1';
+    final leaders = game.leaderboard ?? [];
+    
+    // Determine how many players to show
+    final displayLeaders = showFullLeaderboard 
+        ? (leaders.isNotEmpty ? leaders.sublist(1) : <GolfLeader>[])
+        : (leaders.length > 1 ? leaders.sublist(1, leaders.length > 10 ? 10 : leaders.length) : <GolfLeader>[]);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -288,68 +276,146 @@ class GolfLiveCard extends StatelessWidget {
               ],
             ),
           ),
-          _buildLeaderSection(),
-          if (p2Name != null) _buildLiveRow(2, p2Name!, p2Score!, p2Thru!),
-          if (p3Name != null) _buildLiveRow(3, p3Name!, p3Score!, p3Thru!),
-          const SizedBox(height: 8),
+          _buildLeaderSection(leaders.isNotEmpty ? leaders[0] : null),
+          
+          // Header Row for the list - placed AFTER the leader
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+            child: Row(
+              children: [
+                const SizedBox(width: 24), // Space for rank
+                const Expanded(
+                  child: Text(
+                    'PLAYER',
+                    style: TextStyle(
+                      color: Colors.white38,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+                _buildTableHeader('SCORE'),
+                const SizedBox(width: 12),
+                _buildTableHeader('ROUND'),
+                const SizedBox(width: 12),
+                _buildTableHeader('THRU'),
+              ],
+            ),
+          ),
+
+          ...displayLeaders.map((player) => _buildLiveRow(player)),
+          const SizedBox(height: 16),
         ],
       ),
     );
   }
 
-  Widget _buildLiveRow(int rank, String name, String score, String thru) {
+  Widget _buildTableHeader(String label) {
+    return SizedBox(
+      width: 40,
+      child: Text(
+        label,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.white38,
+          fontSize: 8,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLiveRow(GolfLeader player) {
+    final currentRound = game.round ?? 'R1';
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
         children: [
           SizedBox(
             width: 24,
             child: Text(
-              '$rank',
+              '${player.position}',
               style: TextStyle(
                 color: Colors.grey.shade500,
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: FontWeight.w900,
               ),
             ),
           ),
           Expanded(
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 10,
+                  backgroundColor: Colors.white10,
+                  backgroundImage: player.image.isNotEmpty ? NetworkImage(player.image) : null,
+                  child: player.image.isEmpty ? const Icon(Icons.person, size: 10, color: Colors.white24) : null,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  SportMapper.getInitialName(player.name),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Score Column
+          SizedBox(
+            width: 40,
+            child: ScoreFlipText(
+              score: player.score,
+              style: const TextStyle(
+                color: Colors.green,
+                fontSize: 13,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Round Column
+          SizedBox(
+            width: 40,
             child: Text(
-              name,
+              (player.currentRound ?? currentRound).length > 2 
+                  ? (player.currentRound ?? currentRound).substring(0, 2) 
+                  : (player.currentRound ?? currentRound),
+              textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                score,
-                style: const TextStyle(
-                  color: Colors.green,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w900,
-                ),
+          const SizedBox(width: 12),
+          // Thru Column
+          SizedBox(
+            width: 40,
+            child: Text(
+              player.thru,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey.shade400,
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
               ),
-              Text(
-                thru,
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLeaderSection() {
+  Widget _buildLeaderSection(GolfLeader? leader) {
+    if (leader == null) return const SizedBox.shrink();
+    final currentRound = game.round ?? 'R1';
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -377,7 +443,7 @@ class GolfLiveCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  leaderName,
+                  SportMapper.getInitialName(leader.name),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -388,19 +454,19 @@ class GolfLiveCard extends StatelessWidget {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    _buildStat('SCORE', leaderScore, isHighlight: true),
+                    _buildStat('SCORE', leader.score, isHighlight: true),
                     const SizedBox(width: 24),
-                    _buildStat('THRU', thru),
-                    if (purse != null) ...[
-                      const SizedBox(width: 24),
-                      _buildStat('PURSE', purse!),
-                    ],
+                    _buildStat('ROUND', (leader.currentRound ?? currentRound).length > 2 
+                        ? (leader.currentRound ?? currentRound).substring(0, 2) 
+                        : (leader.currentRound ?? currentRound)),
+                    const SizedBox(width: 24),
+                    _buildStat('THRU', leader.thru),
                   ],
                 ),
               ],
             ),
           ),
-          if (leaderImage != null)
+          if (leader.image.isNotEmpty)
             Positioned(
               right: 0,
               bottom: 0,
@@ -408,7 +474,7 @@ class GolfLiveCard extends StatelessWidget {
                 height: 120,
                 width: 140,
                 child: Image.network(
-                  leaderImage!,
+                  leader.image,
                   fit: BoxFit.contain,
                   alignment: Alignment.bottomCenter,
                   errorBuilder: (context, error, stackTrace) =>
@@ -435,14 +501,25 @@ class GolfLiveCard extends StatelessWidget {
             fontWeight: FontWeight.w900,
           ),
         ),
-        Text(
-          value,
-          style: TextStyle(
-            color: isHighlight ? Colors.green : Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w900,
+        if (label == 'SCORE')
+          ScoreFlipText(
+            score: value,
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              color: isHighlight ? Colors.green : Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+            ),
+          )
+        else
+          Text(
+            value,
+            style: TextStyle(
+              color: isHighlight ? Colors.green : Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+            ),
           ),
-        ),
       ],
     );
   }
@@ -574,7 +651,7 @@ class GolfCompletedCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  winnerName,
+                  SportMapper.getInitialName(winnerName),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -676,7 +753,7 @@ class GolfCompletedCard extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              name,
+              SportMapper.getInitialName(name),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 14,

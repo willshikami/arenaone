@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/game.dart';
 import 'supabase_config.dart';
@@ -43,28 +44,54 @@ class SupabaseService {
           .select('''
             id,
             name,
+            short_name,
             start_time,
-            status,
-            venue,
+            status_type,
+            status_state,
+            completed,
+            is_live,
+            clock,
+            period,
+            venue_name,
+            venue_city,
+            venue_country,
             sports!inner(slug),
-            leagues(name),
             event_participants(
               score,
-              position,
               winner,
+              home_away,
+              record,
+              seed,
+              position,
+              linescores,
               participants(
                 name,
-                logo
+                logo,
+                abbreviation,
+                type
               )
             )
           ''')
           .eq('sports.slug', slug)
           .order('start_time', ascending: true);
 
-      return response
+      // CRITICAL DEBUG LOGS
+      debugPrint('--- SUPABASE FETCH: $slug ---');
+      debugPrint('Status: ${response.isNotEmpty ? "SUCCESS" : "EMPTY"}');
+      debugPrint('Count: ${response.length}');
+      if (response.isNotEmpty) {
+        debugPrint('First Event: ${response[0]['name']}');
+        debugPrint('First Event ID: ${response[0]['id']}');
+      }
+      debugPrint('-----------------------------');
+
+      final mappedGames = response
           .map((eventJson) => mapper.map(eventJson as Map<String, dynamic>))
           .whereType<Game>()
           .toList();
+
+      debugPrint('SUCCESS: Mapped ${mappedGames.length} games for $slug');
+      return mappedGames;
     } catch (e) {
       print('DEBUG: SupabaseService fetch failed for $slug: $e');
       return [];
