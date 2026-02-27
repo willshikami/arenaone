@@ -66,7 +66,7 @@ class TennisUpcomingCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      DateFormat('EEE, MMM d').format(game.startTime).toUpperCase(),
+                      DateFormat('EEE, MMM d').format(game.startTime.toLocal()).toUpperCase(),
                       style: TextStyle(
                         color: Colors.grey.shade500,
                         fontSize: 11,
@@ -85,7 +85,7 @@ class TennisUpcomingCard extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        DateFormat('h:mm a').format(game.startTime),
+                        DateFormat('h:mm a').format(game.startTime.toLocal()),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 11,

@@ -5,6 +5,7 @@ All notable changes to the Arena One project will be documented in this file.
 ## [1.0.0-alpha.11] - 2026-02-27
 
 ### Added
+- **Device Time Zone Support**: All event times (F1, Golf, Tennis, Rally, Football, and generic Game cards) now automatically adjust to and display in the user's current device time zone for accurate local scheduling.
 - **Live ActivityKit Widget (iOS)**: Native SwiftUI widget now displays real-time scores, teams, and status for Football, NBA, and Golf on the Lock Screen and Dynamic Island.
 - **Dynamic Island Support**: Compact, minimal, and expanded layouts for live games, with color-coded status and monospaced score typography.
 - **Improved Table Alignment**: Leaderboard and detail views for Golf and F1 now have perfectly aligned headers and columns, matching the player data rows.

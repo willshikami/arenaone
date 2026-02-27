@@ -328,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: F1UpcomingCard(
             raceName: game.stadium ?? 'TBD Grand Prix',
             location: game.leagueType ?? 'TBD',
-            raceDate: game.startTime,
+            raceDate: game.startTime.toLocal(),
             circuitImage: game.eventImageUrl,
             broadcastChannel: game.broadcastChannel,
             raceNumber: game.raceNumber ?? 0,
@@ -379,7 +379,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           child: F1CompletedCard(
             raceName: game.stadium ?? 'Grand Prix',
-            raceDate: game.startTime,
+            raceDate: game.startTime.toLocal(),
             raceNumber: game.raceNumber ?? 0,
             circuitImage: game.eventImageUrl,
             winnerName: game.winnerName ?? 'Unknown',
@@ -421,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: GolfUpcomingCard(
             tournamentName: game.tournamentName ?? 'TBD Tournament',
             location: game.stadium ?? 'TBD Course',
-            startDate: game.startTime,
+            startDate: game.startTime.toLocal(),
             par: game.par ?? '72',
             tourType: game.tourType ?? 'PGA Tour',
             broadcastChannel: game.broadcastChannel,

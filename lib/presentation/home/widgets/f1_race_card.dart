@@ -121,7 +121,7 @@ class F1UpcomingCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            DateFormat('EEE, MMM d').format(raceDate).toUpperCase(),
+                            DateFormat('EEE, MMM d').format(raceDate.toLocal()).toUpperCase(),
                             style: TextStyle(
                               color: Colors.grey.shade500,
                               fontSize: 12,
@@ -140,7 +140,7 @@ class F1UpcomingCard extends StatelessWidget {
                               ),
                             ),
                             child: Text(
-                              DateFormat('h:mm a').format(raceDate),
+                              DateFormat('h:mm a').format(raceDate.toLocal()),
                               style: const TextStyle(
                                 color: Color(0xFFFFFFFF),
                                 fontSize: 12,
@@ -346,7 +346,7 @@ class F1CompletedCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        DateFormat('MMM d, yyyy • h:mm a').format(raceDate),
+                        DateFormat('MMM d, yyyy • h:mm a').format(raceDate.toLocal()),
                         style: TextStyle(
                           color: Colors.grey.shade600,
                           fontSize: 9,
