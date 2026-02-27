@@ -325,20 +325,17 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           },
-          child: Hero(
-            tag: 'f1_${game.id}',
-            child: F1UpcomingCard(
-              raceName: game.stadium ?? 'TBD Grand Prix',
-              location: game.leagueType ?? 'TBD',
-              raceDate: game.startTime,
-              circuitImage: game.eventImageUrl,
-              broadcastChannel: game.broadcastChannel,
-              raceNumber: game.raceNumber ?? 0,
-              laps: game.laps ?? 0,
-              circuitLayoutUrl: game.circuitLayoutUrl ??
-                  'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Circuit_Red_Bull_Ring.svg/1024px-Circuit_Red_Bull_Ring.svg.png',
-              trackLength: game.trackLength ?? '---',
-            ),
+          child: F1UpcomingCard(
+            raceName: game.stadium ?? 'TBD Grand Prix',
+            location: game.leagueType ?? 'TBD',
+            raceDate: game.startTime,
+            circuitImage: game.eventImageUrl,
+            broadcastChannel: game.broadcastChannel,
+            raceNumber: game.raceNumber ?? 0,
+            laps: game.laps ?? 0,
+            circuitLayoutUrl: game.circuitLayoutUrl ??
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Circuit_Red_Bull_Ring.svg/1024px-Circuit_Red_Bull_Ring.svg.png',
+            trackLength: game.trackLength ?? '---',
           ),
         );
       } else if (game.status == 'Live') {
@@ -351,26 +348,23 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           },
-          child: Hero(
-            tag: 'f1_${game.id}',
-            child: F1LiveCard(
-              raceName: game.stadium ?? 'Grand Prix',
-              raceNumber: game.raceNumber ?? 0,
-              circuitImage: game.eventImageUrl,
-              leaderName: game.winnerName ?? 'Unknown',
-              leaderTeam: game.winnerTeam ?? 'TBD',
-              leaderImage: game.winnerImage ??
-                  'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
-              lapInfo: game.winningTime ?? 'LAP --/--',
-              p2Name: game.p2Name,
-              p2Team: game.p2Team,
-              p2Image: game.p2Image,
-              p2Gap: game.p2Gap,
-              p3Name: game.p3Name,
-              p3Team: game.p3Team,
-              p3Image: game.p3Image,
-              p3Gap: game.p3Gap,
-            ),
+          child: F1LiveCard(
+            raceName: game.stadium ?? 'Grand Prix',
+            raceNumber: game.raceNumber ?? 0,
+            circuitImage: game.eventImageUrl,
+            leaderName: game.winnerName ?? 'Unknown',
+            leaderTeam: game.winnerTeam ?? 'TBD',
+            leaderImage: game.winnerImage ??
+                'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
+            lapInfo: game.winningTime ?? 'LAP --/--',
+            p2Name: game.p2Name,
+            p2Team: game.p2Team,
+            p2Image: game.p2Image,
+            p2Gap: game.p2Gap,
+            p3Name: game.p3Name,
+            p3Team: game.p3Team,
+            p3Image: game.p3Image,
+            p3Gap: game.p3Gap,
           ),
         );
       } else {
@@ -383,33 +377,30 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           },
-          child: Hero(
-            tag: 'f1_${game.id}',
-            child: F1CompletedCard(
-              raceName: game.stadium ?? 'Grand Prix',
-              raceDate: game.startTime,
-              raceNumber: game.raceNumber ?? 0,
-              circuitImage: game.eventImageUrl,
-              winnerName: game.winnerName ?? 'Unknown',
-              winnerTeam: game.winnerTeam ?? 'TBD',
-              winnerLogo: game.winnerImage ??
-                  'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
-              points: game.winnerPoints ?? '0',
-              winnerTotalPoints: game.winnerTotalPoints,
-              time: game.winningTime,
-              p2Name: game.p2Name,
-              p2Team: game.p2Team,
-              p2Image: game.p2Image,
-              p2Points: game.p2Points,
-              p2TotalPoints: game.p2TotalPoints,
-              p2Gap: game.p2Gap,
-              p3Name: game.p3Name,
-              p3Team: game.p3Team,
-              p3Image: game.p3Image,
-              p3Points: game.p3Points,
-              p3TotalPoints: game.p3TotalPoints,
-              p3Gap: game.p3Gap,
-            ),
+          child: F1CompletedCard(
+            raceName: game.stadium ?? 'Grand Prix',
+            raceDate: game.startTime,
+            raceNumber: game.raceNumber ?? 0,
+            circuitImage: game.eventImageUrl,
+            winnerName: game.winnerName ?? 'Unknown',
+            winnerTeam: game.winnerTeam ?? 'TBD',
+            winnerLogo: game.winnerImage ??
+                'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
+            points: game.winnerPoints ?? '0',
+            winnerTotalPoints: game.winnerTotalPoints,
+            time: game.winningTime,
+            p2Name: game.p2Name,
+            p2Team: game.p2Team,
+            p2Image: game.p2Image,
+            p2Points: game.p2Points,
+            p2TotalPoints: game.p2TotalPoints,
+            p2Gap: game.p2Gap,
+            p3Name: game.p3Name,
+            p3Team: game.p3Team,
+            p3Image: game.p3Image,
+            p3Points: game.p3Points,
+            p3TotalPoints: game.p3TotalPoints,
+            p3Gap: game.p3Gap,
           ),
         );
       }
@@ -427,17 +418,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           },
-          child: Hero(
-            tag: 'golf_${game.id}',
-            child: GolfUpcomingCard(
-              tournamentName: game.tournamentName ?? 'TBD Tournament',
-              location: game.stadium ?? 'TBD Course',
-              startDate: game.startTime,
-              par: game.par ?? '72',
-              tourType: game.tourType ?? 'PGA Tour',
-              broadcastChannel: game.broadcastChannel,
-              purse: game.purse,
-            ),
+          child: GolfUpcomingCard(
+            tournamentName: game.tournamentName ?? 'TBD Tournament',
+            location: game.stadium ?? 'TBD Course',
+            startDate: game.startTime,
+            par: game.par ?? '72',
+            tourType: game.tourType ?? 'PGA Tour',
+            broadcastChannel: game.broadcastChannel,
+            purse: game.purse,
           ),
         );
       } else if (game.status == 'Live') {
@@ -450,10 +438,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           },
-          child: Hero(
-            tag: 'golf_${game.id}',
-            child: GolfLiveCard(game: game),
-          ),
+          child: GolfLiveCard(game: game),
         );
       } else {
         return GestureDetector(
@@ -465,20 +450,17 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           },
-          child: Hero(
-            tag: 'golf_${game.id}',
-            child: GolfCompletedCard(
-              tournamentName: game.tournamentName ?? 'TBD Tournament',
-              winnerName: leaders.isNotEmpty ? leaders[0].name : 'Unknown',
-              winnerScore: leaders.isNotEmpty ? leaders[0].score : 'E',
-              winnerImage: leaders.isNotEmpty ? leaders[0].image : null,
-              tourType: game.tourType ?? 'PGA Tour',
-              winnerPurse: game.winnerPurse ?? game.purse,
-              p2Name: leaders.length > 1 ? leaders[1].name : null,
-              p2Score: leaders.length > 1 ? leaders[1].score : null,
-              p3Name: leaders.length > 2 ? leaders[2].name : null,
-              p3Score: leaders.length > 2 ? leaders[2].score : null,
-            ),
+          child: GolfCompletedCard(
+            tournamentName: game.tournamentName ?? 'TBD Tournament',
+            winnerName: leaders.isNotEmpty ? leaders[0].name : 'Unknown',
+            winnerScore: leaders.isNotEmpty ? leaders[0].score : 'E',
+            winnerImage: leaders.isNotEmpty ? leaders[0].image : null,
+            tourType: game.tourType ?? 'PGA Tour',
+            winnerPurse: game.winnerPurse ?? game.purse,
+            p2Name: leaders.length > 1 ? leaders[1].name : null,
+            p2Score: leaders.length > 1 ? leaders[1].score : null,
+            p3Name: leaders.length > 2 ? leaders[2].name : null,
+            p3Score: leaders.length > 2 ? leaders[2].score : null,
           ),
         );
       }

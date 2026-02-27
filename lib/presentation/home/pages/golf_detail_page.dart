@@ -20,36 +20,79 @@ class GolfDetailPage extends StatelessWidget {
           SliverAppBar(
             expandedHeight: 180,
             pinned: true,
+            elevation: 0,
             backgroundColor: const Color(0xFF1C1C26),
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: false,
-              titlePadding: const EdgeInsets.only(left: 24, bottom: 16, right: 24),
-              title: Text(
-                tournamentName.toUpperCase(),
-                style: GoogleFonts.instrumentSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  letterSpacing: 0.5,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              background: Hero(
-                tag: 'golf_${game.id}',
-                child: Material(
-                  color: Colors.transparent,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Color(0xFF1C1C26),
-                          Color(0xFF16161C),
-                        ],
+              titlePadding: const EdgeInsets.only(top:16, left: 48, bottom: 20, right: 24),
+              title: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                   Row(
+                    children: [
+                      Text(
+                        game.round?.toUpperCase() ?? 'ROUND 1',
+                        style: GoogleFonts.spaceMono(
+                          color: Colors.green,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
+                        ),
                       ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: game.status == 'Live' 
+                              ? Colors.red.withValues(alpha: 0.15) 
+                              : Colors.grey.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          game.status.toUpperCase(),
+                          style: TextStyle(
+                            color: game.status == 'Live' ? Colors.red : Colors.grey,
+                            fontSize: 7,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    tournamentName.toUpperCase(),
+                    style: GoogleFonts.instrumentSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: 0.5,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    game.stadium ?? 'TBD Course',
+                    style: GoogleFonts.instrumentSans(
+                      color: Colors.grey.shade400,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              background: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF1C1C26),
+                      Color(0xFF16161C),
+                    ],
                   ),
                 ),
               ),
@@ -57,63 +100,16 @@ class GolfDetailPage extends StatelessWidget {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.only(top: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            game.round?.toUpperCase() ?? 'ROUND 1',
-                            style: GoogleFonts.spaceMono(
-                              color: Colors.green,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 2,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            game.stadium ?? 'TBD Course',
-                            style: GoogleFonts.instrumentSans(
-                              color: Colors.grey.shade400,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: game.status == 'Live' 
-                              ? Colors.red.withValues(alpha: 0.1) 
-                              : Colors.grey.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          game.status.toUpperCase(),
-                          style: TextStyle(
-                            color: game.status == 'Live' ? Colors.red : Colors.grey,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
                   // Table Headers
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
                       children: [
-                        const SizedBox(width: 40), // Space for index
+                        const SizedBox(width: 40), 
                         Expanded(
                           flex: 4,
                           child: Text(

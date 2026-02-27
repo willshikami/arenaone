@@ -2,6 +2,25 @@
 
 All notable changes to the Arena One project will be documented in this file.
 
+## [1.0.0-alpha.11] - 2026-02-27
+
+### Added
+- **Live ActivityKit Widget (iOS)**: Native SwiftUI widget now displays real-time scores, teams, and status for Football, NBA, and Golf on the Lock Screen and Dynamic Island.
+- **Dynamic Island Support**: Compact, minimal, and expanded layouts for live games, with color-coded status and monospaced score typography.
+- **Improved Table Alignment**: Leaderboard and detail views for Golf and F1 now have perfectly aligned headers and columns, matching the player data rows.
+- **Header Info Layout**: Tournament/Grand Prix round, date, and live status are now shown in the top header card, with correct spacing to avoid overlap with the back button.
+- **3D Flip-Down Animation**: Score updates in all cards and detail tables now use a smooth flip-down animation for a tactile, modern feel.
+
+### Changed
+- **Removed Hero Animations**: Navigation to detail pages is now instant, with no morphing card effect, for a snappier and less distracting experience.
+- **Header Padding**: Increased left padding in detail page headers to prevent collision between the back button and tournament/race info.
+- **Live Activity Data Model**: Synchronized Flutter and Swift data models for robust, error-free ActivityKit integration.
+
+### Fixed
+- **Live ActivityKit Error**: Resolved `PlatformException(LIVE_ACTIVITY_ERROR, can't launch live activity, ...)` by ensuring the payload matches the SwiftUI widget's expected structure and updating plugin usage.
+- **Back Button Overlap**: Fixed layout bug where the back button would overlap with header information on scroll.
+- **Column Title Alignment**: Table headers now always align with player columns, regardless of device width or scroll state.
+
 ## [1.0.0-alpha.10] - 2026-02-26
 
 ### Added
@@ -30,7 +49,7 @@ All notable changes to the Arena One project will be documented in this file.
 - **Premier League Support**: Added specialized horizontal `FootballCard` logic featuring circular SVG team logos and match-specific minute indicators.
 
 ### Changed
-- **Navigation Architecture**: 
+- **Navigation Architecture**:
   - Simplified the bottom navigation to a 4-tab system: **Home**, **Scores**, **Following**, and **Profile**.
   - Removed the "Explore" tab to focus on personalized content.
   - Connected navigation to Redux for robust tab switching across different screens.
@@ -57,11 +76,11 @@ All notable changes to the Arena One project will be documented in this file.
 - **F1 Live Card**: Specialized live racing card featuring leader tracking (name, team, image, lap info) and real-time P2/P3 gaps.
 
 ### Changed
-- **Homepage Structure**: 
+- **Homepage Structure**:
   - Substituted sport selector chips for the new tab system.
   - Events are now grouped by sport with `Space Mono` titles and `SFIcons`.
   - Curated the homepage to show a maximum of two events per sport category.
-- **Standardized Card Headers**: 
+- **Standardized Card Headers**:
   - Standardized "Upcoming" event cards for Basketball, Tennis, Golf, and Rally to match F1's premium layout (League/Round on left, Date and formatted Time Box on right).
   - Moved NBA "LIVE" indicator to the header, removing clutter from the center score area.
 - **Enhanced Results Visuals**:
@@ -140,5 +159,3 @@ All notable changes to the Arena One project will be documented in this file.
 - Modern UI implementation for Home (Your Arena).
 - Initial data models (`Team`, `Game`).
 - Light theme with `Figtree` font.
-
-```

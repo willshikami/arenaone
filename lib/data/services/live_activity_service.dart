@@ -36,7 +36,7 @@ class LiveActivityService {
     }
 
     Map<String, dynamic> activityData = _formatGameData(game);
-    await _liveActivitiesPlugin.updateActivity(game.id, activityData);
+    await _liveActivitiesPlugin.updateActivity(_latestActivityId!, activityData);
   }
 
   Future<void> stopActivity() async {
