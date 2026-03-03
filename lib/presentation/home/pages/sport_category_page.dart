@@ -56,14 +56,51 @@ class SportCategoryPage extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          sport == 'All Sports' ? categoryTitle.toUpperCase() : '$sport - $categoryTitle',
-          style: GoogleFonts.instrumentSans(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w900,
-            letterSpacing: sport == 'All Sports' ? 1.5 : 0,
-          ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (sport.toUpperCase() == 'NBA')
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Image.network(
+                  'https://cdn.nba.com/logos/nba/nba-logoman.png',
+                  height: 24,
+                  width: 24,
+                  fit: BoxFit.contain,
+                ),
+              )
+            else if (sport.toUpperCase() == 'FOOTBALL')
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Image.network(
+                  'https://www.premierleague.com/resources/rebrand/v7.12.1/i/elements/pl-logo-white.png',
+                  height: 24,
+                  width: 24,
+                  fit: BoxFit.contain,
+                  color: Colors.white,
+                ),
+              )
+            else if (sport.toUpperCase() == 'F1')
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Image.network(
+                  'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/F1.svg/1200px-F1.svg.png',
+                  height: 16,
+                  width: 24,
+                  fit: BoxFit.contain,
+                  color: Colors.white,
+                ),
+              ),
+            Text(
+              sport == 'All Sports' ? categoryTitle.toUpperCase() : '$sport - $categoryTitle',
+              style: GoogleFonts.instrumentSans(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+                letterSpacing: sport == 'All Sports' ? 1.5 : 0,
+              ),
+            ),
+          ],
         ),
         centerTitle: true,
       ),
