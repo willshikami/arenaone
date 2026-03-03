@@ -14,6 +14,7 @@ import '../../../data/models/sports/golf_game.dart';
 import '../../../data/models/sports/tennis_game.dart';
 import '../../../data/models/sports/rally_game.dart';
 import '../../../data/models/sports/football_game.dart';
+import '../../../data/assets/app_assets.dart';
 import '../widgets/home_top_bar.dart';
 import '../widgets/game_card.dart';
 import '../widgets/f1_race_card.dart';
@@ -226,9 +227,11 @@ class _HomeScreenState extends State<HomeScreen> {
         final allSportGames = fullSportGames[sport]!;
 
         Widget buildSportIcon(String sport) {
-          if (sport.toUpperCase() == 'NBA') {
-            return Image.network(
-              'https://cdn.nba.com/logos/nba/nba-logoman.png',
+          final sportName = sport.toUpperCase();
+          
+          if (sportName == 'NBA') {
+            return Image.asset(
+              AppAssets.nba,
               height: 18,
               width: 18,
               fit: BoxFit.contain,
@@ -239,13 +242,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           }
-          if (sport.toUpperCase() == 'FOOTBALL') {
-            return Image.network(
-              'https://www.premierleague.com/resources/rebrand/v7.12.1/i/elements/pl-logo-white.png',
+          if (sportName == 'FOOTBALL') {
+            return Image.asset(
+              AppAssets.football,
               height: 18,
               width: 18,
               fit: BoxFit.contain,
-              color: Colors.white,
               errorBuilder: (context, error, stackTrace) => const SFIcon(
                 SFIcons.sf_sportscourt,
                 fontSize: 14,
@@ -253,13 +255,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           }
-          if (sport.toUpperCase() == 'F1') {
-            return Image.network(
-              'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/F1.svg/1200px-F1.svg.png',
+          if (sportName == 'F1') {
+            return Image.asset(
+              AppAssets.f1,
               height: 12,
               width: 18,
               fit: BoxFit.contain,
-              color: Colors.white,
               errorBuilder: (context, error, stackTrace) => const SFIcon(
                 SFIcons.sf_flag_2_crossed_fill,
                 fontSize: 14,
@@ -267,14 +268,24 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           }
+          if (sportName == 'TENNIS') {
+            return Image.asset(
+              AppAssets.tennis,
+              height: 18,
+              width: 18,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => const SFIcon(
+                SFIcons.sf_tennisball_fill,
+                fontSize: 14,
+                color: Colors.white,
+              ),
+            );
+          }
 
           IconData iconData;
-          switch (sport.toUpperCase()) {
+          switch (sportName) {
             case 'GOLF':
               iconData = SFIcons.sf_figure_golf;
-              break;
-            case 'TENNIS':
-              iconData = SFIcons.sf_tennisball_fill;
               break;
             case 'RALLY':
               iconData = SFIcons.sf_car_fill;
@@ -298,11 +309,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (allSportGames.isNotEmpty) {
                   final status = allSportGames.first.status;
                   if (status == 'Live') {
-                    category = "Live games";
+                    category = "Live";
                   } else if (status == 'Final') {
                     category = "Results";
                   } else {
-                    category = "Upcoming race";
+                    category = "Upcoming";
                   }
                 }
 

@@ -7,6 +7,7 @@ import '../../../data/models/sports/golf_game.dart';
 import '../../../data/models/sports/tennis_game.dart';
 import '../../../data/models/sports/rally_game.dart';
 import '../../../data/models/sports/football_game.dart';
+import '../../../data/assets/app_assets.dart';
 import '../widgets/game_card.dart';
 import '../widgets/f1_race_card.dart';
 import '../widgets/golf_card.dart';
@@ -62,8 +63,8 @@ class SportCategoryPage extends StatelessWidget {
             if (sport.toUpperCase() == 'NBA')
               Padding(
                 padding: const EdgeInsets.only(right: 10),
-                child: Image.network(
-                  'https://cdn.nba.com/logos/nba/nba-logoman.png',
+                child: Image.asset(
+                  AppAssets.nba,
                   height: 24,
                   width: 24,
                   fit: BoxFit.contain,
@@ -72,32 +73,40 @@ class SportCategoryPage extends StatelessWidget {
             else if (sport.toUpperCase() == 'FOOTBALL')
               Padding(
                 padding: const EdgeInsets.only(right: 10),
-                child: Image.network(
-                  'https://www.premierleague.com/resources/rebrand/v7.12.1/i/elements/pl-logo-white.png',
+                child: Image.asset(
+                  AppAssets.football,
                   height: 24,
                   width: 24,
                   fit: BoxFit.contain,
-                  color: Colors.white,
                 ),
               )
             else if (sport.toUpperCase() == 'F1')
               Padding(
                 padding: const EdgeInsets.only(right: 10),
-                child: Image.network(
-                  'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/F1.svg/1200px-F1.svg.png',
+                child: Image.asset(
+                  AppAssets.f1,
                   height: 16,
                   width: 24,
                   fit: BoxFit.contain,
-                  color: Colors.white,
+                ),
+              )
+            else if (sport.toUpperCase() == 'TENNIS')
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Image.asset(
+                  AppAssets.tennis,
+                  height: 24,
+                  width: 24,
+                  fit: BoxFit.contain,
                 ),
               ),
             Text(
-              sport == 'All Sports' ? categoryTitle.toUpperCase() : '$sport - $categoryTitle',
+              sport == 'All Sports' ? categoryTitle.toUpperCase() : '$sport $categoryTitle'.toUpperCase(),
               style: GoogleFonts.instrumentSans(
                 color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
-                letterSpacing: sport == 'All Sports' ? 1.5 : 0,
+                letterSpacing: 1.2,
               ),
             ),
           ],
