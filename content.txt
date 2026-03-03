@@ -1,0 +1,1000 @@
+        "id": "2033c592-be96-443a-a8f4-1ca86da7b6cc",
+        "event_id": "02048700-0149-422e-9efc-cf22147450bd",
+        "participant_id": "f1bbc6b2-4fb8-4f8d-ae83-8cad59e847b5",
+        "score": "107",
+        "winner": false,
+        "home_away": "home",
+        "record": "34-25 | 16-15 | 18-10",
+        "seed": null,
+--
+            "id": "f1bbc6b2-4fb8-4f8d-ae83-8cad59e847b5",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/tor.png",
+            "name": "Toronto Raptors",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:13.998362",
+            "external_id": "28",
+            "abbreviation": "TOR"
+        }
+    },
+    {
+        "id": "53d2d986-8368-4d66-8663-197e54357abe",
+        "event_id": "02048700-0149-422e-9efc-cf22147450bd",
+        "participant_id": "b7bc1b8a-784c-4938-9a80-11de5bf02000",
+        "score": "110",
+        "winner": true,
+        "home_away": "away",
+        "record": "42-16 | 21-6 | 21-10",
+        "seed": null,
+--
+            "id": "b7bc1b8a-784c-4938-9a80-11de5bf02000",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
+            "name": "San Antonio Spurs",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:14.13079",
+            "external_id": "24",
+            "abbreviation": "SA"
+        }
+    },
+    {
+        "id": "212b8c8c-ad54-4da7-84a2-6711c44b4713",
+        "event_id": "e85c959c-8eda-4c0d-881d-72a66f235bb0",
+        "participant_id": "42e92b45-9c93-44a5-9564-b196e16d20e6",
+        "score": "0",
+        "winner": false,
+        "home_away": "home",
+        "record": "7-10-11",
+        "seed": null,
+--
+            "id": "42e92b45-9c93-44a5-9564-b196e16d20e6",
+            "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/357.png",
+            "name": "Leeds United",
+            "type": "team",
+            "sport_id": "f0ae11f9-0f51-4b1b-8b28-1d9b73f830db",
+            "created_at": "2026-02-28T08:09:03.845978",
+            "external_id": "357",
+            "abbreviation": "LEE"
+        }
+    },
+    {
+        "id": "695b64b6-2226-41c8-85af-1f1ca79670e3",
+        "event_id": "352b801e-aeb6-4515-9b5b-6ccec5b962b8",
+        "participant_id": "9f243ba5-d203-486f-a7b7-7438d2a83d11",
+        "score": "122",
+        "winner": true,
+        "home_away": "home",
+        "record": "44-14 | 24-7 | 20-7",
+        "seed": null,
+--
+            "id": "9f243ba5-d203-486f-a7b7-7438d2a83d11",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png",
+            "name": "Detroit Pistons",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:13.700688",
+            "external_id": "8",
+            "abbreviation": "DET"
+        }
+    },
+    {
+        "id": "56cf1dac-d19c-4b36-9588-855c513a8822",
+        "event_id": "bf04bd96-170a-4752-add5-6ae24836dcdd",
+        "participant_id": "e1c4e5f2-3cf3-4e15-ae4b-76b545b90501",
+        "score": "112",
+        "winner": false,
+        "home_away": "home",
+        "record": "21-36 | 12-17 | 9-19",
+        "seed": null,
+--
+            "id": "e1c4e5f2-3cf3-4e15-ae4b-76b545b90501",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mem.png",
+            "name": "Memphis Grizzlies",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:14.29617",
+            "external_id": "29",
+            "abbreviation": "MEM"
+        }
+    },
+    {
+        "id": "be3c966e-67df-4b52-9dc2-cb1762279007",
+        "event_id": "bf04bd96-170a-4752-add5-6ae24836dcdd",
+        "participant_id": "bd83c869-737a-431a-9788-1a6558cb66e5",
+        "score": "133",
+        "winner": true,
+        "home_away": "away",
+        "record": "31-28 | 19-11 | 12-17",
+        "seed": null,
+--
+            "id": "bd83c869-737a-431a-9788-1a6558cb66e5",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/gs.png",
+            "name": "Golden State Warriors",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:14.408131",
+            "external_id": "9",
+            "abbreviation": "GS"
+        }
+    },
+    {
+        "id": "c432397a-17b7-4a37-b9ba-4b37e0279d00",
+        "event_id": "e68a4cbd-7f50-437e-b109-36014bdfcb4c",
+        "participant_id": "60bf19af-dd49-4b44-bd4b-596cb28b89be",
+        "score": "108",
+        "winner": false,
+        "home_away": "home",
+        "record": "31-27 | 18-11 | 13-16",
+        "seed": null,
+--
+            "id": "60bf19af-dd49-4b44-bd4b-596cb28b89be",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/orl.png",
+            "name": "Orlando Magic",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:15.481332",
+            "external_id": "19",
+            "abbreviation": "ORL"
+        }
+    },
+    {
+        "id": "60b1c74a-564c-4ce4-b084-2097c68edd08",
+        "event_id": "9a2b01ec-2ade-4281-a448-8e8cac6a3423",
+        "participant_id": "6cbb7b10-88da-429c-9f63-26516f49bc79",
+        "score": "128",
+        "winner": true,
+        "home_away": "home",
+        "record": "36-21 | 20-7 | 16-14",
+        "seed": null,
+--
+            "id": "6cbb7b10-88da-429c-9f63-26516f49bc79",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/hou.png",
+            "name": "Houston Rockets",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:14.611408",
+            "external_id": "10",
+            "abbreviation": "HOU"
+        }
+    },
+    {
+        "id": "c661089f-ae60-41a9-8db7-47eec6d2bbe0",
+        "event_id": "9a2b01ec-2ade-4281-a448-8e8cac6a3423",
+        "participant_id": "ec8c5625-fe9c-463f-8e94-030c96b61d9f",
+        "score": "97",
+        "winner": false,
+        "home_away": "away",
+        "record": "13-47 | 9-20 | 4-27",
+        "seed": null,
+--
+            "id": "ec8c5625-fe9c-463f-8e94-030c96b61d9f",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sac.png",
+            "name": "Sacramento Kings",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:14.734726",
+            "external_id": "23",
+            "abbreviation": "SAC"
+        }
+    },
+    {
+        "id": "c7459c8f-23c6-483f-880e-d4573fecc468",
+        "event_id": "d303c6c6-b6ec-4a84-b7d4-94d9a9ceda12",
+        "participant_id": "428d188a-24cb-4c0f-a554-9ad5167f61d4",
+        "score": "118",
+        "winner": false,
+        "home_away": "home",
+        "record": "16-44 | 11-21 | 5-23",
+        "seed": null,
+--
+            "id": "428d188a-24cb-4c0f-a554-9ad5167f61d4",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/wsh.png",
+            "name": "Washington Wizards",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:15.2389",
+            "external_id": "27",
+            "abbreviation": "WSH"
+        }
+    },
+    {
+        "id": "fa7f8753-ab81-4fb1-9527-2975069e6e8b",
+        "event_id": "fcf79aec-a445-4767-b0b5-388579d8e8ba",
+        "participant_id": "0676405c-4dc3-41fc-a4fb-8eeb07267463",
+        "score": "116",
+        "winner": false,
+        "home_away": "away",
+        "record": "37-23 | 20-11 | 17-12",
+        "seed": null,
+--
+            "id": "0676405c-4dc3-41fc-a4fb-8eeb07267463",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cle.png",
+            "name": "Cleveland Cavaliers",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:15.002139",
+            "external_id": "5",
+            "abbreviation": "CLE"
+        }
+    },
+    {
+        "id": "2b3c92a4-adeb-4d20-8a33-8493f1f40173",
+        "event_id": "ae6cee86-0884-446f-af35-0e17fd027903",
+        "participant_id": "1841e0f3-0e9d-4497-bcbe-30291c2c52c8",
+        "score": "103",
+        "winner": true,
+        "home_away": "home",
+        "record": "37-22 | 16-11 | 21-11",
+        "seed": null,
+--
+            "id": "1841e0f3-0e9d-4497-bcbe-30291c2c52c8",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/den.png",
+            "name": "Denver Nuggets",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:15.113909",
+            "external_id": "7",
+            "abbreviation": "DEN"
+        }
+    },
+    {
+        "id": "81e4b4d3-68a9-442c-a56d-c9042f5f07ed",
+        "event_id": "ae6cee86-0884-446f-af35-0e17fd027903",
+        "participant_id": "f1203677-4bdc-4bb1-b6eb-814989c902d5",
+        "score": "84",
+        "winner": false,
+        "home_away": "away",
+        "record": "38-20 | 18-9 | 20-11",
+        "seed": null,
+--
+            "id": "f1203677-4bdc-4bb1-b6eb-814989c902d5",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bos.png",
+            "name": "Boston Celtics",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:15.207668",
+            "external_id": "2",
+            "abbreviation": "BOS"
+        }
+    },
+    {
+        "id": "d59bb39d-4e1d-449b-ab48-0e3d441487df",
+        "event_id": "e68a4cbd-7f50-437e-b109-36014bdfcb4c",
+        "participant_id": "6cbb7b10-88da-429c-9f63-26516f49bc79",
+        "score": "113",
+        "winner": true,
+        "home_away": "away",
+        "record": "37-21 | 20-7 | 17-14",
+        "seed": null,
+--
+            "id": "6cbb7b10-88da-429c-9f63-26516f49bc79",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/hou.png",
+            "name": "Houston Rockets",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:14.611408",
+            "external_id": "10",
+            "abbreviation": "HOU"
+        }
+    },
+    {
+        "id": "d436eceb-b6d8-44ac-b034-2fcf975891f4",
+        "event_id": "3bae6a7b-71ed-49d4-8bf9-8f844f3a71d5",
+        "participant_id": "1841e0f3-0e9d-4497-bcbe-30291c2c52c8",
+        "score": "121",
+        "winner": false,
+        "home_away": "away",
+        "record": "37-23 | 16-11 | 21-12",
+        "seed": null,
+--
+            "id": "1841e0f3-0e9d-4497-bcbe-30291c2c52c8",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/den.png",
+            "name": "Denver Nuggets",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:15.113909",
+            "external_id": "7",
+            "abbreviation": "DEN"
+        }
+    },
+    {
+        "id": "46776905-9113-4f0e-a270-af6ff40cd7e0",
+        "event_id": "48f7869c-d9aa-4681-b638-2b62e0a43d20",
+        "participant_id": "12fec2a8-ffc0-449f-a213-46ac5801a46e",
+        "score": "128",
+        "winner": true,
+        "home_away": "home",
+        "record": "36-24 | 17-12 | 19-12",
+        "seed": null,
+--
+            "id": "12fec2a8-ffc0-449f-a213-46ac5801a46e",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lal.png",
+            "name": "Los Angeles Lakers",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:16.024204",
+            "external_id": "13",
+            "abbreviation": "LAL"
+        }
+    },
+    {
+        "id": "e8cc65ab-6d01-457e-b760-7b328dd61b8b",
+        "event_id": "9551674c-8902-4a4c-9eea-c402d9ec2dde",
+        "participant_id": "74fac3b9-b4bd-4a27-a4c3-220037e374ee",
+        "score": "2",
+        "winner": true,
+        "home_away": "home",
+        "record": "12-4-12",
+        "seed": null,
+--
+            "id": "74fac3b9-b4bd-4a27-a4c3-220037e374ee",
+            "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/370.png",
+            "name": "Fulham",
+            "type": "team",
+            "sport_id": "f0ae11f9-0f51-4b1b-8b28-1d9b73f830db",
+            "created_at": "2026-03-01T08:12:03.550815",
+            "external_id": "370",
+            "abbreviation": "FUL"
+        }
+    },
+    {
+        "id": "d422b62e-b5e7-4636-849e-4c0ae089f90a",
+        "event_id": "721046b7-f395-48c4-9bf3-72a44cf4be73",
+        "participant_id": "8dca778b-ac91-4b3f-ac3c-70b2eb042b91",
+        "score": "116",
+        "winner": false,
+        "home_away": "away",
+        "record": "45-15 | 24-7 | 21-8",
+        "seed": null,
+--
+            "id": "8dca778b-ac91-4b3f-ac3c-70b2eb042b91",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/okc.png",
+            "name": "Oklahoma City Thunder",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:13.796991",
+            "external_id": "25",
+            "abbreviation": "OKC"
+        }
+    },
+    {
+        "id": "d0e45681-5a17-4cab-be97-cb08e775c7c2",
+        "event_id": "a84e8f66-85db-4680-ab0b-e9fed75405c1",
+        "participant_id": "86e15930-5d61-4f91-9384-c0156a6208a8",
+        "score": "112",
+        "winner": false,
+        "home_away": "home",
+        "record": "24-36 | 15-17 | 9-19",
+        "seed": null,
+--
+            "id": "86e15930-5d61-4f91-9384-c0156a6208a8",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/chi.png",
+            "name": "Chicago Bulls",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:15.643792",
+            "external_id": "4",
+            "abbreviation": "CHI"
+        }
+    },
+    {
+        "id": "fc71a3f6-85ae-41fb-8101-abe0d2434ba8",
+        "event_id": "e5772c67-f99b-418a-aaed-310ac0b7733c",
+        "participant_id": "7dc8f703-6478-4657-8efb-af8c6c878d8e",
+        "score": "109",
+        "winner": true,
+        "home_away": "home",
+        "record": "30-31 | 13-16 | 17-15",
+        "seed": null,
+--
+            "id": "7dc8f703-6478-4657-8efb-af8c6c878d8e",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cha.png",
+            "name": "Charlotte Hornets",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:14.821726",
+            "external_id": "30",
+            "abbreviation": "CHA"
+        }
+    },
+    {
+        "id": "5d64c919-9b8e-417e-95cd-5f18b7a7427d",
+        "event_id": "e5772c67-f99b-418a-aaed-310ac0b7733c",
+        "participant_id": "8aea6998-f80c-4d37-b1d2-d710e5ca29db",
+        "score": "93",
+        "winner": false,
+        "home_away": "away",
+        "record": "29-32 | 16-15 | 13-17",
+        "seed": null,
+--
+            "id": "8aea6998-f80c-4d37-b1d2-d710e5ca29db",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/por.png",
+            "name": "Portland Trail Blazers",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:15.713388",
+            "external_id": "22",
+            "abbreviation": "POR"
+        }
+    },
+    {
+        "id": "eaf1919e-3687-4103-b75c-4011de437651",
+        "event_id": "352b801e-aeb6-4515-9b5b-6ccec5b962b8",
+        "participant_id": "0676405c-4dc3-41fc-a4fb-8eeb07267463",
+        "score": "119",
+        "winner": false,
+        "home_away": "away",
+        "record": "37-24 | 20-11 | 17-13",
+        "seed": null,
+--
+            "id": "0676405c-4dc3-41fc-a4fb-8eeb07267463",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cle.png",
+            "name": "Cleveland Cavaliers",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:15.002139",
+            "external_id": "5",
+            "abbreviation": "CLE"
+        }
+    },
+    {
+        "id": "eb43cd97-ef16-4c00-a64e-16f856f93a6b",
+        "event_id": "a2322866-ef72-406c-b29b-146002c38b39",
+        "participant_id": "b7bc1b8a-784c-4938-9a80-11de5bf02000",
+        "score": "89",
+        "winner": false,
+        "home_away": "away",
+        "record": "43-17 | 21-6 | 22-11",
+        "seed": null,
+--
+            "id": "b7bc1b8a-784c-4938-9a80-11de5bf02000",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
+            "name": "San Antonio Spurs",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:14.13079",
+            "external_id": "24",
+            "abbreviation": "SA"
+        }
+    },
+    {
+        "id": "b213f326-8a07-4b74-92ee-b048fd901541",
+        "event_id": "84edf66f-3794-4265-b102-db2787e424c0",
+        "participant_id": "f1203677-4bdc-4bb1-b6eb-814989c902d5",
+        "score": "148",
+        "winner": true,
+        "home_away": "home",
+        "record": "39-20 | 19-9 | 20-11",
+        "seed": null,
+--
+            "id": "f1203677-4bdc-4bb1-b6eb-814989c902d5",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bos.png",
+            "name": "Boston Celtics",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:15.207668",
+            "external_id": "2",
+            "abbreviation": "BOS"
+        }
+    },
+    {
+        "id": "ba3cccc4-38f6-42a0-8efd-1631cf65f17c",
+        "event_id": "a84e8f66-85db-4680-ab0b-e9fed75405c1",
+        "participant_id": "8aea6998-f80c-4d37-b1d2-d710e5ca29db",
+        "score": "121",
+        "winner": true,
+        "home_away": "away",
+        "record": "29-31 | 16-15 | 13-16",
+        "seed": null,
+--
+            "id": "8aea6998-f80c-4d37-b1d2-d710e5ca29db",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/por.png",
+            "name": "Portland Trail Blazers",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:15.713388",
+            "external_id": "22",
+            "abbreviation": "POR"
+        }
+    },
+    {
+        "id": "a29ed659-e90b-4267-98af-ac84cd315495",
+        "event_id": "4efbfcae-5c5e-436e-94c0-c4c67d9f2ab4",
+        "participant_id": "b97688a6-0a2a-44c9-9c9b-6bcb3645102b",
+        "score": "2",
+        "winner": true,
+        "home_away": "home",
+        "record": "9-10-9",
+        "seed": null,
+--
+            "id": "b97688a6-0a2a-44c9-9c9b-6bcb3645102b",
+            "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/331.png",
+            "name": "Brighton & Hove Albion",
+            "type": "team",
+            "sport_id": "f0ae11f9-0f51-4b1b-8b28-1d9b73f830db",
+            "created_at": "2026-03-01T08:12:03.317574",
+            "external_id": "331",
+            "abbreviation": "BHA"
+        }
+    },
+    {
+        "id": "34bc1ed8-4af5-4c48-ae7e-59b020c700e8",
+        "event_id": "9551674c-8902-4a4c-9eea-c402d9ec2dde",
+        "participant_id": "f1bef082-dd8b-45ba-8ed7-d895fb4b9eba",
+        "score": "1",
+        "winner": false,
+        "home_away": "away",
+        "record": "7-8-13",
+        "seed": null,
+--
+            "id": "f1bef082-dd8b-45ba-8ed7-d895fb4b9eba",
+            "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/367.png",
+            "name": "Tottenham Hotspur",
+            "type": "team",
+            "sport_id": "f0ae11f9-0f51-4b1b-8b28-1d9b73f830db",
+            "created_at": "2026-03-01T08:12:03.624507",
+            "external_id": "367",
+            "abbreviation": "TOT"
+        }
+    },
+    {
+        "id": "22ba334c-95f2-4bd6-91e0-faac6b0e8fe5",
+        "event_id": "bcf4b353-6c84-4cda-be31-f9ecb721dc94",
+        "participant_id": "3e48f567-e8a0-4c72-8011-2cd2beadd5bc",
+        "score": "121",
+        "winner": false,
+        "home_away": "home",
+        "record": "21-37 | 14-17 | 7-20",
+        "seed": null,
+--
+            "id": "3e48f567-e8a0-4c72-8011-2cd2beadd5bc",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/dal.png",
+            "name": "Dallas Mavericks",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:15.80725",
+            "external_id": "6",
+            "abbreviation": "DAL"
+        }
+    },
+    {
+        "id": "7afae76c-c49c-419b-9d14-b6b5a8003ef8",
+        "event_id": "bcf4b353-6c84-4cda-be31-f9ecb721dc94",
+        "participant_id": "ec8c5625-fe9c-463f-8e94-030c96b61d9f",
+        "score": "130",
+        "winner": true,
+        "home_away": "away",
+        "record": "14-47 | 9-20 | 5-27",
+        "seed": null,
+--
+            "id": "ec8c5625-fe9c-463f-8e94-030c96b61d9f",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sac.png",
+            "name": "Sacramento Kings",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:14.734726",
+            "external_id": "23",
+            "abbreviation": "SAC"
+        }
+    },
+    {
+        "id": "f8de95d7-0f4f-41cc-bdd6-de59b69ba3ff",
+        "event_id": "d56d9e43-a343-4f6e-b5e7-b4b841c62e05",
+        "participant_id": "532a74d4-78f9-4d20-baf3-d9c262874217",
+        "score": "2",
+        "winner": false,
+        "home_away": "home",
+        "record": "10-6-12",
+        "seed": null,
+--
+            "id": "532a74d4-78f9-4d20-baf3-d9c262874217",
+            "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/361.png",
+            "name": "Newcastle United",
+            "type": "team",
+            "sport_id": "f0ae11f9-0f51-4b1b-8b28-1d9b73f830db",
+            "created_at": "2026-02-28T08:09:03.641053",
+            "external_id": "361",
+            "abbreviation": "NEW"
+        }
+    },
+    {
+        "id": "7a110aa4-e1cd-43df-83a2-7e1b054467c1",
+        "event_id": "14a748f6-ea4b-4afa-bdd6-20545b267c09",
+        "participant_id": "8149c8e7-4761-4dd8-81f7-71d6228c48fa",
+        "score": "2",
+        "winner": true,
+        "home_away": "home",
+        "record": "19-7-3",
+        "seed": null,
+--
+            "id": "8149c8e7-4761-4dd8-81f7-71d6228c48fa",
+            "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/359.png",
+            "name": "Arsenal",
+            "type": "team",
+            "sport_id": "f0ae11f9-0f51-4b1b-8b28-1d9b73f830db",
+            "created_at": "2026-03-01T08:12:04.004374",
+            "external_id": "359",
+            "abbreviation": "ARS"
+        }
+    },
+    {
+        "id": "0fabb985-a9c9-420c-81b8-b4144a109664",
+        "event_id": "05e121c0-2bfa-47f2-b83e-6ea704525f23",
+        "participant_id": "82dd928c-b78f-421f-abb6-4256392083cb",
+        "score": "81",
+        "winner": false,
+        "home_away": "home",
+        "record": "26-34 | 14-15 | 12-19",
+        "seed": null,
+--
+            "id": "82dd928c-b78f-421f-abb6-4256392083cb",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mil.png",
+            "name": "Milwaukee Bucks",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:14.926927",
+            "external_id": "15",
+            "abbreviation": "MIL"
+        }
+    },
+    {
+        "id": "c9272016-f8a4-4657-8b30-c73e29306ede",
+        "event_id": "d2ef8b83-458f-4154-b764-141ceb6d7f8b",
+        "participant_id": "3d831d14-faec-4f9c-9f06-556fe0b9c65f",
+        "score": "0",
+        "winner": false,
+        "home_away": "away",
+        "record": "13-4-11",
+        "seed": null,
+--
+            "id": "3d831d14-faec-4f9c-9f06-556fe0b9c65f",
+            "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/337.png",
+            "name": "Brentford",
+            "type": "team",
+            "sport_id": "f0ae11f9-0f51-4b1b-8b28-1d9b73f830db",
+            "created_at": "2026-02-28T08:09:03.277798",
+            "external_id": "337",
+            "abbreviation": "BRE"
+        }
+    },
+    {
+        "id": "24c8f456-b356-454c-8dc6-9b0855841c4c",
+        "event_id": "843a8ecc-60ad-4d42-bcf5-7a2f6e1434a9",
+        "participant_id": "8253e109-7449-4de1-858d-27b8d91bfc27",
+        "score": "0",
+        "winner": false,
+        "home_away": "away",
+        "record": "4-7-17",
+        "seed": null,
+--
+            "id": "8253e109-7449-4de1-858d-27b8d91bfc27",
+            "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/379.png",
+            "name": "Burnley",
+            "type": "team",
+            "sport_id": "f0ae11f9-0f51-4b1b-8b28-1d9b73f830db",
+            "created_at": "2026-02-28T08:09:03.208839",
+            "external_id": "379",
+            "abbreviation": "BUR"
+        }
+    },
+    {
+        "id": "81a4d437-257e-41d6-a558-792d83562e6a",
+        "event_id": "39b80875-b8d3-47ea-ad00-9e6c53594e26",
+        "participant_id": "90b1cd8a-93a4-4618-bc32-46263c2ca7b6",
+        "score": "0",
+        "winner": false,
+        "home_away": "away",
+        "record": "9-10-9",
+        "seed": null,
+--
+            "id": "90b1cd8a-93a4-4618-bc32-46263c2ca7b6",
+            "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/366.png",
+            "name": "Sunderland",
+            "type": "team",
+            "sport_id": "f0ae11f9-0f51-4b1b-8b28-1d9b73f830db",
+            "created_at": "2026-02-28T08:09:03.039213",
+            "external_id": "366",
+            "abbreviation": "SUN"
+        }
+    },
+    {
+        "id": "6375acbe-8701-414f-a6be-a96eefd3d7db",
+        "event_id": "c0eb5299-8e50-476b-b41b-093952ff7e0d",
+        "participant_id": "d350f43c-db03-4f16-945a-f264baf05447",
+        "score": "0",
+        "winner": false,
+        "home_away": "away",
+        "record": "14-6-8",
+        "seed": null,
+--
+            "id": "d350f43c-db03-4f16-945a-f264baf05447",
+            "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/364.png",
+            "name": "Liverpool",
+            "type": "team",
+            "sport_id": "f0ae11f9-0f51-4b1b-8b28-1d9b73f830db",
+            "created_at": "2026-02-28T08:09:03.415056",
+            "external_id": "364",
+            "abbreviation": "LIV"
+        }
+    },
+    {
+        "id": "a28f4e45-7000-4af0-9d18-315c389d81a8",
+        "event_id": "84edf66f-3794-4265-b102-db2787e424c0",
+        "participant_id": "b1ecd86e-4e9c-47d8-b52c-d17458a822a3",
+        "score": "111",
+        "winner": false,
+        "home_away": "away",
+        "record": "15-44 | 8-21 | 7-23",
+        "seed": null,
+--
+            "id": "b1ecd86e-4e9c-47d8-b52c-d17458a822a3",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bkn.png",
+            "name": "Brooklyn Nets",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:15.330197",
+            "external_id": "17",
+            "abbreviation": "BKN"
+        }
+    },
+    {
+        "id": "f25c8b8e-a3e0-4241-b378-9ebf1873d811",
+        "event_id": "1cf91539-40a4-4f86-b13b-19bf6054f94e",
+        "participant_id": "9f243ba5-d203-486f-a7b7-7438d2a83d11",
+        "score": "106",
+        "winner": true,
+        "home_away": "away",
+        "record": "45-14 | 24-7 | 21-7",
+        "seed": null,
+--
+            "id": "9f243ba5-d203-486f-a7b7-7438d2a83d11",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png",
+            "name": "Detroit Pistons",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:13.700688",
+            "external_id": "8",
+            "abbreviation": "DET"
+        }
+    },
+    {
+        "id": "47954b7f-fc59-4893-a545-44e27c1ac055",
+        "event_id": "182e243f-5bae-4fb5-b150-54f1e510a0b5",
+        "participant_id": "4e1486fe-36c9-4971-8a6e-6d72a722a44d",
+        "score": "113",
+        "winner": true,
+        "home_away": "home",
+        "record": "34-26 | 20-12 | 14-14",
+        "seed": null,
+--
+            "id": "4e1486fe-36c9-4971-8a6e-6d72a722a44d",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phx.png",
+            "name": "Phoenix Suns",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:15.95405",
+            "external_id": "21",
+            "abbreviation": "PHX"
+        }
+    },
+    {
+        "id": "5e96cb8a-75da-4b94-a582-1e0344028863",
+        "event_id": "dcd22e74-a600-42be-988b-8e7f6ab79272",
+        "participant_id": "bbdd014a-854a-4457-b286-7686052df70a",
+        "score": "E",
+        "winner": false,
+        "home_away": null,
+        "record": null,
+        "seed": null,
+--
+            "id": "bbdd014a-854a-4457-b286-7686052df70a",
+            "logo": null,
+            "name": "Will Zalatoris",
+            "type": "athlete",
+            "sport_id": "deb2dc1c-cb9e-47b4-afb8-a9b54e3416d4",
+            "created_at": "2026-02-26T08:05:23.046252",
+            "external_id": "9877",
+            "abbreviation": null
+        }
+    },
+    {
+        "id": "8e959878-d7ec-4ddd-b6c8-c776cb2a9038",
+        "event_id": "182e243f-5bae-4fb5-b150-54f1e510a0b5",
+        "participant_id": "12fec2a8-ffc0-449f-a213-46ac5801a46e",
+        "score": "110",
+        "winner": false,
+        "home_away": "away",
+        "record": "34-24 | 16-12 | 18-12",
+        "seed": null,
+--
+            "id": "12fec2a8-ffc0-449f-a213-46ac5801a46e",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lal.png",
+            "name": "Los Angeles Lakers",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:16.024204",
+            "external_id": "13",
+            "abbreviation": "LAL"
+        }
+    },
+    {
+        "id": "5e5c2241-aa29-4b93-9369-8e2b0df99c14",
+        "event_id": "dcd22e74-a600-42be-988b-8e7f6ab79272",
+        "participant_id": "a21a5f0f-aaaa-4f0c-8942-1b8cd4ecde47",
+        "score": "+6",
+        "winner": false,
+        "home_away": null,
+        "record": null,
+        "seed": null,
+--
+            "id": "a21a5f0f-aaaa-4f0c-8942-1b8cd4ecde47",
+            "logo": null,
+            "name": "Harry Higgs",
+            "type": "athlete",
+            "sport_id": "deb2dc1c-cb9e-47b4-afb8-a9b54e3416d4",
+            "created_at": "2026-02-26T08:05:16.235504",
+            "external_id": "4844",
+            "abbreviation": null
+        }
+    },
+    {
+        "id": "cdc4998f-f18d-4a42-ab7a-3603fd9a1397",
+        "event_id": "e8019d22-017a-4b89-ac5c-3484677d5382",
+        "participant_id": "d48e50b2-b6ba-4646-ae82-ed90c08ed55b",
+        "score": "105",
+        "winner": false,
+        "home_away": "home",
+        "record": "18-42 | 11-20 | 7-22",
+        "seed": null,
+--
+            "id": "d48e50b2-b6ba-4646-ae82-ed90c08ed55b",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
+            "name": "Utah Jazz",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:16.120638",
+            "external_id": "26",
+            "abbreviation": "UTAH"
+        }
+    },
+    {
+        "id": "af6cf92e-8eb5-4dc8-8525-24c8d850cc13",
+        "event_id": "e8019d22-017a-4b89-ac5c-3484677d5382",
+        "participant_id": "66fe903f-074f-40ee-b52d-13aaded7d874",
+        "score": "115",
+        "winner": true,
+        "home_away": "away",
+        "record": "19-42 | 11-21 | 8-21",
+        "seed": null,
+--
+            "id": "66fe903f-074f-40ee-b52d-13aaded7d874",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/no.png",
+            "name": "New Orleans Pelicans",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:16.172715",
+            "external_id": "3",
+            "abbreviation": "NO"
+        }
+    },
+    {
+        "id": "7692ac2d-8173-4b1b-b0e0-18747e72fcf9",
+        "event_id": "daa90d61-9909-42c4-93e9-b9ac681419b6",
+        "participant_id": "d2cd16d1-7cd7-4479-a34f-aaa9474e4b95",
+        "score": "2",
+        "winner": true,
+        "home_away": "home",
+        "record": "2-7-20",
+        "seed": null,
+--
+            "id": "d2cd16d1-7cd7-4479-a34f-aaa9474e4b95",
+            "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/380.png",
+            "name": "Wolverhampton Wanderers",
+            "type": "team",
+            "sport_id": "f0ae11f9-0f51-4b1b-8b28-1d9b73f830db",
+            "created_at": "2026-02-26T08:05:15.456083",
+            "external_id": "380",
+            "abbreviation": "WOL"
+        }
+    },
+    {
+        "id": "219bbb86-97b1-463f-950f-7fffeb1283fc",
+        "event_id": "013cffa5-f6fe-4532-b478-221d46c831f2",
+        "participant_id": "d48e50b2-b6ba-4646-ae82-ed90c08ed55b",
+        "score": "118",
+        "winner": false,
+        "home_away": "home",
+        "record": "18-41 | 11-19 | 7-22",
+        "seed": null,
+--
+            "id": "d48e50b2-b6ba-4646-ae82-ed90c08ed55b",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
+            "name": "Utah Jazz",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:16.120638",
+            "external_id": "26",
+            "abbreviation": "UTAH"
+        }
+    },
+    {
+        "id": "79d6885d-367d-4d86-9c4f-2d7c76a8de4b",
+        "event_id": "013cffa5-f6fe-4532-b478-221d46c831f2",
+        "participant_id": "66fe903f-074f-40ee-b52d-13aaded7d874",
+        "score": "129",
+        "winner": true,
+        "home_away": "away",
+        "record": "18-42 | 11-21 | 7-21",
+        "seed": null,
+--
+            "id": "66fe903f-074f-40ee-b52d-13aaded7d874",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/no.png",
+            "name": "New Orleans Pelicans",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:16.172715",
+            "external_id": "3",
+            "abbreviation": "NO"
+        }
+    },
+    {
+        "id": "a66f8593-c29a-442c-adb3-ee1468383e75",
+        "event_id": "c66190d4-6330-4c7f-8616-105e43d30063",
+        "participant_id": "3e48f567-e8a0-4c72-8011-2cd2beadd5bc",
+        "score": "105",
+        "winner": false,
+        "home_away": "home",
+        "record": "21-38 | 14-18 | 7-20",
+        "seed": null,
+--
+            "id": "3e48f567-e8a0-4c72-8011-2cd2beadd5bc",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/dal.png",
+            "name": "Dallas Mavericks",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T16:34:15.80725",
+            "external_id": "6",
+            "abbreviation": "DAL"
+        }
+    },
+    {
+        "id": "cfc78c59-c48c-4e0c-bdcb-71a47d1e8667",
+        "event_id": "d303c6c6-b6ec-4a84-b7d4-94d9a9ceda12",
+        "participant_id": "6cbb7b10-88da-429c-9f63-26516f49bc79",
+        "score": "123",
+        "winner": true,
+        "home_away": "away",
+        "record": "38-22 | 20-7 | 18-15",
+        "seed": null,
+--
+            "id": "6cbb7b10-88da-429c-9f63-26516f49bc79",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/hou.png",
+            "name": "Houston Rockets",
+            "type": "team",
+            "sport_id": "67314440-05c7-43fa-86be-4437e0ca4ca3",
+            "created_at": "2026-02-26T08:05:14.611408",
+            "external_id": "10",
+            "abbreviation": "HOU"
+        }
+    },
+    {
+        "id": "49eb18ea-efc4-4884-8298-28769d3c2d36",
+        "event_id": "4efbfcae-5c5e-436e-94c0-c4c67d9f2ab4",
+        "participant_id": "d1bda43b-2ecf-47b8-9232-ccc8961ba7a1",
+        "score": "1",
+        "winner": false,
+        "home_away": "away",
+        "record": "7-6-15",
+        "seed": null,
+--
+            "id": "d1bda43b-2ecf-47b8-9232-ccc8961ba7a1",
+            "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/393.png",
+            "name": "Nottingham Forest",
+            "type": "team",
+            "sport_id": "f0ae11f9-0f51-4b1b-8b28-1d9b73f830db",
+            "created_at": "2026-03-01T08:12:03.390097",
+            "external_id": "393",
+            "abbreviation": "NFO"
+        }
+    },
+    {
