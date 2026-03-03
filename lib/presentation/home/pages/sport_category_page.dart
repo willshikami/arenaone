@@ -134,7 +134,10 @@ class SportCategoryPage extends StatelessWidget {
           circuitLayoutUrl: game.circuitLayoutUrl ??
               'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Circuit_Red_Bull_Ring.svg/1024px-Circuit_Red_Bull_Ring.svg.png',
           practice1Time: game.practice1Time,
+          practice2Time: game.practice2Time,
+          practice3Time: game.practice3Time,
           qualifyingTime: game.qualifyingTime,
+          sprintTime: game.sprintTime,
         );
       } else if (game.status == 'Live') {
         return F1LiveCard(
