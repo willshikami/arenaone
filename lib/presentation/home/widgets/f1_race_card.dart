@@ -10,9 +10,12 @@ class F1UpcomingCard extends StatelessWidget {
   final String? circuitImage;
   final String? broadcastChannel;
   final int raceNumber;
-  final int laps;
   final String circuitLayoutUrl;
-  final String trackLength;
+  final DateTime? practice1Time;
+  final DateTime? practice2Time;
+  final DateTime? practice3Time;
+  final DateTime? qualifyingTime;
+  final DateTime? sprintTime;
 
   const F1UpcomingCard({
     super.key,
@@ -22,35 +25,52 @@ class F1UpcomingCard extends StatelessWidget {
     this.circuitImage,
     this.broadcastChannel,
     required this.raceNumber,
-    required this.laps,
     required this.circuitLayoutUrl,
-    required this.trackLength,
+    this.practice1Time,
+    this.practice2Time,
+    this.practice3Time,
+    this.qualifyingTime,
+    this.sprintTime,
   });
 
-
-  Widget _buildTechLabel(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.instrumentSans(
-            color: Colors.grey.shade600,
-            fontSize: 10,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 0.5,
+  Widget _buildSessionRow(String session, DateTime time) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 4,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: session == 'RACE DAY' ? const Color(0xFFFF2D2D) : const Color(0xFF2D7DFF),
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                session,
+                style: GoogleFonts.instrumentSans(
+                  color: session == 'RACE DAY' ? Colors.white : Colors.grey.shade400,
+                  fontSize: 12,
+                  fontWeight: session == 'RACE DAY' ? FontWeight.w800 : FontWeight.w600,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          value,
-          style: GoogleFonts.instrumentSans(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
+          Text(
+            DateFormat('EEEE, MMM d').format(time.toLocal()).toUpperCase(),
+            style: GoogleFonts.instrumentSans(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -164,27 +184,29 @@ class F1UpcomingCard extends StatelessWidget {
                               raceName,
                               style: GoogleFonts.instrumentSans(
                                 color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
+                                fontSize: 24,
+                                fontWeight: FontWeight.w800,
                               ),
                             ),
                             const SizedBox(height: 4),
-                            Text(
-                              location,
-                              style: GoogleFonts.instrumentSans(
-                                color: Colors.grey.shade400,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
                             Row(
                               children: [
-                                _buildTechLabel('LAPS', '$laps'),
-                                const SizedBox(width: 24),
-                                _buildTechLabel('LENGTH', trackLength.toUpperCase()),
+                                Icon(Icons.location_on_rounded, size: 14, color: Colors.grey.shade500),
+                                const SizedBox(width: 4),
+                                Text(
+                                  location,
+                                  style: GoogleFonts.instrumentSans(
+                                    color: Colors.grey.shade400,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ],
                             ),
+                            const SizedBox(height: 24),
+                            _buildSessionRow('PRACTICE 1 & 2', _getFriday(raceDate)),
+                            _buildSessionRow('PRACTICE 3 & QUALIFYING', _getSaturday(raceDate)),
+                            _buildSessionRow('RACE DAY', _getSunday(raceDate)),
                           ],
                         ),
                       ),
@@ -197,6 +219,18 @@ class F1UpcomingCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  DateTime _getFriday(DateTime date) {
+    return date.add(Duration(days: 5 - date.weekday));
+  }
+
+  DateTime _getSaturday(DateTime date) {
+    return date.add(Duration(days: 6 - date.weekday));
+  }
+
+  DateTime _getSunday(DateTime date) {
+    return date.add(Duration(days: 7 - date.weekday));
   }
 }
 

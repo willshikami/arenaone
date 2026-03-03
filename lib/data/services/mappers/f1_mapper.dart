@@ -62,6 +62,18 @@ class F1Mapper extends SportMapper {
     final venueCity = json['venue_city'];
     final trackAsset = _getTrackAsset(venueName, eventName, venueCity);
 
+    // Parsing session times from event_participants if available in linescores
+    // Or from the event itself if the schema changes to include them there.
+    DateTime? p1Time;
+    DateTime? p2Time;
+    DateTime? p3Time;
+    DateTime? qTime;
+    DateTime? sTime;
+
+    // Check if session times are in event_participants linescores (e.g. for upcoming races)
+    // This is where Option B (Dynamic Wait) logic will live.
+    // For now, it stays null until data is observed.
+
     return F1Game(
       id: json['id'].toString(),
       sport: 'F1',
@@ -83,6 +95,11 @@ class F1Mapper extends SportMapper {
       raceNumber: 1,
       eventImageUrl: trackAsset,
       drivers: drivers,
+      practice1Time: p1Time,
+      practice2Time: p2Time,
+      practice3Time: p3Time,
+      qualifyingTime: qTime,
+      sprintTime: sTime,
     );
   }
 }
