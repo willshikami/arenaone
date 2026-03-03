@@ -21,6 +21,12 @@ class FootballGame extends Game {
   final String? leagueType;
   @override
   final String? stadium;
+  @override
+  final String? clock;
+  @override
+  final int? period;
+  @override
+  final String? statusType;
 
   final String homeTeamName;
   final String awayTeamName;
@@ -39,6 +45,9 @@ class FootballGame extends Game {
     this.broadcastChannel,
     this.leagueType,
     this.stadium,
+    this.clock,
+    this.period,
+    this.statusType,
     required this.homeTeamName,
     required this.awayTeamName,
     required this.homeTeamAbbr,
@@ -55,6 +64,9 @@ class FootballGame extends Game {
           broadcastChannel: broadcastChannel,
           leagueType: leagueType,
           stadium: stadium,
+          clock: clock,
+          period: period,
+          statusType: statusType,
         );
 
   factory FootballGame.fromJson(Map<String, dynamic> json) => _$FootballGameFromJson(json);

@@ -14,6 +14,9 @@ abstract class Game {
   final String? leagueType; // e.g., "Regular Season"
   final String? stadium; // e.g., "Gillette Stadium"
   final String? broadcastChannel; // e.g., "Apple TV"
+  final String? clock;
+  final int? period;
+  final String? statusType;
 
   Game({
     required this.id,
@@ -24,6 +27,9 @@ abstract class Game {
     this.leagueType,
     this.stadium,
     this.broadcastChannel,
+    this.clock,
+    this.period,
+    this.statusType,
   });
 
   factory Game.fromJson(Map<String, dynamic> json) {

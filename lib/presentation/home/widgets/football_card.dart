@@ -99,24 +99,18 @@ class FootballCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.red.withValues(alpha: 0.1),
+                            color: Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                           ),
-                          child: const Row(
-                            children: [
-                              Icon(Icons.circle, color: Colors.red, size: 8),
-                              SizedBox(width: 6),
-                              Text(
-                                'LIVE',
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                            ],
+                          child: Text(
+                            _getLiveStatusText(game).toUpperCase(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1,
+                            ),
                           ),
                         )
                       else if (game.status == 'Final')
@@ -131,7 +125,7 @@ class FootballCard extends StatelessWidget {
                             style: TextStyle(
                               color: Color(0xFF34C759),
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 1,
                             ),
                           ),
@@ -319,11 +313,37 @@ class FootballCard extends StatelessWidget {
     Color textColor = Colors.white;
 
     if (game.isLive) {
-      centerText = "64'"; // Football match minute
+      centerText = game.clock ?? "0'";
     } else if (game.status == 'Final') {
       textColor = Colors.grey.shade500;
     } else {
       textColor = Colors.grey.shade500;
+    }
+
+    if (game.isLive) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            centerText,
+            style: GoogleFonts.instrumentSans(
+              color: textColor,
+              fontSize: 18,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'LIVE',
+            style: GoogleFonts.instrumentSans(
+              color: Colors.red,
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ],
+      );
     }
 
     return Text(
@@ -334,5 +354,21 @@ class FootballCard extends StatelessWidget {
         fontWeight: FontWeight.w400,
       ),
     );
+  }
+
+  String _getLiveStatusText(Game game) {
+    // Check for Halftime status
+    if (game.statusType?.toUpperCase() == 'HALFTIME') return 'Halftime';
+    
+    // Check period
+    if (game.period == 1) return 'First Half';
+    if (game.period == 2) return 'Second Half';
+    
+    // Fallback to basic capitalization for anything else
+    if (game.statusType != null && game.statusType!.isNotEmpty) {
+      return game.statusType![0].toUpperCase() + game.statusType!.substring(1).toLowerCase();
+    }
+    
+    return 'Live';
   }
 }
