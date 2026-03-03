@@ -131,10 +131,10 @@ class SportCategoryPage extends StatelessWidget {
           circuitImage: game.eventImageUrl,
           broadcastChannel: game.broadcastChannel,
           raceNumber: game.raceNumber ?? 0,
-          laps: game.laps ?? 0,
           circuitLayoutUrl: game.circuitLayoutUrl ??
               'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Circuit_Red_Bull_Ring.svg/1024px-Circuit_Red_Bull_Ring.svg.png',
-          trackLength: game.trackLength ?? '---',
+          practice1Time: game.practice1Time,
+          qualifyingTime: game.qualifyingTime,
         );
       } else if (game.status == 'Live') {
         return F1LiveCard(

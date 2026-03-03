@@ -63,6 +63,11 @@ class F1Game extends Game {
   final String? winnerTotalPoints;
   final String? p2TotalPoints;
   final String? p3TotalPoints;
+  final DateTime? practice1Time;
+  final DateTime? practice2Time;
+  final DateTime? practice3Time;
+  final DateTime? qualifyingTime;
+  final DateTime? sprintTime;
   
   @JsonKey(includeFromJson: false, includeToJson: false)
   final List<F1Driver>? drivers;
@@ -99,6 +104,11 @@ class F1Game extends Game {
     this.winnerTotalPoints,
     this.p2TotalPoints,
     this.p3TotalPoints,
+    this.practice1Time,
+    this.practice2Time,
+    this.practice3Time,
+    this.qualifyingTime,
+    this.sprintTime,
     this.drivers,
   }) : super(
           id: id,
