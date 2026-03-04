@@ -26,6 +26,9 @@ class BasketballMapper extends SportMapper {
       homeTeamLogo: home?['logo'],
       awayTeamLogo: away?['logo'],
       score: getScore(json['status_state'], teams['homeData']['score'], teams['awayData']['score']),
+      clock: json['clock']?.toString(),
+      period: json['period'] as int?,
+      statusType: json['status_type']?.toString(),
       leagueType: 'Regular Season', // leagues table removed from schema
     );
   }

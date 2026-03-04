@@ -7,6 +7,7 @@ import '../../../data/models/sports/golf_game.dart';
 import '../../../data/models/sports/tennis_game.dart';
 import '../../../data/models/sports/rally_game.dart';
 import '../../../data/models/sports/football_game.dart';
+import '../../../data/assets/app_assets.dart';
 import '../widgets/game_card.dart';
 import '../widgets/f1_race_card.dart';
 import '../widgets/golf_card.dart';
@@ -56,14 +57,59 @@ class SportCategoryPage extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          sport == 'All Sports' ? categoryTitle.toUpperCase() : '$sport - $categoryTitle',
-          style: GoogleFonts.instrumentSans(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w900,
-            letterSpacing: sport == 'All Sports' ? 1.5 : 0,
-          ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (sport.toUpperCase() == 'NBA')
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Image.asset(
+                  AppAssets.nba,
+                  height: 24,
+                  width: 24,
+                  fit: BoxFit.contain,
+                ),
+              )
+            else if (sport.toUpperCase() == 'FOOTBALL')
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Image.asset(
+                  AppAssets.football,
+                  height: 24,
+                  width: 24,
+                  fit: BoxFit.contain,
+                ),
+              )
+            else if (sport.toUpperCase() == 'F1')
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Image.asset(
+                  AppAssets.f1,
+                  height: 16,
+                  width: 24,
+                  fit: BoxFit.contain,
+                ),
+              )
+            else if (sport.toUpperCase() == 'TENNIS')
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Image.asset(
+                  AppAssets.tennis,
+                  height: 24,
+                  width: 24,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            Text(
+              sport == 'All Sports' ? categoryTitle.toUpperCase() : '$sport $categoryTitle'.toUpperCase(),
+              style: GoogleFonts.instrumentSans(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.2,
+              ),
+            ),
+          ],
         ),
         centerTitle: true,
       ),

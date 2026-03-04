@@ -14,6 +14,7 @@ import '../../../data/models/sports/golf_game.dart';
 import '../../../data/models/sports/tennis_game.dart';
 import '../../../data/models/sports/rally_game.dart';
 import '../../../data/models/sports/football_game.dart';
+import '../../../data/assets/app_assets.dart';
 import '../widgets/home_top_bar.dart';
 import '../widgets/game_card.dart';
 import '../widgets/f1_race_card.dart';
@@ -225,23 +226,78 @@ class _HomeScreenState extends State<HomeScreen> {
         final sportDisplayGames = entry.value;
         final allSportGames = fullSportGames[sport]!;
 
-        IconData getSportIcon(String sport) {
-          switch (sport.toUpperCase()) {
-            case 'F1':
-              return SFIcons.sf_flag_2_crossed_fill;
-            case 'GOLF':
-              return SFIcons.sf_figure_golf;
-            case 'TENNIS':
-              return SFIcons.sf_tennisball_fill;
-            case 'NBA':
-              return SFIcons.sf_basketball_fill;
-            case 'RALLY':
-              return SFIcons.sf_car_fill;
-            case 'FOOTBALL':
-              return SFIcons.sf_sportscourt;
-            default:
-              return SFIcons.sf_sportscourt;
+        Widget buildSportIcon(String sport) {
+          final sportName = sport.toUpperCase();
+          
+          if (sportName == 'NBA') {
+            return Image.asset(
+              AppAssets.nba,
+              height: 18,
+              width: 18,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => const SFIcon(
+                SFIcons.sf_basketball_fill,
+                fontSize: 14,
+                color: Colors.white,
+              ),
+            );
           }
+          if (sportName == 'FOOTBALL') {
+            return Image.asset(
+              AppAssets.football,
+              height: 18,
+              width: 18,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => const SFIcon(
+                SFIcons.sf_sportscourt,
+                fontSize: 14,
+                color: Colors.white,
+              ),
+            );
+          }
+          if (sportName == 'F1') {
+            return Image.asset(
+              AppAssets.f1,
+              height: 12,
+              width: 18,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => const SFIcon(
+                SFIcons.sf_flag_2_crossed_fill,
+                fontSize: 14,
+                color: Colors.white,
+              ),
+            );
+          }
+          if (sportName == 'TENNIS') {
+            return Image.asset(
+              AppAssets.tennis,
+              height: 18,
+              width: 18,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => const SFIcon(
+                SFIcons.sf_tennisball_fill,
+                fontSize: 14,
+                color: Colors.white,
+              ),
+            );
+          }
+
+          IconData iconData;
+          switch (sportName) {
+            case 'GOLF':
+              iconData = SFIcons.sf_figure_golf;
+              break;
+            case 'RALLY':
+              iconData = SFIcons.sf_car_fill;
+              break;
+            default:
+              iconData = SFIcons.sf_sportscourt;
+          }
+          return SFIcon(
+            iconData,
+            fontSize: 14,
+            color: Colors.white,
+          );
         }
 
         return Column(
@@ -253,11 +309,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (allSportGames.isNotEmpty) {
                   final status = allSportGames.first.status;
                   if (status == 'Live') {
-                    category = "Live games";
+                    category = "Live";
                   } else if (status == 'Final') {
                     category = "Results";
                   } else {
-                    category = "Upcoming race";
+                    category = "Upcoming";
                   }
                 }
 
@@ -279,11 +335,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Row(
                       children: [
-                        SFIcon(
-                          getSportIcon(sport),
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
+                        buildSportIcon(sport),
                         const SizedBox(width: 8),
                         Text(
                           sport.toUpperCase(),
@@ -306,6 +358,37 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             ...sportDisplayGames.map((game) => _buildGameCard(game)),
+            if (allSportGames.length > sportDisplayGames.length && 
+                allSportGames.any((g) => g.isLive || g.status == 'Live'))
+              Align(
+                alignment: Alignment.centerLeft,
+                child: InkWell(
+                  onTap: () {
+                    String category = "Live";
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SportCategoryPage(
+                          sport: sport,
+                          categoryTitle: category,
+                          games: allSportGames,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      'Show ${allSportGames.length - sportDisplayGames.length} more',
+                      style: GoogleFonts.instrumentSans(
+                        color: const Color(0xFFFF6A1A),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             const SizedBox(height: 16),
           ],
         );

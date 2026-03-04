@@ -24,6 +24,7 @@ TennisGame _$TennisGameFromJson(Map<String, dynamic> json) => TennisGame(
   tournamentName: json['tournamentName'] as String?,
   round: json['round'] as String?,
   surface: json['surface'] as String?,
+  score: json['score'] as String?,
   player1SetScores: (json['player1SetScores'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
@@ -55,6 +56,7 @@ Map<String, dynamic> _$TennisGameToJson(TennisGame instance) =>
       'tournamentName': instance.tournamentName,
       'round': instance.round,
       'surface': instance.surface,
+      'score': instance.score,
       'player1SetScores': instance.player1SetScores,
       'player2SetScores': instance.player2SetScores,
       'player1CurrentPoints': instance.player1CurrentPoints,

@@ -67,46 +67,157 @@ class FootballCard extends StatelessWidget {
             onTap: () {},
             borderRadius: BorderRadius.circular(24),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: Column(
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Home Logo & Name & Score
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    SportMapper.getShortName(footGame?.homeTeamName),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.instrumentSans(
+                                      color: game.status == 'Final'
+                                          ? (homeIsWinner ? Colors.white : Colors.grey.shade600)
+                                          : Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  _buildTeamLogo(footGame?.homeTeamLogo, homeIsWinner),
+                                ],
+                              ),
+                              const SizedBox(width: 16),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 22),
+                                child: Text(
+                                  homeScoreValue,
+                                  style: TextStyle(
+                                    color: game.status == 'Final'
+                                        ? (homeIsWinner ? Colors.white : Colors.grey.shade700)
+                                        : Colors.white,
+                                    fontSize: 36,
+                                    fontWeight: game.status == 'Final' && homeIsWinner
+                                        ? FontWeight.w600
+                                        : FontWeight.w400,
+                                    fontFeatures: const [FontFeature.tabularFigures()],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      
+                      // Match Info Center
+                      Padding(
+                        padding: const EdgeInsets.only(top: 22, left: 12, right: 12),
+                        child: _buildMatchCenter(game),
+                      ),
+
+                      // Away Logo & Name & Score
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 22),
+                                child: Text(
+                                  awayScoreValue,
+                                  style: TextStyle(
+                                    color: game.status == 'Final'
+                                        ? (awayIsWinner ? Colors.white : Colors.grey.shade700)
+                                        : Colors.white,
+                                    fontSize: 36,
+                                    fontWeight: game.status == 'Final' && awayIsWinner
+                                        ? FontWeight.w600
+                                        : FontWeight.w400,
+                                    fontFeatures: const [FontFeature.tabularFigures()],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    SportMapper.getShortName(footGame?.awayTeamName),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.instrumentSans(
+                                      color: game.status == 'Final'
+                                          ? (awayIsWinner ? Colors.white : Colors.grey.shade600)
+                                          : Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  _buildTeamLogo(footGame?.awayTeamLogo, awayIsWinner),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    height: 1,
+                    width: double.infinity,
+                    color: Colors.white.withValues(alpha: 0.06),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 2,
-                            height: 12,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF3A66A7), // Premier League blue-ish color
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '${game.sport} ${game.leagueType ?? ''}'.toUpperCase().trim(),
-                            style: TextStyle(
-                              color: Colors.grey.shade400,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        (game.stadium ?? 'VENUE TBD').toUpperCase(),
+                        style: TextStyle(
+                          color: Colors.grey.shade500,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        ),
                       ),
                       if (game.isLive)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.1),
+                            color: game.statusType?.toUpperCase() == 'HALFTIME'
+                                ? const Color(0xFFFF6A1A).withValues(alpha: 0.1)
+                                : Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                            border: Border.all(
+                                color: game.statusType?.toUpperCase() == 'HALFTIME'
+                                    ? const Color(0xFFFF6A1A).withValues(alpha: 0.2)
+                                    : Colors.white.withValues(alpha: 0.2)),
                           ),
                           child: Text(
                             _getLiveStatusText(game).toUpperCase(),
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: game.statusType?.toUpperCase() == 'HALFTIME'
+                                  ? const Color(0xFFFF6A1A)
+                                  : Colors.white,
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 1,
@@ -132,6 +243,7 @@ class FootballCard extends StatelessWidget {
                         )
                       else
                         Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
                               DateFormat('EEE, MMM d').format(game.startTime.toLocal()).toUpperCase(),
@@ -165,97 +277,6 @@ class FootballCard extends StatelessWidget {
                         ),
                     ],
                   ),
-
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      _buildTeamLogo(footGame?.homeTeamLogo, homeIsWinner),
-                      const SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            SportMapper.getShortName(footGame?.homeTeamName),
-                            style: GoogleFonts.instrumentSans(
-                              color: game.status == 'Final' 
-                                ? (homeIsWinner ? Colors.white : Colors.grey.shade600)
-                                : Colors.white,
-                              fontSize: 16,
-                              fontWeight: game.status == 'Final' && homeIsWinner 
-                                ? FontWeight.w900 
-                                : FontWeight.w700,
-                            ),
-                          ),
-                          Text(
-                            homeScoreValue,
-                            style: TextStyle(
-                              color: game.status == 'Final' 
-                                ? (homeIsWinner ? Colors.white : Colors.grey.shade700)
-                                : Colors.white,
-                              fontSize: 36,
-                              fontWeight: game.status == 'Final' && homeIsWinner 
-                                ? FontWeight.w600 
-                                : FontWeight.w400,
-                              fontFeatures: const [FontFeature.tabularFigures()],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const Spacer(),
-                      
-                      _buildMatchCenter(game),
-
-                      const Spacer(),
-
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            SportMapper.getShortName(footGame?.awayTeamName),
-                            style: GoogleFonts.instrumentSans(
-                              color: game.status == 'Final' 
-                                ? (awayIsWinner ? Colors.white : Colors.grey.shade600)
-                                : Colors.white,
-                              fontSize: 16,
-                              fontWeight: game.status == 'Final' && awayIsWinner 
-                                ? FontWeight.w900 
-                                : FontWeight.w700,
-                            ),
-                          ),
-                          Text(
-                            awayScoreValue,
-                            style: TextStyle(
-                              color: game.status == 'Final' 
-                                ? (awayIsWinner ? Colors.white : Colors.grey.shade700)
-                                : Colors.white,
-                              fontSize: 36,
-                              fontWeight: game.status == 'Final' && awayIsWinner 
-                                ? FontWeight.w600 
-                                : FontWeight.w400,
-                              fontFeatures: const [FontFeature.tabularFigures()],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 16),
-                      _buildTeamLogo(footGame?.awayTeamLogo, awayIsWinner),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    height: 1,
-                    width: double.infinity,
-                    color: Colors.white.withValues(alpha: 0.06),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildFooterInfo(game.stadium ?? 'TBD'),
-                      _buildFooterInfo(game.broadcastChannel ?? 'Check Local'),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -265,43 +286,26 @@ class FootballCard extends StatelessWidget {
     );
   }
 
-  Widget _buildFooterInfo(String label) {
-    return Text(
-      label,
-      style: TextStyle(
-        color: Colors.grey.shade500,
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-      ),
-    );
-  }
-
   Widget _buildTeamLogo(String? logoUrl, bool isWinner) {
     return Container(
-      height: 54,
-      width: 54,
+      height: 50,
+      width: 50,
       padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
-        shape: BoxShape.circle,
-        border: isWinner ? Border.all(color: const Color(0xFFFF6A1A).withValues(alpha: 0.3), width: 1.5) : null,
-      ),
       child: logoUrl != null
-          ? ClipOval(
-              child: logoUrl.endsWith('.svg')
-                  ? SvgPicture.network(
-                      logoUrl,
-                      placeholderBuilder: (context) => const Center(child: SizedBox.shrink()),
-                    )
-                  : Image.network(
-                      logoUrl,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) => 
-                          const Center(
-                            child: SFIcon(SFIcons.sf_sportscourt, color: Colors.white24, fontSize: 30),
-                          ),
-                    ),
-            )
+          ? (logoUrl.endsWith('.svg')
+              ? SvgPicture.network(
+                  logoUrl,
+                  fit: BoxFit.contain,
+                  placeholderBuilder: (context) => const Center(child: SizedBox.shrink()),
+                )
+              : Image.network(
+                  logoUrl,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) => 
+                      const Center(
+                        child: SFIcon(SFIcons.sf_sportscourt, color: Colors.white24, fontSize: 30),
+                      ),
+                ))
           : const Center(
               child: SFIcon(SFIcons.sf_sportscourt, color: Colors.white24, fontSize: 30),
             ),
@@ -358,7 +362,7 @@ class FootballCard extends StatelessWidget {
 
   String _getLiveStatusText(Game game) {
     // Check for Halftime status
-    if (game.statusType?.toUpperCase() == 'HALFTIME') return 'Halftime';
+    if (game.statusType?.toUpperCase() == 'HALFTIME') return 'Half Time';
     
     // Check period
     if (game.period == 1) return 'First Half';

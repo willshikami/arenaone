@@ -23,6 +23,9 @@ BasketballGame _$BasketballGameFromJson(Map<String, dynamic> json) =>
       homeTeamLogo: json['homeTeamLogo'] as String?,
       awayTeamLogo: json['awayTeamLogo'] as String?,
       score: json['score'] as String?,
+      clock: json['clock'] as String?,
+      period: (json['period'] as num?)?.toInt(),
+      statusType: json['statusType'] as String?,
     );
 
 Map<String, dynamic> _$BasketballGameToJson(BasketballGame instance) =>
@@ -42,4 +45,7 @@ Map<String, dynamic> _$BasketballGameToJson(BasketballGame instance) =>
       'homeTeamLogo': instance.homeTeamLogo,
       'awayTeamLogo': instance.awayTeamLogo,
       'score': instance.score,
+      'clock': instance.clock,
+      'period': instance.period,
+      'statusType': instance.statusType,
     };

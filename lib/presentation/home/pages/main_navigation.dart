@@ -31,7 +31,6 @@ class MainNavigation extends StatelessWidget {
                 index: vm.currentTabIndex,
                 children: const [
                   HomeScreen(),
-                  PlaceholderScreen(title: 'Scores'),
                   FollowingPage(),
                   ProfilePage(),
                 ],
@@ -83,14 +82,9 @@ class MainNavigation extends StatelessWidget {
             unselectedFontSize: 11,
             items: const [
               BottomNavigationBarItem(
-                icon: SFIcon(SFIcons.sf_house, fontSize: 24),
-                activeIcon: SFIcon(SFIcons.sf_house_fill, fontSize: 24),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
                 icon: SFIcon(SFIcons.sf_sportscourt, fontSize: 24),
                 activeIcon: SFIcon(SFIcons.sf_sportscourt_fill, fontSize: 24),
-                label: 'Scores',
+                label: 'Home',
               ),
               BottomNavigationBarItem(
                 icon: SFIcon(SFIcons.sf_star, fontSize: 24),

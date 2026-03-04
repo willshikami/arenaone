@@ -11,7 +11,7 @@ class HomeTopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final now = DateTime.now();
     final dayName = DateFormat('EEEE').format(now);
-    final monthDate = DateFormat('d MMMM').format(now);
+    final monthDate = DateFormat('d MMMM').format(now).toUpperCase();
 
     return StoreConnector<AppState, _ViewModel>(
       vm: () => _Factory(this),
@@ -27,37 +27,14 @@ class HomeTopBar extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      'TODAY',
-                      style: GoogleFonts.instrumentSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w900,
-                        color: const Color(0xFFFF6A1A),
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 3,
-                      height: 3,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.5),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      dayName.toUpperCase(),
-                      style: GoogleFonts.instrumentSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white.withValues(alpha: 0.5),
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                  ],
+                Text(
+                  dayName.toUpperCase(),
+                  style: GoogleFonts.instrumentSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w900,
+                    color: const Color(0xFFFF6A1A),
+                    letterSpacing: 1.5,
+                  ),
                 ),
                 Text(
                   monthDate,
