@@ -6,12 +6,14 @@ class LiveClockText extends StatefulWidget {
   final String? initialClock;
   final TextStyle style;
   final bool isLive;
+  final bool isCountdown;
 
   const LiveClockText({
     super.key,
     required this.initialClock,
     required this.style,
     this.isLive = true,
+    this.isCountdown = true,
   });
 
   @override
@@ -21,7 +23,6 @@ class LiveClockText extends StatefulWidget {
 class _LiveClockTextState extends State<LiveClockText> {
   Timer? _timer;
   late int _currentSeconds;
-  bool _isCountdown = true;
 
   @override
   void initState() {
@@ -41,6 +42,15 @@ class _LiveClockTextState extends State<LiveClockText> {
     _timer?.cancel();
     if (widget.initialClock == null || !widget.isLive) {
       _currentSeconds = 0;
+      return;
+    }
+
+    // Handle Football format (e.g., "45'")
+    if (widget.initialClock!.contains("'")) {
+      final val = widget.initialClock!.replaceAll("'", "");
+      final minutes = int.tryParse(val) ?? 0;
+      _currentSeconds = minutes * 60;
+      _startTimer();
       return;
     }
 
@@ -66,15 +76,19 @@ class _LiveClockTextState extends State<LiveClockText> {
         return;
       }
       setState(() {
-        if (_currentSeconds > 0) {
-          _currentSeconds--;
+        if (widget.isCountdown) {
+          if (_currentSeconds > 0) {
+            _currentSeconds--;
+          } else {
+            timer.cancel();
+          }
         } else {
-          timer.cancel();
+          // Count UP for football
+          _currentSeconds++;
         }
       });
     });
   }
-
   @override
   void dispose() {
     _timer?.cancel();
@@ -84,6 +98,25 @@ class _LiveClockTextState extends State<LiveClockText> {
   String _formatDuration(int totalSeconds) {
     final minutes = totalSeconds ~/ 60;
     final seconds = totalSeconds % 60;
+
+    // Handle Stoppage Time for Football (Count Up)
+    if (!widget.isCountdown) {
+      // First Half Stoppage (45+)
+      if (minutes >= 45 && minutes < 90) {
+        final extraSeconds = totalSeconds - (45 * 60);
+        final extraMins = extraSeconds ~/ 60;
+        final extraSecs = extraSeconds % 60;
+        return "45 +$extraMins:${extraSecs.toString().padLeft(2, '0')}";
+      }
+      // Second Half Stoppage (90+)
+      if (minutes >= 90) {
+        final extraSeconds = totalSeconds - (90 * 60);
+        final extraMins = extraSeconds ~/ 60;
+        final extraSecs = extraSeconds % 60;
+        return "90 +$extraMins:${extraSecs.toString().padLeft(2, '0')}";
+      }
+    }
+
     return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
