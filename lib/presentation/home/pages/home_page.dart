@@ -358,6 +358,37 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             ...sportDisplayGames.map((game) => _buildGameCard(game)),
+            if (allSportGames.length > sportDisplayGames.length && 
+                allSportGames.any((g) => g.isLive || g.status == 'Live'))
+              Align(
+                alignment: Alignment.centerLeft,
+                child: InkWell(
+                  onTap: () {
+                    String category = "Live";
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SportCategoryPage(
+                          sport: sport,
+                          categoryTitle: category,
+                          games: allSportGames,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      'Show ${allSportGames.length - sportDisplayGames.length} more',
+                      style: GoogleFonts.instrumentSans(
+                        color: const Color(0xFFFF6A1A),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             const SizedBox(height: 16),
           ],
         );

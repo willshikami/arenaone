@@ -3,12 +3,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'dart:ui';
 import '../../../data/models/game.dart';
 import '../../../data/models/sports/basketball_game.dart';
 import '../../../data/models/sports/football_game.dart';
 import '../../../data/models/sports/golf_game.dart';
 import '../../../data/services/mappers/sport_mapper.dart';
 import '../../widgets/score_flip_text.dart';
+import '../../widgets/live_clock_text.dart';
 
 class GameCard extends StatelessWidget {
   final Game game;
@@ -156,10 +158,7 @@ class GameCard extends StatelessWidget {
                       ),
                       
                       // Match Info Center
-                      Padding(
-                        padding: const EdgeInsets.only(top: 22, left: 12, right: 12),
-                        child: _buildMatchCenter(game),
-                      ),
+                      _buildMatchCenter(game),
 
                       // Away Stats & Score
                       Expanded(
@@ -235,25 +234,29 @@ class GameCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.red.withValues(alpha: 0.1),
+                            color: (game.status.toUpperCase().contains('HALF') || 
+                                    game.status.toUpperCase().contains('HALFTIME'))
+                                ? const Color(0xFFFF6B00).withValues(alpha: 0.1)
+                                : Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
+                            border: Border.all(
+                              color: (game.status.toUpperCase().contains('HALF') || 
+                                      game.status.toUpperCase().contains('HALFTIME'))
+                                  ? const Color(0xFFFF6B00).withValues(alpha: 0.2)
+                                  : Colors.white.withValues(alpha: 0.15),
+                            ),
                           ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.circle, color: Colors.red, size: 8),
-                              SizedBox(width: 6),
-                              Text(
-                                'LIVE',
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                            ],
+                          child: Text(
+                            _getPeriodText(game),
+                            style: TextStyle(
+                              color: (game.status.toUpperCase().contains('HALF') || 
+                                      game.status.toUpperCase().contains('HALFTIME'))
+                                  ? const Color(0xFFFF6600)
+                                  : Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1,
+                            ),
                           ),
                         )
                       else if (game.status == 'Final')
@@ -405,27 +408,92 @@ class GameCard extends StatelessWidget {
   }
 
   Widget _buildMatchCenter(Game game) {
-    String centerText = 'VS';
-    Color textColor = Colors.white;
-
     if (game.isLive) {
-      centerText = 'LIVE'; // Use generic LIVE instead of hardcoded clock
-    } else if (game.status == 'Final') {
-      centerText = 'VS';
-      textColor = Colors.grey.shade500;
-    } else {
-      centerText = 'VS';
-      textColor = Colors.grey.shade500;
+      final isHalftime = game.statusType == 'STATUS_HALFTIME' || 
+                         game.status.toUpperCase().contains('HALFTIME') ||
+                         game.status.toUpperCase().contains('HALF TIME');
+
+      return Padding(
+        padding: const EdgeInsets.only(top: 22, left: 12, right: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (isHalftime)
+              Text(
+                'HALFTIME',
+                style: GoogleFonts.instrumentSans(
+                  color: const Color(0xFFFF6600),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 1,
+                ),
+              )
+            else ...[
+              LiveClockText(
+                initialClock: game.clock,
+                isLive: game.isLive,
+                style: GoogleFonts.instrumentSans(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 2),
+              const Text(
+                'LIVE',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1,
+                ),
+              ),
+            ],
+          ],
+        ),
+      );
     }
 
-    return Text(
-      centerText,
-      style: GoogleFonts.instrumentSans(
-        color: textColor,
-        fontSize: 20,
-        fontWeight: FontWeight.w400,
+    Color textColor = game.status == 'Final' ? Colors.grey.shade500 : Colors.grey.shade500;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 22, left: 12, right: 12),
+      child: Text(
+        'VS',
+        style: GoogleFonts.instrumentSans(
+          color: textColor,
+          fontSize: 20,
+          fontWeight: FontWeight.w400,
+        ),
       ),
     );
+  }
+
+  String _getPeriodText(Game game) {
+    if (game.status.toUpperCase().contains('HALF') || game.status.toUpperCase().contains('HALFTIME')) {
+      return 'HALF';
+    }
+
+    switch (game.period) {
+      case 1:
+        return '1ST QTR';
+      case 2:
+        return '2ND QTR';
+      case 3:
+        return '3RD QTR';
+      case 4:
+        return '4TH QTR';
+      default:
+        // Fallback to existing logic if period isn't 1-4
+        return game.status.toUpperCase()
+            .replaceAll('1ST QUARTER', '1ST')
+            .replaceAll('2ND QUARTER', '2ND')
+            .replaceAll('3RD QUARTER', '3RD')
+            .replaceAll('4TH QUARTER', '4TH')
+            .replaceAll('HALFTIME', 'HALF')
+            .replaceAll('QUARTER', 'QTR')
+            .replaceAll(' QTR', ' QTR');
+    }
   }
 }
 

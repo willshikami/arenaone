@@ -38,6 +38,21 @@ F1Game _$F1GameFromJson(Map<String, dynamic> json) => F1Game(
   winnerTotalPoints: json['winnerTotalPoints'] as String?,
   p2TotalPoints: json['p2TotalPoints'] as String?,
   p3TotalPoints: json['p3TotalPoints'] as String?,
+  practice1Time: json['practice1Time'] == null
+      ? null
+      : DateTime.parse(json['practice1Time'] as String),
+  practice2Time: json['practice2Time'] == null
+      ? null
+      : DateTime.parse(json['practice2Time'] as String),
+  practice3Time: json['practice3Time'] == null
+      ? null
+      : DateTime.parse(json['practice3Time'] as String),
+  qualifyingTime: json['qualifyingTime'] == null
+      ? null
+      : DateTime.parse(json['qualifyingTime'] as String),
+  sprintTime: json['sprintTime'] == null
+      ? null
+      : DateTime.parse(json['sprintTime'] as String),
 );
 
 Map<String, dynamic> _$F1GameToJson(F1Game instance) => <String, dynamic>{
@@ -72,4 +87,9 @@ Map<String, dynamic> _$F1GameToJson(F1Game instance) => <String, dynamic>{
   'winnerTotalPoints': instance.winnerTotalPoints,
   'p2TotalPoints': instance.p2TotalPoints,
   'p3TotalPoints': instance.p3TotalPoints,
+  'practice1Time': instance.practice1Time?.toIso8601String(),
+  'practice2Time': instance.practice2Time?.toIso8601String(),
+  'practice3Time': instance.practice3Time?.toIso8601String(),
+  'qualifyingTime': instance.qualifyingTime?.toIso8601String(),
+  'sprintTime': instance.sprintTime?.toIso8601String(),
 };
