@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../../data/models/game.dart';
 import '../../../data/models/sports/football_game.dart';
 import '../../../data/services/mappers/sport_mapper.dart';
+import '../../widgets/live_clock_text.dart';
 
 class FootballCard extends StatelessWidget {
   final Game game;
@@ -313,45 +314,54 @@ class FootballCard extends StatelessWidget {
   }
 
   Widget _buildMatchCenter(Game game) {
-    String centerText = 'VS';
-    Color textColor = Colors.white;
-
     if (game.isLive) {
-      centerText = game.clock ?? "0'";
-    } else if (game.status == 'Final') {
-      textColor = Colors.grey.shade500;
-    } else {
-      textColor = Colors.grey.shade500;
-    }
+      final isHalftime = game.statusType?.toUpperCase() == 'HALFTIME' ||
+          game.status.toUpperCase().contains('HALFTIME') ||
+          game.status.toUpperCase().contains('HALF TIME');
 
-    if (game.isLive) {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            centerText,
-            style: GoogleFonts.instrumentSans(
-              color: textColor,
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
+          if (isHalftime)
+            Text(
+              'HALFTIME',
+              style: GoogleFonts.instrumentSans(
+                color: const Color(0xFFFF6600),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 1,
+              ),
+            )
+          else ...[
+            LiveClockText(
+              initialClock: game.clock,
+              isLive: game.isLive,
+              isCountdown: false, // Football clocks count UP
+              style: GoogleFonts.instrumentSans(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'LIVE',
-            style: GoogleFonts.instrumentSans(
-              color: Colors.red,
-              fontSize: 10,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.2,
+            const SizedBox(height: 2),
+            const Text(
+              'LIVE',
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1,
+              ),
             ),
-          ),
+          ],
         ],
       );
     }
 
+    Color textColor = game.status == 'Final' ? Colors.grey.shade500 : Colors.white;
+
     return Text(
-      centerText,
+      'VS',
       style: GoogleFonts.instrumentSans(
         color: textColor,
         fontSize: 18,
