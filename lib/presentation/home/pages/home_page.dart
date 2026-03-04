@@ -82,27 +82,37 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               children: [
                 const HomeTopBar(),
-                TabBar(
-                  dividerColor: Colors.transparent,
-                  indicatorColor: const Color(
-                    0xFFFF6A1A,
-                  ), // Modern bold orange indicator
-                  indicatorWeight: 3,
-                  labelColor: Colors.white,
-                  unselectedLabelColor: Colors.grey,
-                  labelStyle: GoogleFonts.instrumentSans(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.04),
+                        width: 1,
+                      ),
+                    ),
                   ),
-                  unselectedLabelStyle: GoogleFonts.instrumentSans(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
+                  child: TabBar(
+                    dividerColor: Colors.transparent,
+                    indicatorColor: const Color(
+                      0xFFFF6A1A,
+                    ), // Modern bold orange indicator
+                    indicatorWeight: 3,
+                    labelColor: Colors.white,
+                    unselectedLabelColor: Colors.grey,
+                    labelStyle: GoogleFonts.instrumentSans(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                    unselectedLabelStyle: GoogleFonts.instrumentSans(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                    tabs: const [
+                      Tab(text: 'Upcoming'),
+                      Tab(text: 'Live'),
+                      Tab(text: 'Results'),
+                    ],
                   ),
-                  tabs: const [
-                    Tab(text: 'Upcoming'),
-                    Tab(text: 'Live'),
-                    Tab(text: 'Results'),
-                  ],
                 ),
                 Expanded(
                   child: RefreshIndicator(
