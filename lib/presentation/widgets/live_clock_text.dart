@@ -49,6 +49,7 @@ class _LiveClockTextState extends State<LiveClockText> {
     if (widget.initialClock!.contains("'")) {
       final val = widget.initialClock!.replaceAll("'", "");
       final minutes = int.tryParse(val) ?? 0;
+      // Initialize with exactly these minutes and 0 seconds
       _currentSeconds = minutes * 60;
       _startTimer();
       return;
