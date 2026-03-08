@@ -51,67 +51,90 @@ class F1Mapper extends SportMapper {
       // Map driver names to their respective F1 teams for 2026 season
       String teamName = 'TBD';
       String driverImage = pLogo; // Default from API
+      int wins = 0;
+      int podiums = 0;
+      int totalRaces = 0;
 
       if (pName.contains('Verstappen')) {
         teamName = 'Red Bull Racing';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/M/MAXVER01_Max_Verstappen/maxver01.png';
+        wins = 61; podiums = 107; totalRaces = 206;
       } else if (pName.contains('Hadjar')) {
         teamName = 'Red Bull Racing';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/I/ISAHAD01_Isack_Hadjar/isahad01.png';
+        wins = 0; podiums = 0; totalRaces = 0;
       } else if (pName.contains('Russell')) {
         teamName = 'Mercedes';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/G/GEORUS01_George_Russell/georus01.png';
+        wins = 2; podiums = 14; totalRaces = 125;
       } else if (pName.contains('Antonelli')) {
         teamName = 'Mercedes';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/K/KIMANT01_Kimi_Antonelli/kimant01.png';
+        wins = 0; podiums = 0; totalRaces = 0;
       } else if (pName.contains('Leclerc')) {
         teamName = 'Ferrari';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/C/CHALEC01_Charles_Leclerc/chalec01.png';
+        wins = 7; podiums = 39; totalRaces = 144;
       } else if (pName.contains('Hamilton')) {
         teamName = 'Ferrari';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LEWHAM01_Lewis_Hamilton/lewham01.png';
+        wins = 105; podiums = 201; totalRaces = 353;
       } else if (pName.contains('Norris')) {
         teamName = 'McLaren';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LANNOR01_Lando_Norris/lannor01.png';
+        wins = 3; podiums = 25; totalRaces = 125;
       } else if (pName.contains('Piastri')) {
         teamName = 'McLaren';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/O/OSCPIA01_Oscar_Piastri/oscpia01.png';
+        wins = 2; podiums = 9; totalRaces = 43;
       } else if (pName.contains('Alonso')) {
         teamName = 'Aston Martin';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/F/FERALO01_Fernando_Alonso/feralo01.png';
+        wins = 32; podiums = 106; totalRaces = 398;
       } else if (pName.contains('Stroll')) {
         teamName = 'Aston Martin';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/LANSTR01_Lance_Stroll/lanstr01.png';
+        wins = 0; podiums = 3; totalRaces = 163;
       } else if (pName.contains('Sainz')) {
         teamName = 'Williams';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/C/CARSAI01_Carlos_Sainz/carsai01.png';
+        wins = 4; podiums = 25; totalRaces = 203;
       } else if (pName.contains('Albon')) {
         teamName = 'Williams';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/A/ALEALB01_Alexander_Albon/alealb01.png';
+        wins = 0; podiums = 2; totalRaces = 101;
       } else if (pName.contains('Ocon')) {
         teamName = 'Haas';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/E/ESTOCO01_Esteban_Ocon/estoco01.png';
+        wins = 1; podiums = 4; totalRaces = 154;
       } else if (pName.contains('Bearman')) {
         teamName = 'Haas';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/O/OLIBEA01_Oliver_Bearman/olibea01.png';
+        wins = 0; podiums = 0; totalRaces = 3;
       } else if (pName.contains('Gasly')) {
         teamName = 'Alpine';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/P/PIEGAS01_Pierre_Gasly/piegas01.png';
+        wins = 1; podiums = 5; totalRaces = 150;
       } else if (pName.contains('Doohan')) {
         teamName = 'Alpine';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/J/JACDOO01_Jack_Doohan/jacdoo01.png';
+        wins = 0; podiums = 0; totalRaces = 0;
       } else if (pName.contains('Tsunoda')) {
         teamName = 'RB';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/Y/YUKTSU01_Yuki_Tsunoda/yuktsu01.png';
+        wins = 0; podiums = 0; totalRaces = 87;
       } else if (pName.contains('Lawson')) {
         teamName = 'RB';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LIALAW01_Liam_Lawson/lialaw01.png';
+        wins = 0; podiums = 0; totalRaces = 11;
       } else if (pName.contains('Hülkenberg')) {
         teamName = 'Kick Sauber';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/N/NICHUL01_Nico_Hulkenberg/nichul01.png';
+        wins = 0; podiums = 0; totalRaces = 224;
       } else if (pName.contains('Bortoleto')) {
         teamName = 'Kick Sauber';
         driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/G/GABBOR01_Gabriel_Bortoleto/gabbor01.png';
+        wins = 0; podiums = 0; totalRaces = 0;
       }
 
       return F1Driver(
@@ -121,6 +144,9 @@ class F1Mapper extends SportMapper {
         image: driverImage,
         points: p['score']?.toString() ?? '0',
         gap: p['record']?.toString(), // Sometimes gap is in record
+        wins: wins,
+        podiums: podiums,
+        totalRaces: totalRaces,
       );
     }).toList();
 

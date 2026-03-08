@@ -138,21 +138,32 @@ class GoffPlayerDetailsSheet extends StatelessWidget {
                     _buildStatItem('ROUND', player.currentRound ?? round ?? '-'),
                   ],
                 ),
-                if (player.totalPoints != null || player.careerPoints != null) ...[
+                if (player.totalPoints != null || player.careerPoints != null || player.totalWins != null || player.championships != null) ...[
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
                     child: Divider(color: Colors.white10, height: 1),
                   ),
                   Row(
                     children: [
-                      if (player.totalPoints != null)
-                        _buildStatItem('TOTAL POINTS', player.totalPoints!),
-                      if (player.careerPoints != null)
-                        _buildStatItem('CAREER POINTS', player.careerPoints!),
+                      if (player.totalWins != null)
+                        _buildStatItem('TOTAL WINS', player.totalWins!.toString(), color: const Color(0xFFFFD700)),
+                      if (player.championships != null)
+                        _buildStatItem('MAJORS', player.championships!.toString(), color: Colors.green),
                       if (player.purse != null)
                         _buildStatItem('EARNINGS', player.purse!),
                     ],
                   ),
+                  if (player.totalPoints != null || player.careerPoints != null) ...[
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        if (player.totalPoints != null)
+                          _buildStatItem('TOTAL POINTS', player.totalPoints!),
+                        if (player.careerPoints != null)
+                          _buildStatItem('CAREER POINTS', player.careerPoints!),
+                      ],
+                    ),
+                  ],
                 ],
               ],
             ),

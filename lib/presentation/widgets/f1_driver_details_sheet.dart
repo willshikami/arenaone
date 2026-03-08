@@ -11,6 +11,9 @@ class F1DriverDetailsSheet extends StatelessWidget {
   final String? gap;
   final String? totalPoints;
   final String? sessionType;
+  final int? wins;
+  final int? podiums;
+  final int? totalRaces;
 
   const F1DriverDetailsSheet({
     super.key,
@@ -22,6 +25,9 @@ class F1DriverDetailsSheet extends StatelessWidget {
     this.gap,
     this.totalPoints,
     this.sessionType,
+    this.wins,
+    this.podiums,
+    this.totalRaces,
   });
 
   static void show(
@@ -34,6 +40,9 @@ class F1DriverDetailsSheet extends StatelessWidget {
     String? gap,
     String? totalPoints,
     String? sessionType,
+    int? wins,
+    int? podiums,
+    int? totalRaces,
   }) {
     showModalBottomSheet(
       context: context,
@@ -48,6 +57,9 @@ class F1DriverDetailsSheet extends StatelessWidget {
         gap: gap,
         totalPoints: totalPoints,
         sessionType: sessionType,
+        wins: wins,
+        podiums: podiums,
+        totalRaces: totalRaces,
       ),
     );
   }
@@ -167,6 +179,22 @@ class F1DriverDetailsSheet extends StatelessWidget {
                       _buildStatItem('SEASON PTS', totalPoints!),
                   ],
                 ),
+                if (wins != null || podiums != null || totalRaces != null) ...[
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Divider(color: Colors.white10, height: 1),
+                  ),
+                  Row(
+                    children: [
+                      if (wins != null)
+                        _buildStatItem('WINS', wins.toString(), color: const Color(0xFFFFD700)),
+                      if (podiums != null)
+                        _buildStatItem('PODIUMS', podiums.toString()),
+                      if (totalRaces != null)
+                        _buildStatItem('RACES', totalRaces.toString()),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),

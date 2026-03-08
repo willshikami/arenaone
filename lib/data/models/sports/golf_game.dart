@@ -76,6 +76,8 @@ class GolfLeader {
   final String? careerPoints;
   final String? totalPoints;
   final String? purse;
+  final int? totalWins;
+  final int? championships;
 
   GolfLeader({
     required this.position,
@@ -88,6 +90,8 @@ class GolfLeader {
     this.careerPoints,
     this.totalPoints,
     this.purse,
+    this.totalWins,
+    this.championships,
   });
 
   factory GolfLeader.fromJson(Map<String, dynamic> json) => _$GolfLeaderFromJson(json);

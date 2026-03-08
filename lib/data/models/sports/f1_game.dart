@@ -10,6 +10,9 @@ class F1Driver {
   final String image;
   final String points;
   final String? gap;
+  final int? wins;
+  final int? podiums;
+  final int? totalRaces;
 
   F1Driver({
     required this.position,
@@ -18,6 +21,9 @@ class F1Driver {
     required this.image,
     required this.points,
     this.gap,
+    this.wins,
+    this.podiums,
+    this.totalRaces,
   });
 }
 
