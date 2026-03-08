@@ -22,7 +22,25 @@ class SupabaseService {
   }
 
   Future<List<Game>> fetchF1Games() async {
-    return _fetchGamesBySlug('f1', F1Mapper());
+    final games = await _fetchGamesBySlug('f1', F1Mapper());
+    
+    // Group games by their base name (e.g., "Australian Grand Prix")
+    // and only keep the one with the latest start time or most advanced session.
+    final groupedGames = <String, Game>{};
+    for (var game in games) {
+      final baseName = game.stadium ?? game.id;
+      if (!groupedGames.containsKey(baseName)) {
+        groupedGames[baseName] = game;
+      } else {
+        // If we find another session for the same GP, pick the one with the later start time
+        // (usually Race > Qualifying > Practice)
+        if (game.startTime.isAfter(groupedGames[baseName]!.startTime)) {
+          groupedGames[baseName] = game;
+        }
+      }
+    }
+    
+    return groupedGames.values.toList();
   }
 
   Future<List<Game>> fetchGolfGames() async {

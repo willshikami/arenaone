@@ -108,7 +108,18 @@ class _Factory extends VmFactory<AppState, HomeTopBar, _ViewModel> {
 
   @override
   _ViewModel fromStore() {
-    final liveGames = state.games.where((g) => g.isLive || g.status == 'Live').length;
+    final liveGames = state.games.where((g) {
+      final isLive = g.isLive || g.status == 'Live';
+      if (!isLive) return false;
+
+      // Filter by followed sports if the user has selected any preferred sports
+      if (state.selectedSports.isNotEmpty) {
+        return state.selectedSports.contains(g.sport);
+      }
+      
+      return true;
+    }).length;
+
     return _ViewModel(liveCount: liveGames);
   }
 }

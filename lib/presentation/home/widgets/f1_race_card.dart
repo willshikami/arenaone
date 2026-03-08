@@ -16,6 +16,7 @@ class F1UpcomingCard extends StatelessWidget {
   final DateTime? practice3Time;
   final DateTime? qualifyingTime;
   final DateTime? sprintTime;
+  final String? sessionType;
 
   const F1UpcomingCard({
     super.key,
@@ -31,6 +32,7 @@ class F1UpcomingCard extends StatelessWidget {
     this.practice3Time,
     this.qualifyingTime,
     this.sprintTime,
+    this.sessionType,
   });
 
   Widget _buildSessionRow(String session, DateTime time) {
@@ -204,9 +206,13 @@ class F1UpcomingCard extends StatelessWidget {
                               ],
                             ),
                             const SizedBox(height: 24),
-                            _buildSessionRow('PRACTICE 1 & 2', _getFriday(raceDate)),
-                            _buildSessionRow('PRACTICE 3 & QUALIFYING', _getSaturday(raceDate)),
-                            _buildSessionRow('RACE DAY', _getSunday(raceDate)),
+                            if (sessionType == 'qualifying') ...[
+                              _buildQualifyingHeader(),
+                              const SizedBox(height: 12),
+                            ],
+                            _buildSessionRow('PRACTICE 1 & 2', practice1Time ?? _getFriday(raceDate)),
+                            _buildSessionRow('PRACTICE 3 & QUALIFYING', qualifyingTime ?? _getSaturday(raceDate)),
+                            _buildSessionRow('RACE DAY', raceDate),
                           ],
                         ),
                       ),
@@ -221,6 +227,33 @@ class F1UpcomingCard extends StatelessWidget {
     );
   }
 
+  Widget _buildQualifyingHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2D7DFF).withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFF2D7DFF).withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.timer_outlined, color: Color(0xFF2D7DFF), size: 14),
+          const SizedBox(width: 6),
+          Text(
+            'QUALIFYING SESSION',
+            style: GoogleFonts.instrumentSans(
+              color: const Color(0xFF2D7DFF),
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   DateTime _getFriday(DateTime date) {
     return date.add(Duration(days: 5 - date.weekday));
   }
@@ -228,13 +261,10 @@ class F1UpcomingCard extends StatelessWidget {
   DateTime _getSaturday(DateTime date) {
     return date.add(Duration(days: 6 - date.weekday));
   }
-
-  DateTime _getSunday(DateTime date) {
-    return date.add(Duration(days: 7 - date.weekday));
-  }
 }
 
 class F1CompletedCard extends StatelessWidget {
+  final String? sessionType;
   final String raceName;
   final DateTime raceDate;
   final int raceNumber;
@@ -260,6 +290,7 @@ class F1CompletedCard extends StatelessWidget {
 
   const F1CompletedCard({
     super.key,
+    this.sessionType,
     required this.raceName,
     required this.raceDate,
     required this.raceNumber,
@@ -366,13 +397,17 @@ class F1CompletedCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF34C759).withValues(alpha: 0.15),
+                          color: (sessionType == 'qualifying') 
+                            ? const Color(0xFF2D7DFF).withValues(alpha: 0.15)
+                            : const Color(0xFF34C759).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        child: const Text(
-                          'FINAL',
+                        child: Text(
+                          (sessionType == 'qualifying') ? 'QUALIFYING' : 'FINAL',
                           style: TextStyle(
-                            color: Color(0xFF34C759),
+                            color: (sessionType == 'qualifying') 
+                              ? const Color(0xFF2D7DFF) 
+                              : const Color(0xFF34C759),
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
                           ),
@@ -421,10 +456,10 @@ class F1CompletedCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'WINNER',
+                Text(
+                  (sessionType == 'qualifying') ? 'LEADER' : 'WINNER',
                   style: TextStyle(
-                    color: Color(0xFFFFD100),
+                    color: (sessionType == 'qualifying') ? const Color(0xFF2D7DFF) : const Color(0xFFFFD100),
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -620,6 +655,7 @@ class F1CompletedCard extends StatelessWidget {
 }
 
 class F1LiveCard extends StatelessWidget {
+  final String? sessionType;
   final String raceName;
   final int raceNumber;
   final String? circuitImage;
@@ -631,13 +667,21 @@ class F1LiveCard extends StatelessWidget {
   final String? p2Team;
   final String? p2Image;
   final String? p2Gap;
+  final String? p2Points;
   final String? p3Name;
   final String? p3Team;
   final String? p3Image;
   final String? p3Gap;
+  final String? p3Points;
+  final String? p4Name;
+  final String? p4Team;
+  final String? p4Image;
+  final String? p4Gap;
+  final String? p4Points;
 
   const F1LiveCard({
     super.key,
+    this.sessionType,
     required this.raceName,
     required this.raceNumber,
     this.circuitImage,
@@ -649,10 +693,17 @@ class F1LiveCard extends StatelessWidget {
     this.p2Team,
     this.p2Image,
     this.p2Gap,
+    this.p2Points,
     this.p3Name,
     this.p3Team,
     this.p3Image,
     this.p3Gap,
+    this.p3Points,
+    this.p4Name,
+    this.p4Team,
+    this.p4Image,
+    this.p4Gap,
+    this.p4Points,
   });
 
   @override
@@ -734,17 +785,23 @@ class F1LiveCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.red.withValues(alpha: 0.1),
+                      color: (sessionType == 'qualifying') 
+                        ? const Color(0xFF2D7DFF).withValues(alpha: 0.1)
+                        : Colors.red.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.circle, color: Colors.red, size: 8),
-                        SizedBox(width: 6),
+                        Icon(
+                          Icons.circle, 
+                          color: (sessionType == 'qualifying') ? const Color(0xFF2D7DFF) : Colors.red, 
+                          size: 8
+                        ),
+                        const SizedBox(width: 6),
                         Text(
-                          'LIVE',
+                          (sessionType == 'qualifying') ? 'QUALIFYING' : 'LIVE',
                           style: TextStyle(
-                            color: Colors.red,
+                            color: (sessionType == 'qualifying') ? const Color(0xFF2D7DFF) : Colors.red,
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                           ),
@@ -757,9 +814,11 @@ class F1LiveCard extends StatelessWidget {
             ),
             _buildLeaderSection(),
             if (p2Name != null)
-              _buildDriverRow(2, p2Name!, p2Team!, p2Image!, p2Gap ?? '---'),
+              _buildDriverRow(2, p2Name!, p2Team!, p2Image!, p2Gap ?? (p2Points != null ? '$p2Points PTS' : '---')),
             if (p3Name != null)
-              _buildDriverRow(3, p3Name!, p3Team!, p3Image!, p3Gap ?? '---'),
+              _buildDriverRow(3, p3Name!, p3Team!, p3Image!, p3Gap ?? (p3Points != null ? '$p3Points PTS' : '---')),
+            if (p4Name != null)
+              _buildDriverRow(4, p4Name!, p4Team!, p4Image!, p4Gap ?? (p4Points != null ? '$p4Points PTS' : '---')),
             const SizedBox(height: 8),
           ],
         ),
@@ -784,10 +843,10 @@ class F1LiveCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'LEADER',
+                Text(
+                  (sessionType == 'qualifying') ? 'LEADER' : 'LEADER',
                   style: TextStyle(
-                    color: Colors.red,
+                    color: (sessionType == 'qualifying') ? const Color(0xFF2D7DFF) : Colors.red,
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -932,9 +991,9 @@ class F1LiveCard extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const Text(
-                'GAP',
-                style: TextStyle(
+              Text(
+                gap.contains('PTS') ? 'POINTS' : 'GAP',
+                style: const TextStyle(
                   color: Colors.grey,
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
