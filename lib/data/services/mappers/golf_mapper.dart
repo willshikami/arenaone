@@ -40,13 +40,97 @@ class GolfMapper extends SportMapper {
         }
       }
 
+      final pName = pInfo?['name'] ?? 'Unknown';
+      
+      // Map golfer names to their respective Headshots
+      String playerImage = pInfo?['logo'] ?? '';
+      if (pName.contains('Scheffler')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_46046';
+      } else if (pName.contains('McIlroy')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_28237';
+      } else if (pName.contains('Rahm')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_46970';
+      } else if (pName.contains('Hovland')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_46717';
+      } else if (pName.contains('Åberg')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_52955';
+      } else if (pName.contains('Clark') && (pName.contains('Wyndham') || pName.contains('W.'))) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_51506';
+      } else if (pName.contains('Schauffele')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_48041';
+      } else if (pName.contains('Cantlay')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_35450';
+      } else if (pName.contains('Homa')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_35549';
+      } else if (pName.contains('Fitzpatrick')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_40098';
+      } else if (pName.contains('Harman')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_32139';
+      } else if (pName.contains('Fleetwood')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_34360';
+      } else if (pName.contains('Hatton')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_34099';
+      } else if (pName.contains('Bradley')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_33141';
+      } else if (pName.contains('Morikawa')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_50525';
+      } else if (pName.contains('Day') && pName.contains('Jason')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_28089';
+      } else if (pName.contains('Theegala')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_51634';
+      } else if (pName.contains('Spieth')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_34046';
+      } else if (pName.contains('Thomas') && pName.contains('Justin')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_33448';
+      } else if (pName.contains('Fowler')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_32102';
+      } else if (pName.contains('Matsuyama')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_32839';
+      } else if (pName.contains('Lowry')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_33204';
+      } else if (pName.contains('Burns') && pName.contains('Sam')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_47506';
+      } else if (pName.contains('Kim') && (pName.contains('Tom') || pName.contains('Joo-hyung'))) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_55182';
+      } else if (pName.contains('Finau')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_29725';
+      } else if (pName.contains('Koepka')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_35451';
+      } else if (pName.contains('DeChambeau')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_47959';
+      } else if (pName.contains('Smith') && pName.contains('Cameron')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_35891';
+      } else if (pName.contains('Johnson') && pName.contains('Dustin')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_33067';
+      } else if (pName.contains('Mickelson')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_01810';
+      } else if (pName.contains('Bhatia')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_56630';
+      } else if (pName.contains('Gotterup')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_59095';
+      } else if (pName.contains('Young') && pName.contains('Cameron')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_57366';
+      } else if (pName.contains('Straka')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_49960';
+      } else if (pName.contains('Berger')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_40026';
+      } else if (pName.contains('Henley')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_34098';
+      } else if (pName.contains('Hall') && pName.contains('Harry')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_57975';
+      } else if (pName.contains('Cauley')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_34021';
+      } else if (pName.contains('Lee') && pName.contains('Min Woo')) {
+        playerImage = 'https://pga-tour-res.cloudinary.com/image/upload/c_thumb,g_face,z_0.7,q_auto,f_auto,dpr_2.0,w_120,h_120,b_rgb:F2F2F2,d_stub:default_avatar_light.webp/headshots_37378';
+      }
+
       return GolfLeader(
         position: p['position'] ?? 0,
-        name: pInfo?['name'] ?? 'Unknown',
+        name: pName,
         team: pInfo?['team'] ?? '',
         score: p['score']?.toString() ?? 'E',
         thru: playerThru,
-        image: pInfo?['logo'] ?? '',
+        image: playerImage,
         currentRound: playerRound,
       );
     }).toList();

@@ -4,6 +4,7 @@ import 'package:flutter_sficon/flutter_sficon.dart';
 import '../../../data/models/sports/golf_game.dart';
 import '../../../data/services/mappers/sport_mapper.dart';
 import '../../widgets/score_flip_text.dart';
+import '../../widgets/golf_player_details_sheet.dart';
 
 class GolfUpcomingCard extends StatelessWidget {
   final String tournamentName;
@@ -276,7 +277,7 @@ class GolfLiveCard extends StatelessWidget {
               ],
             ),
           ),
-          _buildLeaderSection(leaders.isNotEmpty ? leaders[0] : null),
+          _buildLeaderSection(context, leaders.isNotEmpty ? leaders[0] : null),
           
           // Header Row for the list - placed AFTER the leader
           Padding(
@@ -304,7 +305,7 @@ class GolfLiveCard extends StatelessWidget {
             ),
           ),
 
-          ...displayLeaders.map((player) => _buildLiveRow(player)),
+          ...displayLeaders.map((player) => _buildLiveRow(context, player)),
           const SizedBox(height: 16),
         ],
       ),
@@ -327,164 +328,186 @@ class GolfLiveCard extends StatelessWidget {
     );
   }
 
-  Widget _buildLiveRow(GolfLeader player) {
+  Widget _buildLiveRow(BuildContext context, GolfLeader player) {
     final currentRound = game.round ?? 'R1';
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 24,
-            child: Text(
-              '${player.position}',
-              style: TextStyle(
-                color: Colors.grey.shade500,
-                fontSize: 12,
-                fontWeight: FontWeight.w900,
+    return InkWell(
+      onTap: () => GoffPlayerDetailsSheet.show(
+        context, 
+        player,
+        tournamentName: game.tournamentName,
+        round: currentRound,
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 24,
+              child: Text(
+                '${player.position}',
+                style: TextStyle(
+                  color: Colors.grey.shade500,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 10,
-                  backgroundColor: Colors.white10,
-                  backgroundImage: player.image.isNotEmpty ? NetworkImage(player.image) : null,
-                  child: player.image.isEmpty ? const Icon(Icons.person, size: 10, color: Colors.white24) : null,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  SportMapper.getInitialName(player.name),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
+            Expanded(
+              child: Row(
+                children: [
+                  Hero(
+                    tag: 'player_${player.name}',
+                    child: CircleAvatar(
+                      radius: 10,
+                      backgroundColor: Colors.white10,
+                      backgroundImage: player.image.isNotEmpty ? NetworkImage(player.image) : null,
+                      child: player.image.isEmpty ? const Icon(Icons.person, size: 10, color: Colors.white24) : null,
+                    ),
                   ),
+                  const SizedBox(width: 8),
+                  Text(
+                    SportMapper.getInitialName(player.name),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Score Column
+            SizedBox(
+              width: 40,
+              child: ScoreFlipText(
+                score: player.score,
+                style: const TextStyle(
+                  color: Colors.green,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w900,
                 ),
-              ],
-            ),
-          ),
-          // Score Column
-          SizedBox(
-            width: 40,
-            child: ScoreFlipText(
-              score: player.score,
-              style: const TextStyle(
-                color: Colors.green,
-                fontSize: 13,
-                fontWeight: FontWeight.w900,
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          // Round Column
-          SizedBox(
-            width: 40,
-            child: Text(
-              (player.currentRound ?? currentRound).length > 2 
-                  ? (player.currentRound ?? currentRound).substring(0, 2) 
-                  : (player.currentRound ?? currentRound),
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
+            const SizedBox(width: 12),
+            // Round Column
+            SizedBox(
+              width: 40,
+              child: Text(
+                (player.currentRound ?? currentRound).length > 2 
+                    ? (player.currentRound ?? currentRound).substring(0, 2) 
+                    : (player.currentRound ?? currentRound),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          // Thru Column
-          SizedBox(
-            width: 40,
-            child: Text(
-              player.thru,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey.shade400,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
+            const SizedBox(width: 12),
+            // Thru Column
+            SizedBox(
+              width: 40,
+              child: Text(
+                player.thru,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey.shade400,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildLeaderSection(GolfLeader? leader) {
+  Widget _buildLeaderSection(BuildContext context, GolfLeader? leader) {
     if (leader == null) return const SizedBox.shrink();
     final currentRound = game.round ?? 'R1';
 
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.green.withValues(alpha: 0.03),
-        border: Border.symmetric(
-          horizontal: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
-        ),
+    return InkWell(
+      onTap: () => GoffPlayerDetailsSheet.show(
+        context, 
+        leader,
+        tournamentName: game.tournamentName,
+        round: currentRound,
       ),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 24, 110, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'LEADER',
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  SportMapper.getInitialName(leader.name),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    height: 1.1,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    _buildStat('SCORE', leader.score, isHighlight: true),
-                    const SizedBox(width: 24),
-                    _buildStat('ROUND', (leader.currentRound ?? currentRound).length > 2 
-                        ? (leader.currentRound ?? currentRound).substring(0, 2) 
-                        : (leader.currentRound ?? currentRound)),
-                    const SizedBox(width: 24),
-                    _buildStat('THRU', leader.thru),
-                  ],
-                ),
-              ],
-            ),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.green.withValues(alpha: 0.03),
+          border: Border.symmetric(
+            horizontal: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
           ),
-          if (leader.image.isNotEmpty)
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: SizedBox(
-                height: 120,
-                width: 140,
-                child: Image.network(
-                  leader.image,
-                  fit: BoxFit.contain,
-                  alignment: Alignment.bottomCenter,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Center(
-                        child: Icon(Icons.person, color: Colors.white24, size: 60),
-                      ),
-                ),
+        ),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 24, 110, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'LEADER',
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    SportMapper.getInitialName(leader.name),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                      height: 1.1,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      _buildStat('SCORE', leader.score, isHighlight: true),
+                      const SizedBox(width: 24),
+                      _buildStat('ROUND', (leader.currentRound ?? currentRound).length > 2 
+                          ? (leader.currentRound ?? currentRound).substring(0, 2) 
+                          : (leader.currentRound ?? currentRound)),
+                      const SizedBox(width: 24),
+                      _buildStat('THRU', leader.thru),
+                    ],
+                  ),
+                ],
               ),
             ),
-        ],
+            if (leader.image.isNotEmpty)
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: Hero(
+                  tag: 'player_${leader.name}',
+                  child: SizedBox(
+                    height: 120,
+                    width: 140,
+                    child: Image.network(
+                      leader.image,
+                      fit: BoxFit.contain,
+                      alignment: Alignment.bottomCenter,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Center(
+                            child: Icon(Icons.person, color: Colors.white24, size: 60),
+                          ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -614,82 +637,77 @@ class GolfCompletedCard extends StatelessWidget {
               ],
             ),
           ),
-          _buildWinnerSection(),
-          if (p2Name != null) _buildRunnerUpRow(2, p2Name!, p2Score!),
-          if (p3Name != null) _buildRunnerUpRow(3, p3Name!, p3Score!),
+          _buildWinnerSection(context),
+          if (p2Name != null) _buildRunnerUpRow(context, 2, p2Name!, p2Score!),
+          if (p3Name != null) _buildRunnerUpRow(context, 3, p3Name!, p3Score!),
           const SizedBox(height: 8),
         ],
       ),
     );
   }
 
-  Widget _buildWinnerSection() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFD100).withValues(alpha: 0.03),
-        border: Border.symmetric(
-          horizontal: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
+  Widget _buildWinnerSection(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        if (winnerImage != null) {
+          GoffPlayerDetailsSheet.show(
+            context,
+            GolfLeader(
+              position: 1,
+              name: winnerName,
+              team: tourType,
+              score: winnerScore,
+              thru: 'FINAL',
+              image: winnerImage!,
+              purse: winnerPurse,
+            ),
+            tournamentName: tournamentName,
+          );
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFD100).withValues(alpha: 0.03),
+          border: Border.symmetric(
+            horizontal: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
+          ),
         ),
-      ),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 24, 110, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'CHAMPION',
-                  style: TextStyle(
-                    color: Color(0xFFFFD100),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  SportMapper.getInitialName(winnerName),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    height: 1.1,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'TOTAL SCORE',
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 8,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                        Text(
-                          winnerScore,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                      ],
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 24, 110, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'CHAMPION',
+                    style: TextStyle(
+                      color: Color(0xFFFFD100),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
                     ),
-                    if (winnerPurse != null) ...[
-                      const SizedBox(width: 32),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    SportMapper.getInitialName(winnerName),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                      height: 1.1,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'PURSE',
+                            'TOTAL SCORE',
                             style: TextStyle(
                               color: Colors.grey.shade600,
                               fontSize: 8,
@@ -697,79 +715,122 @@ class GolfCompletedCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            winnerPurse!,
+                            winnerScore,
                             style: const TextStyle(
-                              color: Color(0xFFFFD100),
+                              color: Colors.white,
                               fontSize: 20,
                               fontWeight: FontWeight.w900,
                             ),
                           ),
                         ],
                       ),
+                      if (winnerPurse != null) ...[
+                        const SizedBox(width: 32),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'PURSE',
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 8,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            Text(
+                              winnerPurse!,
+                              style: const TextStyle(
+                                color: Color(0xFFFFD100),
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ],
-                  ],
-                ),
-              ],
-            ),
-          ),
-          if (winnerImage != null)
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: SizedBox(
-                height: 130,
-                width: 150,
-                child: Image.network(
-                  winnerImage!,
-                  fit: BoxFit.contain,
-                  alignment: Alignment.bottomCenter,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Center(
-                        child: Icon(Icons.person, color: Colors.white24, size: 60),
-                      ),
-                ),
+                  ),
+                ],
               ),
             ),
-        ],
+            if (winnerImage != null)
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: Hero(
+                  tag: 'player_$winnerName',
+                  child: SizedBox(
+                    height: 130,
+                    width: 150,
+                    child: Image.network(
+                      winnerImage!,
+                      fit: BoxFit.contain,
+                      alignment: Alignment.bottomCenter,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Center(
+                            child: Icon(Icons.person, color: Colors.white24, size: 60),
+                          ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildRunnerUpRow(int rank, String name, String score) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 24,
-            child: Text(
-              '$rank',
-              style: TextStyle(
-                color: Colors.grey.shade500,
+  Widget _buildRunnerUpRow(BuildContext context, int rank, String name, String score) {
+    return InkWell(
+      onTap: () {
+        GoffPlayerDetailsSheet.show(
+          context,
+          GolfLeader(
+            position: rank,
+            name: name,
+            team: tourType,
+            score: score,
+            thru: 'FINAL',
+            image: '', // No image for runners up in completed card currently
+          ),
+          tournamentName: tournamentName,
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 24,
+              child: Text(
+                '$rank',
+                style: TextStyle(
+                  color: Colors.grey.shade500,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Text(
+                SportMapper.getInitialName(name),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            Text(
+              score,
+              style: const TextStyle(
+                color: Colors.white,
                 fontSize: 14,
                 fontWeight: FontWeight.w900,
               ),
             ),
-          ),
-          Expanded(
-            child: Text(
-              SportMapper.getInitialName(name),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          Text(
-            score,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

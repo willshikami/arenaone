@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../../data/services/mappers/sport_mapper.dart';
+import '../../widgets/f1_driver_details_sheet.dart';
 
 class F1UpcomingCard extends StatelessWidget {
   final String raceName;
@@ -427,11 +428,11 @@ class F1CompletedCard extends StatelessWidget {
                 ],
               ),
             ),
-            _buildWinnerSection(winnerName, winnerTeam, winnerLogo, time ?? '1:41.223', points, winnerTotalPoints),
+            _buildWinnerSection(context, winnerName, winnerTeam, winnerLogo, time ?? '1:41.223', points, winnerTotalPoints),
             if (p2Name != null)
-              _buildDriverRow(2, p2Name!, p2Team!, p2Image!, p2Gap ?? '+0.222s', p2Points ?? '18', p2TotalPoints),
+              _buildDriverRow(context, 2, p2Name!, p2Team!, p2Image!, p2Gap ?? '+0.222s', p2Points ?? '18', p2TotalPoints),
             if (p3Name != null)
-              _buildDriverRow(3, p3Name!, p3Team!, p3Image!, p3Gap ?? '+0.254s', p3Points ?? '15', p3TotalPoints),
+              _buildDriverRow(context, 3, p3Name!, p3Team!, p3Image!, p3Gap ?? '+0.254s', p3Points ?? '15', p3TotalPoints),
             const SizedBox(height: 8),
           ],
         ),
@@ -439,84 +440,99 @@ class F1CompletedCard extends StatelessWidget {
     );
   }
 
-  Widget _buildWinnerSection(String name, String team, String imageUrl, String time, String points, String? totalPoints) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFD100).withValues(alpha: 0.03),
-        border: Border.symmetric(
-          horizontal: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
-        ),
+  Widget _buildWinnerSection(BuildContext context, String name, String team, String imageUrl, String time, String points, String? totalPoints) {
+    return InkWell(
+      onTap: () => F1DriverDetailsSheet.show(
+        context,
+        name: name,
+        team: team,
+        image: imageUrl,
+        position: '1',
+        points: points,
+        totalPoints: totalPoints,
+        sessionType: sessionType,
       ),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 24, 110, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  (sessionType == 'qualifying') ? 'LEADER' : 'WINNER',
-                  style: TextStyle(
-                    color: (sessionType == 'qualifying') ? const Color(0xFF2D7DFF) : const Color(0xFFFFD100),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  SportMapper.getShortName(name),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    height: 1.1,
-                  ),
-                ),
-                Text(
-                  team.toUpperCase(),
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    _buildWinnerStat('TIME', time),
-                    const SizedBox(width: 20),
-                    _buildWinnerStat('PTS', '+$points'),
-                    if (totalPoints != null) ...[
-                      const SizedBox(width: 20),
-                      _buildWinnerStat('TOTAL', totalPoints),
-                    ],
-                  ],
-                ),
-              ],
-            ),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFD100).withValues(alpha: 0.03),
+          border: Border.symmetric(
+            horizontal: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
           ),
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: SizedBox(
-              height: 130,
-              width: 150,
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.contain,
-                alignment: Alignment.bottomCenter,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Center(
-                      child: Icon(Icons.person, color: Colors.white24, size: 60),
+        ),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 24, 110, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    (sessionType == 'qualifying') ? 'LEADER' : 'WINNER',
+                    style: TextStyle(
+                      color: (sessionType == 'qualifying') ? const Color(0xFF2D7DFF) : const Color(0xFFFFD100),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
                     ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    SportMapper.getShortName(name),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                      height: 1.1,
+                    ),
+                  ),
+                  Text(
+                    team.toUpperCase(),
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      _buildWinnerStat('TIME', time),
+                      const SizedBox(width: 20),
+                      _buildWinnerStat('PTS', '+$points'),
+                      if (totalPoints != null) ...[
+                        const SizedBox(width: 20),
+                        _buildWinnerStat('TOTAL', totalPoints),
+                      ],
+                    ],
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: Hero(
+                tag: 'driver_$name',
+                child: SizedBox(
+                  height: 130,
+                  width: 150,
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.bottomCenter,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Center(
+                          child: Icon(Icons.person, color: Colors.white24, size: 60),
+                        ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -545,110 +561,126 @@ class F1CompletedCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDriverRow(int rank, String name, String team, String imageUrl, String timeOrGap, String pointsPerRace, String? totalPoints) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 18,
-            child: Text(
-              '$rank',
-              style: TextStyle(
-                color: Colors.grey.shade500,
-                fontSize: 13,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Container(
-            height: 32,
-            width: 32,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white.withValues(alpha: 0.05),
-            ),
-            child: ClipOval(
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const Center(
-                  child: Icon(Icons.person, color: Colors.white24, size: 20),
+  Widget _buildDriverRow(BuildContext context, int rank, String name, String team, String imageUrl, String timeOrGap, String pointsPerRace, String? totalPoints) {
+    return InkWell(
+      onTap: () => F1DriverDetailsSheet.show(
+        context,
+        name: name,
+        team: team,
+        image: imageUrl,
+        position: rank.toString(),
+        points: pointsPerRace,
+        gap: timeOrGap,
+        totalPoints: totalPoints,
+        sessionType: sessionType,
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 18,
+              child: Text(
+                '$rank',
+                style: TextStyle(
+                  color: Colors.grey.shade500,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  SportMapper.getShortName(name),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
+            const SizedBox(width: 12),
+            Hero(
+              tag: 'driver_$name',
+              child: Container(
+                height: 32,
+                width: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.05),
+                ),
+                child: ClipOval(
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const Center(
+                      child: Icon(Icons.person, color: Colors.white24, size: 20),
+                    ),
                   ),
                 ),
-                Text(
-                  team.toUpperCase(),
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-          if (totalPoints != null) ...[
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    SportMapper.getShortName(name),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Text(
+                    team.toUpperCase(),
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (totalPoints != null) ...[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'TOTAL',
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 7,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  Text(
+                    totalPoints,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 16),
+            ],
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'TOTAL',
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 7,
-                    fontWeight: FontWeight.w800,
+                  timeOrGap,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 Text(
-                  totalPoints,
+                  '+$pointsPerRace pts',
                   style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF00FF00),
+                    fontSize: 9,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ],
             ),
-            const SizedBox(width: 16),
           ],
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                timeOrGap,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              Text(
-                '+$pointsPerRace pts',
-                style: const TextStyle(
-                  color: Color(0xFF00FF00),
-                  fontSize: 9,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -812,13 +844,13 @@ class F1LiveCard extends StatelessWidget {
                 ],
               ),
             ),
-            _buildLeaderSection(),
+            _buildLeaderSection(context),
             if (p2Name != null)
-              _buildDriverRow(2, p2Name!, p2Team!, p2Image!, p2Gap ?? (p2Points != null ? '$p2Points PTS' : '---')),
+              _buildLiveDriverRow(context, 2, p2Name!, p2Team!, p2Image!, p2Gap ?? (p2Points != null ? '$p2Points PTS' : '---')),
             if (p3Name != null)
-              _buildDriverRow(3, p3Name!, p3Team!, p3Image!, p3Gap ?? (p3Points != null ? '$p3Points PTS' : '---')),
+              _buildLiveDriverRow(context, 3, p3Name!, p3Team!, p3Image!, p3Gap ?? (p3Points != null ? '$p3Points PTS' : '---')),
             if (p4Name != null)
-              _buildDriverRow(4, p4Name!, p4Team!, p4Image!, p4Gap ?? (p4Points != null ? '$p4Points PTS' : '---')),
+              _buildLiveDriverRow(context, 4, p4Name!, p4Team!, p4Image!, p4Gap ?? (p4Points != null ? '$p4Points PTS' : '---')),
             const SizedBox(height: 8),
           ],
         ),
@@ -826,74 +858,88 @@ class F1LiveCard extends StatelessWidget {
     );
   }
 
-  Widget _buildLeaderSection() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.red.withValues(alpha: 0.03),
-        border: Border.symmetric(
-          horizontal: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
-        ),
+  Widget _buildLeaderSection(BuildContext context) {
+    return InkWell(
+      onTap: () => F1DriverDetailsSheet.show(
+        context,
+        name: leaderName,
+        team: leaderTeam,
+        image: leaderImage,
+        position: '1',
+        points: lapInfo,
+        sessionType: sessionType,
       ),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 24, 110, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  (sessionType == 'qualifying') ? 'LEADER' : 'LEADER',
-                  style: TextStyle(
-                    color: (sessionType == 'qualifying') ? const Color(0xFF2D7DFF) : Colors.red,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  leaderName,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    height: 1.1,
-                  ),
-                ),
-                Text(
-                  leaderTeam.toUpperCase(),
-                  style: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _buildStat('LAP INFO', lapInfo),
-              ],
-            ),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.red.withValues(alpha: 0.03),
+          border: Border.symmetric(
+            horizontal: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
           ),
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: SizedBox(
-              height: 130,
-              width: 150,
-              child: Image.network(
-                leaderImage,
-                fit: BoxFit.contain,
-                alignment: Alignment.bottomCenter,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Center(
-                      child: Icon(Icons.person, color: Colors.white24, size: 60),
+        ),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 24, 110, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    (sessionType == 'qualifying') ? 'LEADER' : 'LEADER',
+                    style: TextStyle(
+                      color: (sessionType == 'qualifying') ? const Color(0xFF2D7DFF) : Colors.red,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
                     ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    leaderName,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                      height: 1.1,
+                    ),
+                  ),
+                  Text(
+                    leaderTeam.toUpperCase(),
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildStat('LAP INFO', lapInfo),
+                ],
               ),
             ),
-          ),
-        ],
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: Hero(
+                tag: 'driver_$leaderName',
+                child: SizedBox(
+                  height: 130,
+                  width: 150,
+                  child: Image.network(
+                    leaderImage,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.bottomCenter,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Center(
+                          child: Icon(Icons.person, color: Colors.white24, size: 60),
+                        ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -922,86 +968,92 @@ class F1LiveCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDriverRow(int rank, String name, String team, String imageUrl, String gap) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 18,
-            child: Text(
-              '$rank',
-              style: TextStyle(
-                color: Colors.grey.shade500,
-                fontSize: 13,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Container(
-            height: 32,
-            width: 32,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white.withValues(alpha: 0.05),
-            ),
-            child: ClipOval(
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const Center(
-                  child: Icon(Icons.person, color: Colors.white24, size: 20),
+  Widget _buildLiveDriverRow(BuildContext context, int rank, String name, String team, String imageUrl, String gap) {
+    return InkWell(
+      onTap: () => F1DriverDetailsSheet.show(
+        context,
+        name: name,
+        team: team,
+        image: imageUrl,
+        position: rank.toString(),
+        gap: gap,
+        sessionType: sessionType,
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 18,
+              child: Text(
+                '$rank',
+                style: TextStyle(
+                  color: Colors.grey.shade500,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
+            const SizedBox(width: 12),
+            Hero(
+              tag: 'driver_$name',
+              child: Container(
+                height: 32,
+                width: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.05),
+                ),
+                child: ClipOval(
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const Center(
+                      child: Icon(Icons.person, color: Colors.white24, size: 20),
+                    ),
                   ),
                 ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Text(
+                    team.toUpperCase(),
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
                 Text(
-                  team.toUpperCase(),
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
+                  gap,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                gap,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              Text(
-                gap.contains('PTS') ? 'POINTS' : 'GAP',
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 8,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
