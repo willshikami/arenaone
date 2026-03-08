@@ -55,6 +55,11 @@ class F1Game extends Game {
   final String? p3Image;
   final String? p3Points;
   final String? p3Gap;
+  final String? p4Name;
+  final String? p4Team;
+  final String? p4Image;
+  final String? p4Points;
+  final String? p4Gap;
   final String? eventImageUrl;
   final int? raceNumber;
   final int? laps;
@@ -68,6 +73,7 @@ class F1Game extends Game {
   final DateTime? practice3Time;
   final DateTime? qualifyingTime;
   final DateTime? sprintTime;
+  final String? sessionType; // 'race', 'qualifying', 'practice', 'sprint'
   
   @JsonKey(includeFromJson: false, includeToJson: false)
   final List<F1Driver>? drivers;
@@ -96,6 +102,11 @@ class F1Game extends Game {
     this.p3Image,
     this.p3Points,
     this.p3Gap,
+    this.p4Name,
+    this.p4Team,
+    this.p4Image,
+    this.p4Points,
+    this.p4Gap,
     this.eventImageUrl,
     this.raceNumber,
     this.laps,
@@ -109,6 +120,7 @@ class F1Game extends Game {
     this.practice3Time,
     this.qualifyingTime,
     this.sprintTime,
+    this.sessionType,
     this.drivers,
   }) : super(
           id: id,

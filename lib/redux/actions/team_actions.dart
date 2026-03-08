@@ -43,7 +43,9 @@ class LoadF1GamesAction extends ReduxAction<AppState> {
   Future<AppState?> reduce() async {
     try {
       final games = await SupabaseService().fetchF1Games();
+
       final filteredGames = state.games.where((g) => g.sport != 'F1').toList();
+      
       return state.copyWith(games: [...filteredGames, ...games], error: null);
     } catch (e) {
       return state.copyWith(error: 'Failed to fetch F1 games: $e');

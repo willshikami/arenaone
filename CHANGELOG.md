@@ -2,20 +2,24 @@
 
 All notable changes to the Arena One project will be documented in this file.
 
-## [1.0.0-alpha.11] - 2026-02-27
+## [1.0.0-alpha.12] - 2026-03-04
 
 ### Added
-- **Device Time Zone Support**: All event times (F1, Golf, Tennis, Rally, Football, and generic Game cards) now automatically adjust to and display in the user's current device time zone for accurate local scheduling.
-- **Live ActivityKit Widget (iOS)**: Native SwiftUI widget now displays real-time scores, teams, and status for Football, NBA, and Golf on the Lock Screen and Dynamic Island.
-- **Dynamic Island Support**: Compact, minimal, and expanded layouts for live games, with color-coded status and monospaced score typography.
-- **Improved Table Alignment**: Leaderboard and detail views for Golf and F1 now have perfectly aligned headers and columns, matching the player data rows.
-- **Header Info Layout**: Tournament/Grand Prix round, date, and live status are now shown in the top header card, with correct spacing to avoid overlap with the back button.
-- **3D Flip-Down Animation**: Score updates in all cards and detail tables now use a smooth flip-down animation for a tactile, modern feel.
+- **Live Clock Engine**: Implemented a stateful real-time ticker for NBA and Football cards that provides a live countdown (NBA) or count-up (Football) experience in between API syncs.
+- **Football Stoppage Time**: Native support for stoppage time in Football cards (e.g., `45 +1:23` and `90 +3:45`) for realistic match tracking.
+- **Enhanced NBA Status Mapping**: Numeric `period` field now dynamically displays quarters (e.g., `1ST QTR`, `2ND QTR`) with a neutral orange theme for Halftimes.
+- **Centralized Asset Management**: Created `AppAssets` to load all sports category logos from local high-quality PNGs, replacing generic icons.
+- **Live Feed "Show More" CTA**: Dynamic "Show X more" text in the Live tab for categories with more than 5 ongoing events.
 
 ### Changed
-- **Removed Hero Animations**: Navigation to detail pages is now instant, with no morphing card effect, for a snappier and less distracting experience.
-- **Header Padding**: Increased left padding in detail page headers to prevent collision between the back button and tournament/race info.
-- **Live Activity Data Model**: Synchronized Flutter and Swift data models for robust, error-free ActivityKit integration.
+- **Modernized Card Layout**: Restructured NBA and Football cards to prioritize team names and scores at the top, moving metadata (venue/status) and a divider line to the bottom for a cleaner aesthetic.
+- **Simplified Navigation**: Removed the "Scores" tab and updated the Home icon to `sf_sportscourt` for a leaner, more centered experience.
+- **Refined Typography**: Standardized uppercase headers and reduced font sizes for game clocks and status badges to improve visual hierarchy and professional feel.
+- **Logo Optimization**: Removed circular clipping and borders from team logos to ensure they display in their natural aspect ratio without being cut off.
+
+### Fixed
+- **NBA Halftime Visibility**: Fixed a bug where the game clock would remain visible during Halftimes; it is now correctly replaced by the "HALFTIME" status.
+- **Date Header Alignment**: Modernized the Home screen header by removing "Today" and far-left aligning the day name in bold uppercase.
 
 ### Fixed
 - **Live ActivityKit Error**: Resolved `PlatformException(LIVE_ACTIVITY_ERROR, can't launch live activity, ...)` by ensuring the payload matches the SwiftUI widget's expected structure and updating plugin usage.

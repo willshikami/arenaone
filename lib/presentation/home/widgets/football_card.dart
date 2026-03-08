@@ -315,7 +315,7 @@ class FootballCard extends StatelessWidget {
 
   Widget _buildMatchCenter(Game game) {
     if (game.isLive) {
-      final isHalftime = game.statusType?.toUpperCase() == 'HALFTIME' ||
+      final isHalftime = game.statusType == 'STATUS_HALFTIME' ||
           game.status.toUpperCase().contains('HALFTIME') ||
           game.status.toUpperCase().contains('HALF TIME');
 

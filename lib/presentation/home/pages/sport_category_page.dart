@@ -184,9 +184,11 @@ class SportCategoryPage extends StatelessWidget {
           practice3Time: game.practice3Time,
           qualifyingTime: game.qualifyingTime,
           sprintTime: game.sprintTime,
+          sessionType: game.sessionType,
         );
       } else if (game.status == 'Live') {
         return F1LiveCard(
+          sessionType: game.sessionType,
           raceName: game.stadium ?? 'Grand Prix',
           raceNumber: game.raceNumber ?? 0,
           circuitImage: game.eventImageUrl,
@@ -199,13 +201,21 @@ class SportCategoryPage extends StatelessWidget {
           p2Team: game.p2Team,
           p2Image: game.p2Image,
           p2Gap: game.p2Gap,
+          p2Points: game.p2Points,
           p3Name: game.p3Name,
           p3Team: game.p3Team,
           p3Image: game.p3Image,
           p3Gap: game.p3Gap,
+          p3Points: game.p3Points,
+          p4Name: game.p4Name,
+          p4Team: game.p4Team,
+          p4Image: game.p4Image,
+          p4Gap: game.p4Gap,
+          p4Points: game.p4Points,
         );
       } else {
         return F1CompletedCard(
+          sessionType: game.sessionType,
           raceName: game.stadium ?? 'Grand Prix',
           raceDate: game.startTime,
           raceNumber: game.raceNumber ?? 0,

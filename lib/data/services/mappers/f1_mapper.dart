@@ -31,7 +31,8 @@ class F1Mapper extends SportMapper {
     if (name.contains('las vegas') || name.contains('vegas')) return 'assets/tracks/vegas.webp';
     if (name.contains('yas marina') || name.contains('abu dhabi')) return 'assets/tracks/yas_marina.webp';
     if (name.contains('madrid')) return 'assets/tracks/madrid.webp';
-    
+    if (name.contains('qatar') || name.contains('lusail')) return 'assets/tracks/qatar.webp';
+
     return null;
   }
 
@@ -41,11 +42,83 @@ class F1Mapper extends SportMapper {
     
     final drivers = participants.map((p) {
       final pInfo = getParticipantMap(p['participants']);
+      
+      // Sometimes ESPN API puts team name in 'abbreviation' or 'type' mapping
+      // or even as a separate field in the participant object.
+      final pName = pInfo?['name'] ?? 'Unknown';
+      final pLogo = pInfo?['logo'] ?? 'https://a.espncdn.com/i/teamlogos/f1/500/f1.png';
+      
+      // Map driver names to their respective F1 teams for 2026 season
+      String teamName = 'TBD';
+      String driverImage = pLogo; // Default from API
+
+      if (pName.contains('Verstappen')) {
+        teamName = 'Red Bull Racing';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/M/MAXVER01_Max_Verstappen/maxver01.png';
+      } else if (pName.contains('Hadjar')) {
+        teamName = 'Red Bull Racing';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/I/ISAHAD01_Isack_Hadjar/isahad01.png';
+      } else if (pName.contains('Russell')) {
+        teamName = 'Mercedes';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/G/GEORUS01_George_Russell/georus01.png';
+      } else if (pName.contains('Antonelli')) {
+        teamName = 'Mercedes';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/K/KIMANT01_Kimi_Antonelli/kimant01.png';
+      } else if (pName.contains('Leclerc')) {
+        teamName = 'Ferrari';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/C/CHALEC01_Charles_Leclerc/chalec01.png';
+      } else if (pName.contains('Hamilton')) {
+        teamName = 'Ferrari';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LEWHAM01_Lewis_Hamilton/lewham01.png';
+      } else if (pName.contains('Norris')) {
+        teamName = 'McLaren';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LANNOR01_Lando_Norris/lannor01.png';
+      } else if (pName.contains('Piastri')) {
+        teamName = 'McLaren';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/O/OSCPIA01_Oscar_Piastri/oscpia01.png';
+      } else if (pName.contains('Alonso')) {
+        teamName = 'Aston Martin';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/F/FERALO01_Fernando_Alonso/feralo01.png';
+      } else if (pName.contains('Stroll')) {
+        teamName = 'Aston Martin';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/LANSTR01_Lance_Stroll/lanstr01.png';
+      } else if (pName.contains('Sainz')) {
+        teamName = 'Williams';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/C/CARSAI01_Carlos_Sainz/carsai01.png';
+      } else if (pName.contains('Albon')) {
+        teamName = 'Williams';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/A/ALEALB01_Alexander_Albon/alealb01.png';
+      } else if (pName.contains('Ocon')) {
+        teamName = 'Haas';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/E/ESTOCO01_Esteban_Ocon/estoco01.png';
+      } else if (pName.contains('Bearman')) {
+        teamName = 'Haas';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/O/OLIBEA01_Oliver_Bearman/olibea01.png';
+      } else if (pName.contains('Gasly')) {
+        teamName = 'Alpine';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/P/PIEGAS01_Pierre_Gasly/piegas01.png';
+      } else if (pName.contains('Doohan')) {
+        teamName = 'Alpine';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/J/JACDOO01_Jack_Doohan/jacdoo01.png';
+      } else if (pName.contains('Tsunoda')) {
+        teamName = 'RB';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/Y/YUKTSU01_Yuki_Tsunoda/yuktsu01.png';
+      } else if (pName.contains('Lawson')) {
+        teamName = 'RB';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LIALAW01_Liam_Lawson/lialaw01.png';
+      } else if (pName.contains('Hülkenberg')) {
+        teamName = 'Kick Sauber';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/N/NICHUL01_Nico_Hulkenberg/nichul01.png';
+      } else if (pName.contains('Bortoleto')) {
+        teamName = 'Kick Sauber';
+        driverImage = 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/G/GABBOR01_Gabriel_Bortoleto/gabbor01.png';
+      }
+
       return F1Driver(
         position: p['position'] ?? 0,
-        name: pInfo?['name'] ?? 'Unknown',
-        team: pInfo?['team'] ?? 'TBD',
-        image: pInfo?['logo'] ?? 'https://a.espncdn.com/i/teamlogos/f1/500/f1.png',
+        name: pName,
+        team: teamName,
+        image: driverImage,
         points: p['score']?.toString() ?? '0',
         gap: p['record']?.toString(), // Sometimes gap is in record
       );
@@ -56,6 +129,7 @@ class F1Mapper extends SportMapper {
     final winner = drivers.isNotEmpty ? drivers[0] : null;
     final p2 = drivers.length > 1 ? drivers[1] : null;
     final p3 = drivers.length > 2 ? drivers[2] : null;
+    final p4 = drivers.length > 3 ? drivers[3] : null;
 
     final venueName = json['venue_name'];
     final eventName = json['name'];
@@ -70,6 +144,22 @@ class F1Mapper extends SportMapper {
     DateTime? qTime;
     DateTime? sTime;
 
+    // Detection of session type from status_type or name
+    String? sessionType = 'race';
+    final statusType = json['status_type']?.toString().toLowerCase() ?? '';
+    final name = eventName?.toString().toLowerCase() ?? '';
+    
+    if (statusType.contains('qualifying') || name.contains('qualifying')) {
+      sessionType = 'qualifying';
+    } else if (statusType.contains('practice') || name.contains('practice')) {
+      sessionType = 'practice';
+    } else if (statusType.contains('sprint') || name.contains('sprint')) {
+      sessionType = 'sprint';
+    } else if (statusType.contains('final') || name.contains('grand prix')) {
+      // If it mentions Grand Prix or is Final and not tagged as Quali/Practice, it's likely the Race
+      sessionType = 'race';
+    }
+
     // Check if session times are in event_participants linescores (e.g. for upcoming races)
     // This is where Option B (Dynamic Wait) logic will live.
     // For now, it stays null until data is observed.
@@ -82,6 +172,7 @@ class F1Mapper extends SportMapper {
       isLive: isLive(json['is_live'], json['status_state']),
       stadium: venueName ?? eventName,
       leagueType: 'Formula 1',
+      sessionType: sessionType,
       winnerName: winner?.name,
       winnerTeam: winner?.team ?? 'TBD',
       winnerImage: winner?.image,
@@ -89,9 +180,18 @@ class F1Mapper extends SportMapper {
       p2Name: p2?.name,
       p2Team: p2?.team,
       p2Image: p2?.image,
+      p2Points: p2?.points,
+      p2Gap: p2?.gap,
       p3Name: p3?.name,
       p3Team: p3?.team,
       p3Image: p3?.image,
+      p3Points: p3?.points,
+      p3Gap: p3?.gap,
+      p4Name: p4?.name,
+      p4Team: p4?.team,
+      p4Image: p4?.image,
+      p4Points: p4?.points,
+      p4Gap: p4?.gap,
       raceNumber: 1,
       eventImageUrl: trackAsset,
       drivers: drivers,

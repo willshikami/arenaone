@@ -45,11 +45,19 @@ class _LiveClockTextState extends State<LiveClockText> {
       return;
     }
 
-    // Handle Football format (e.g., "45'")
+    // Handle Football format (e.g., "45 +1'")
     if (widget.initialClock!.contains("'")) {
-      final val = widget.initialClock!.replaceAll("'", "");
-      final minutes = int.tryParse(val) ?? 0;
-      _currentSeconds = minutes * 60;
+      final cleanClock = widget.initialClock!.replaceAll("'", "");
+      
+      if (cleanClock.contains('+')) {
+        final parts = cleanClock.split('+');
+        final baseMins = int.tryParse(parts[0].trim()) ?? 0;
+        final extraMins = int.tryParse(parts[1].trim()) ?? 0;
+        _currentSeconds = (baseMins + extraMins) * 60;
+      } else {
+        final minutes = int.tryParse(cleanClock.trim()) ?? 0;
+        _currentSeconds = minutes * 60;
+      }
       _startTimer();
       return;
     }
@@ -89,6 +97,7 @@ class _LiveClockTextState extends State<LiveClockText> {
       });
     });
   }
+
   @override
   void dispose() {
     _timer?.cancel();
@@ -99,21 +108,17 @@ class _LiveClockTextState extends State<LiveClockText> {
     final minutes = totalSeconds ~/ 60;
     final seconds = totalSeconds % 60;
 
-    // Handle Stoppage Time for Football (Count Up)
-    if (!widget.isCountdown) {
-      // First Half Stoppage (45+)
-      if (minutes >= 45 && minutes < 90) {
-        final extraSeconds = totalSeconds - (45 * 60);
+    // Special logic for Football Stoppage Time parsing from API
+    if (!widget.isCountdown && widget.initialClock != null && widget.initialClock!.contains('+')) {
+      final cleanClock = widget.initialClock!.replaceAll("'", "");
+      final baseMinsStr = cleanClock.split('+')[0].trim();
+      final baseMins = int.tryParse(baseMinsStr) ?? (minutes < 90 ? 45 : 90);
+      
+      final extraSeconds = totalSeconds - (baseMins * 60);
+      if (extraSeconds >= 0) {
         final extraMins = extraSeconds ~/ 60;
         final extraSecs = extraSeconds % 60;
-        return "45 +$extraMins:${extraSecs.toString().padLeft(2, '0')}";
-      }
-      // Second Half Stoppage (90+)
-      if (minutes >= 90) {
-        final extraSeconds = totalSeconds - (90 * 60);
-        final extraMins = extraSeconds ~/ 60;
-        final extraSecs = extraSeconds % 60;
-        return "90 +$extraMins:${extraSecs.toString().padLeft(2, '0')}";
+        return "$baseMins +$extraMins:${extraSecs.toString().padLeft(2, '0')}";
       }
     }
 

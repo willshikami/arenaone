@@ -82,27 +82,37 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               children: [
                 const HomeTopBar(),
-                TabBar(
-                  dividerColor: Colors.transparent,
-                  indicatorColor: const Color(
-                    0xFFFF6A1A,
-                  ), // Modern bold orange indicator
-                  indicatorWeight: 3,
-                  labelColor: Colors.white,
-                  unselectedLabelColor: Colors.grey,
-                  labelStyle: GoogleFonts.instrumentSans(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.04),
+                        width: 1,
+                      ),
+                    ),
                   ),
-                  unselectedLabelStyle: GoogleFonts.instrumentSans(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
+                  child: TabBar(
+                    dividerColor: Colors.transparent,
+                    indicatorColor: const Color(
+                      0xFFFF6A1A,
+                    ), // Modern bold orange indicator
+                    indicatorWeight: 3,
+                    labelColor: Colors.white,
+                    unselectedLabelColor: Colors.grey,
+                    labelStyle: GoogleFonts.instrumentSans(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                    unselectedLabelStyle: GoogleFonts.instrumentSans(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                    tabs: const [
+                      Tab(text: 'Upcoming'),
+                      Tab(text: 'Live'),
+                      Tab(text: 'Results'),
+                    ],
                   ),
-                  tabs: const [
-                    Tab(text: 'Upcoming'),
-                    Tab(text: 'Live'),
-                    Tab(text: 'Results'),
-                  ],
                 ),
                 Expanded(
                   child: RefreshIndicator(
@@ -175,17 +185,31 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildGamesList(BuildContext context, List<Game> games) {
     if (games.isEmpty) return _buildEmptyState();
 
-    // Sort games: descending for results (status 'Final'), ascending for others
+    // Sort games logic:
+    // 1. Live games always at the top
+    // 2. Scheduled/Upcoming/Post-Race in middle
+    // 3. Final results at the bottom (sorted by latest first)
     final sortedGames = List<Game>.from(games)
       ..sort((a, b) {
-        // Special safety for Tennis: if player names include 'TBD', put them at the end of the day's group
+        // Priority 1: Live
+        final aIsLive = a.status == 'Live';
+        final bIsLive = b.status == 'Live';
+        if (aIsLive != bIsLive) return aIsLive ? -1 : 1;
+
+        // Priority 2: Not Final/Post-Race (Upcoming)
+        final aIsFinal = a.status == 'Final' || a.status == 'Post-Race';
+        final bIsFinal = b.status == 'Final' || b.status == 'Post-Race';
+        if (aIsFinal != bIsFinal) return aIsFinal ? 1 : -1;
+
+        // Special safety for Tennis TBD
         if (a is TennisGame && b is TennisGame) {
           final aIsTBD = a.player1Name == 'TBD' || a.player2Name == 'TBD';
           final bIsTBD = b.player1Name == 'TBD' || b.player2Name == 'TBD';
           if (aIsTBD != bIsTBD) return aIsTBD ? 1 : -1;
         }
 
-        if (a.status == 'Final') {
+        // If both are Final, newest first. If both are Upcoming, closest first.
+        if (aIsFinal && bIsFinal) {
           return b.startTime.compareTo(a.startTime);
         }
         return a.startTime.compareTo(b.startTime);
@@ -418,7 +442,11 @@ class _HomeScreenState extends State<HomeScreen> {
             circuitLayoutUrl: game.circuitLayoutUrl ??
                 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Circuit_Red_Bull_Ring.svg/1024px-Circuit_Red_Bull_Ring.svg.png',
             practice1Time: game.practice1Time,
+            practice2Time: game.practice2Time,
+            practice3Time: game.practice3Time,
             qualifyingTime: game.qualifyingTime,
+            sprintTime: game.sprintTime,
+            sessionType: game.sessionType,
           ),
         );
       } else if (game.status == 'Live') {
@@ -432,6 +460,7 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
           child: F1LiveCard(
+            sessionType: game.sessionType,
             raceName: game.stadium ?? 'Grand Prix',
             raceNumber: game.raceNumber ?? 0,
             circuitImage: game.eventImageUrl,
@@ -444,10 +473,17 @@ class _HomeScreenState extends State<HomeScreen> {
             p2Team: game.p2Team,
             p2Image: game.p2Image,
             p2Gap: game.p2Gap,
+            p2Points: game.p2Points,
             p3Name: game.p3Name,
             p3Team: game.p3Team,
             p3Image: game.p3Image,
             p3Gap: game.p3Gap,
+            p3Points: game.p3Points,
+            p4Name: game.p4Name,
+            p4Team: game.p4Team,
+            p4Image: game.p4Image,
+            p4Gap: game.p4Gap,
+            p4Points: game.p4Points,
           ),
         );
       } else {
@@ -461,6 +497,7 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
           child: F1CompletedCard(
+            sessionType: game.sessionType,
             raceName: game.stadium ?? 'Grand Prix',
             raceDate: game.startTime.toLocal(),
             raceNumber: game.raceNumber ?? 0,
