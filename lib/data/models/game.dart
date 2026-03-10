@@ -1,9 +1,9 @@
-import 'sports/basketball_game.dart';
-import 'sports/f1_game.dart';
-import 'sports/golf_game.dart';
-import 'sports/tennis_game.dart';
-import 'sports/rally_game.dart';
-import 'sports/football_game.dart';
+import 'package:arenaone/data/models/sports/basketball_game.dart';
+import 'package:arenaone/data/models/sports/f1_game.dart';
+import 'package:arenaone/data/models/sports/golf_game.dart';
+import 'package:arenaone/data/models/sports/tennis_game.dart';
+import 'package:arenaone/data/models/sports/rally_game.dart';
+import 'package:arenaone/data/models/sports/football_game.dart';
 
 abstract class Game {
   final String id;

@@ -1,12 +1,12 @@
 import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
-import '../../../redux/app_state.dart';
-import 'home_page.dart';
-import 'following_page.dart';
-import 'profile_page.dart';
-import '../../auth/pages/sport_selection_page.dart';
-import '../../../redux/actions/navigation_actions.dart';
+import 'package:arenaone/redux/app_state.dart';
+import 'package:arenaone/presentation/home/pages/home_page.dart';
+import 'package:arenaone/presentation/home/pages/following_page.dart';
+import 'package:arenaone/presentation/home/pages/profile_page.dart';
+import 'package:arenaone/presentation/auth/pages/sport_selection_page.dart';
+import 'package:arenaone/redux/actions/navigation_actions.dart';
 
 class MainNavigation extends StatelessWidget {
   const MainNavigation({super.key});

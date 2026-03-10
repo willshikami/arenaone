@@ -1,11 +1,11 @@
 import 'package:async_redux/async_redux.dart';
 import 'package:flutter/foundation.dart';
 import 'package:collection/collection.dart';
-import '../app_state.dart';
-import '../../data/services/database_helper.dart';
-import '../../data/services/supabase_service.dart';
-import '../../data/models/team.dart';
-import '../../data/services/live_activity_service.dart';
+import 'package:arenaone/redux/app_state.dart';
+import 'package:arenaone/data/services/database_helper.dart';
+import 'package:arenaone/data/services/supabase_service.dart';
+import 'package:arenaone/data/models/team.dart';
+import 'package:arenaone/data/services/live_activity_service.dart';
 
 class LoadNBAGamesAction extends ReduxAction<AppState> {
   @override

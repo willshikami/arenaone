@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import '../game.dart';
+import 'package:arenaone/data/models/game.dart';
 
 part 'f1_game.g.dart';
 

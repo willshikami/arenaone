@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'dart:ui';
 
 class LiveClockText extends StatefulWidget {
   final String? initialClock;

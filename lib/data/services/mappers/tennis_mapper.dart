@@ -1,6 +1,6 @@
-import '../../models/game.dart';
-import '../../models/sports/tennis_game.dart';
-import 'sport_mapper.dart';
+import 'package:arenaone/data/models/game.dart';
+import 'package:arenaone/data/models/sports/tennis_game.dart';
+import 'package:arenaone/data/services/mappers/sport_mapper.dart';
 
 class TennisMapper extends SportMapper {
   @override
@@ -11,9 +11,6 @@ class TennisMapper extends SportMapper {
     final startTime = DateTime.parse(startTimeStr);
     var status = mapStatus(json['status_state'], json['status_type']);
     final tournamentName = json['name'] ?? 'ATP Tour';
-
-    // LOG: UPDATED TENNIS MAPPER V2
-    print('TENNIS_MAPPER_V2: Checking $tournamentName | Status: $status | Start: $startTime');
 
     // FIX: Many tournament headers are marked 'post' erroneously.
     // If it's within 7 days of today (past or future), let's keep it visible in Upcoming or Live

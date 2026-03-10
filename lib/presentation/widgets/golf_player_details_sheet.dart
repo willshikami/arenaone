@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
-import '../../data/models/sports/golf_game.dart';
+import 'package:arenaone/data/models/sports/golf_game.dart';
 
 class GoffPlayerDetailsSheet extends StatelessWidget {
   final GolfLeader player;

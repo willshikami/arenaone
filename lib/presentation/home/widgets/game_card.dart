@@ -3,14 +3,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'dart:ui';
-import '../../../data/models/game.dart';
-import '../../../data/models/sports/basketball_game.dart';
-import '../../../data/models/sports/football_game.dart';
-import '../../../data/models/sports/golf_game.dart';
-import '../../../data/services/mappers/sport_mapper.dart';
-import '../../widgets/score_flip_text.dart';
-import '../../widgets/live_clock_text.dart';
+import 'package:arenaone/data/models/game.dart';
+import 'package:arenaone/data/models/sports/basketball_game.dart';
+import 'package:arenaone/data/models/sports/football_game.dart';
+import 'package:arenaone/data/models/sports/golf_game.dart';
+import 'package:arenaone/data/services/mappers/sport_mapper.dart';
+import 'package:arenaone/presentation/widgets/score_flip_text.dart';
+import 'package:arenaone/presentation/widgets/live_clock_text.dart';
 
 class GameCard extends StatelessWidget {
   final Game game;

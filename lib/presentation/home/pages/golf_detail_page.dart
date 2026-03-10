@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../data/models/sports/golf_game.dart';
-import '../../../data/services/mappers/sport_mapper.dart';
+import 'package:arenaone/data/models/sports/golf_game.dart';
+import 'package:arenaone/data/services/mappers/sport_mapper.dart';
 
 class GolfDetailPage extends StatelessWidget {
   final GolfGame game;

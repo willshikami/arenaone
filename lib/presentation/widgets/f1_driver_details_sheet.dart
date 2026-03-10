@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sficon/flutter_sficon.dart';
-import '../../data/models/sports/f1_game.dart';
 
 class F1DriverDetailsSheet extends StatelessWidget {
   final String name;

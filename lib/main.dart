@@ -1,11 +1,11 @@
 import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
-import 'redux/store.dart';
-import 'redux/actions/navigation_actions.dart';
-import 'utils/app_theme.dart';
-import 'presentation/home/pages/main_navigation.dart';
-import 'data/services/supabase_config.dart';
-import 'data/services/live_activity_service.dart';
+import 'package:arenaone/redux/store.dart';
+import 'package:arenaone/redux/actions/navigation_actions.dart';
+import 'package:arenaone/utils/app_theme.dart';
+import 'package:arenaone/presentation/home/pages/main_navigation.dart';
+import 'package:arenaone/data/services/supabase_config.dart';
+import 'package:arenaone/data/services/live_activity_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {

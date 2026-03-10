@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../models/game.dart';
-import 'supabase_config.dart';
-import 'mappers/sport_mapper.dart';
-import 'mappers/basketball_mapper.dart';
-import 'mappers/football_mapper.dart';
-import 'mappers/f1_mapper.dart';
-import 'mappers/golf_mapper.dart';
-import 'mappers/tennis_mapper.dart';
-import 'mappers/rally_mapper.dart';
+import 'package:arenaone/data/models/game.dart';
+import 'package:arenaone/data/services/supabase_config.dart';
+import 'package:arenaone/data/services/mappers/sport_mapper.dart';
+import 'package:arenaone/data/services/mappers/basketball_mapper.dart';
+import 'package:arenaone/data/services/mappers/football_mapper.dart';
+import 'package:arenaone/data/services/mappers/f1_mapper.dart';
+import 'package:arenaone/data/services/mappers/golf_mapper.dart';
+import 'package:arenaone/data/services/mappers/tennis_mapper.dart';
+import 'package:arenaone/data/services/mappers/rally_mapper.dart';
 
 class SupabaseService {
   final SupabaseClient _client = SupabaseConfig.client;
@@ -111,7 +111,7 @@ class SupabaseService {
       debugPrint('SUCCESS: Mapped ${mappedGames.length} games for $slug');
       return mappedGames;
     } catch (e) {
-      print('DEBUG: SupabaseService fetch failed for $slug: $e');
+      debugPrint('DEBUG: SupabaseService fetch failed for $slug: $e');
       return [];
     }
   }

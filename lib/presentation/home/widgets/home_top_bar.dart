@@ -3,8 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
 import 'package:async_redux/async_redux.dart';
-import '../../../redux/app_state.dart';
-import '../../../data/models/game.dart';
+import 'package:arenaone/redux/app_state.dart';
 
 class HomeTopBar extends StatelessWidget {
   const HomeTopBar({super.key});

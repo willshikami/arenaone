@@ -1,4 +1,4 @@
-import '../../models/game.dart';
+import 'package:arenaone/data/models/game.dart';
 
 abstract class SportMapper {
   Game? map(Map<String, dynamic> json);
@@ -17,8 +17,8 @@ abstract class SportMapper {
     return 'Upcoming';
   }
 
-  bool isLive(bool? is_live, String? state) {
-    if (is_live == true) return true;
+  bool isLive(bool? isLive, String? state) {
+    if (isLive == true) return true;
     final s = state?.toLowerCase() ?? '';
     return s == 'in' || s == 'live' || s == 'inprogress';
   }
@@ -70,8 +70,9 @@ abstract class SportMapper {
     if (homeData == null || awayData == null) {
       final name = eventName ?? '';
       String? separator;
-      if (name.contains(' at ')) separator = ' at ';
-      else if (name.contains(' vs ')) separator = ' vs ';
+      if (name.contains(' at ')) {
+        separator = ' at ';
+      } else if (name.contains(' vs ')) separator = ' vs ';
       else if (name.contains(' - ')) separator = ' - ';
 
       if (separator != null) {

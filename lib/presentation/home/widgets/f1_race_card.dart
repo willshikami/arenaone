@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import '../../../data/services/mappers/sport_mapper.dart';
-import '../../widgets/f1_driver_details_sheet.dart';
+import 'package:arenaone/data/services/mappers/sport_mapper.dart';
+import 'package:arenaone/presentation/widgets/f1_driver_details_sheet.dart';
 
 class F1UpcomingCard extends StatelessWidget {
   final String raceName;

@@ -1,8 +1,8 @@
 import 'package:async_redux/async_redux.dart';
 import 'dart:convert';
-import '../app_state.dart';
-import '../../data/services/database_helper.dart';
-import '../../data/services/live_activity_service.dart';
+import 'package:arenaone/redux/app_state.dart';
+import 'package:arenaone/data/services/database_helper.dart';
+import 'package:arenaone/data/services/live_activity_service.dart';
 
 class SetCurrentTabIndexAction extends ReduxAction<AppState> {
   final int index;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
-import '../../../data/models/sports/rally_game.dart';
-import '../../../data/services/mappers/sport_mapper.dart';
+import 'package:arenaone/data/models/sports/rally_game.dart';
+import 'package:arenaone/data/services/mappers/sport_mapper.dart';
 
 class RallyUpcomingCard extends StatelessWidget {
   final RallyGame game;

@@ -2,8 +2,8 @@ import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../redux/app_state.dart';
-import '../../../redux/actions/navigation_actions.dart';
+import 'package:arenaone/redux/app_state.dart';
+import 'package:arenaone/redux/actions/navigation_actions.dart';
 
 class SportSelectionPage extends StatelessWidget {
   const SportSelectionPage({super.key});

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
-import '../../../data/models/sports/golf_game.dart';
-import '../../../data/services/mappers/sport_mapper.dart';
-import '../../widgets/score_flip_text.dart';
-import '../../widgets/golf_player_details_sheet.dart';
+import 'package:arenaone/data/models/sports/golf_game.dart';
+import 'package:arenaone/data/services/mappers/sport_mapper.dart';
+import 'package:arenaone/presentation/widgets/score_flip_text.dart';
+import 'package:arenaone/presentation/widgets/golf_player_details_sheet.dart';
 
 class GolfUpcomingCard extends StatelessWidget {
   final String tournamentName;

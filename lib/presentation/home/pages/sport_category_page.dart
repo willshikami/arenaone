@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import '../../../data/models/game.dart';
-import '../../../data/models/sports/f1_game.dart';
-import '../../../data/models/sports/golf_game.dart';
-import '../../../data/models/sports/tennis_game.dart';
-import '../../../data/models/sports/rally_game.dart';
-import '../../../data/models/sports/football_game.dart';
-import '../../../data/assets/app_assets.dart';
-import '../widgets/game_card.dart';
-import '../widgets/f1_race_card.dart';
-import '../widgets/golf_card.dart';
-import '../widgets/tennis_card.dart';
-import '../widgets/rally_card.dart';
-import '../widgets/football_card.dart';
+import 'package:arenaone/data/models/game.dart';
+import 'package:arenaone/data/models/sports/f1_game.dart';
+import 'package:arenaone/data/models/sports/golf_game.dart';
+import 'package:arenaone/data/models/sports/tennis_game.dart';
+import 'package:arenaone/data/models/sports/rally_game.dart';
+import 'package:arenaone/data/models/sports/football_game.dart';
+import 'package:arenaone/data/assets/app_assets.dart';
+import 'package:arenaone/presentation/home/widgets/game_card.dart';
+import 'package:arenaone/presentation/home/widgets/f1_race_card.dart';
+import 'package:arenaone/presentation/home/widgets/golf_card.dart';
+import 'package:arenaone/presentation/home/widgets/tennis_card.dart';
+import 'package:arenaone/presentation/home/widgets/rally_card.dart';
+import 'package:arenaone/presentation/home/widgets/football_card.dart';
 
 class SportCategoryPage extends StatelessWidget {
   final String sport;

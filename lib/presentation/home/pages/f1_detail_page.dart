@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import '../../../data/models/sports/f1_game.dart';
+import 'package:arenaone/data/models/sports/f1_game.dart';
 
 class F1DetailPage extends StatelessWidget {
   final F1Game game;

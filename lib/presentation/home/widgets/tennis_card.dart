@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_sficon/flutter_sficon.dart';
-import '../../../data/models/sports/tennis_game.dart';
-import '../../../data/services/mappers/sport_mapper.dart';
+import 'package:arenaone/data/models/sports/tennis_game.dart';
+import 'package:arenaone/data/services/mappers/sport_mapper.dart';
 
 class TennisUpcomingCard extends StatelessWidget {
   final TennisGame game;

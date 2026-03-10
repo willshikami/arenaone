@@ -1,6 +1,6 @@
-import '../../models/game.dart';
-import '../../models/sports/basketball_game.dart';
-import 'sport_mapper.dart';
+import 'package:arenaone/data/models/game.dart';
+import 'package:arenaone/data/models/sports/basketball_game.dart';
+import 'package:arenaone/data/services/mappers/sport_mapper.dart';
 
 class BasketballMapper extends SportMapper {
   @override

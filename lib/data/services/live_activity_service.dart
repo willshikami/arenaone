@@ -1,8 +1,8 @@
 import 'package:live_activities/live_activities.dart';
-import '../../data/models/game.dart';
-import '../../data/models/sports/football_game.dart';
-import '../../data/models/sports/basketball_game.dart';
-import '../../data/models/sports/golf_game.dart';
+import 'package:arenaone/data/models/game.dart';
+import 'package:arenaone/data/models/sports/football_game.dart';
+import 'package:arenaone/data/models/sports/basketball_game.dart';
+import 'package:arenaone/data/models/sports/golf_game.dart';
 
 class LiveActivityService {
   static final LiveActivityService _instance = LiveActivityService._internal();
