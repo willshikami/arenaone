@@ -5,11 +5,12 @@ import 'package:arenaone/core/data/mappers/sport_mapper.dart';
 class TennisMapper extends SportMapper {
   @override
   Game? map(Map<String, dynamic> json) {
-    final startTimeStr = json['start_time'] as String?;
+    final startTimeStr = json['startTime'] as String?;
     if (startTimeStr == null) return null; 
     
+    final statusMap = json['status'] as Map<String, dynamic>?;
     final startTime = DateTime.parse(startTimeStr);
-    var status = mapStatus(json['status_state'], json['status_type']);
+    var status = mapStatus(statusMap);
     final tournamentName = json['name'] ?? 'ATP Tour';
 
     // FIX: Many tournament headers are marked 'post' erroneously.
@@ -21,15 +22,14 @@ class TennisMapper extends SportMapper {
     if (startTime.isAfter(oneWeekAgo) && startTime.isBefore(oneWeekFromNow)) {
       if (status == 'Final') {
         // Only force to Upcoming if players are TBD (likely a tournament header)
-        final participants = json['event_participants'] as List<dynamic>? ?? [];
-        if (participants.isEmpty) {
+        final teams = findHomeAwayTeams(json);
+        if (teams == null || teams['home'] == null) {
           status = 'Upcoming';
         }
       }
     }
 
-    final participants = json['event_participants'] as List<dynamic>? ?? [];
-    final teams = findHomeAwayTeams(participants, json['name']);
+    final teams = findHomeAwayTeams(json);
     
     final home = teams?['home'];
     final away = teams?['away'];
@@ -41,13 +41,14 @@ class TennisMapper extends SportMapper {
       sport: 'Tennis',
       startTime: startTime,
       status: status,
-      isLive: isLive(json['is_live'], json['status_state']),
-      stadium: json['venue_name'] ?? tournamentName,
+      isLive: isLive(statusMap),
+      stadium: json['venue'] ?? tournamentName,
       player1Name: home?['name'] ?? 'TBD',
       player2Name: away?['name'] ?? 'TBD',
       player1Image: home?['logo'],
       player2Image: away?['logo'],
-      score: getScore(json['status_state'], teams?['homeData']?['score'], teams?['awayData']?['score']),
+      score: getScore(statusMap, teams?['homeData']?['score'], teams?['awayData']?['score']),
+      leagueType: json['leagues']?['name'] ?? 'Tennis',
       tournamentName: tournamentName,
     );
   }

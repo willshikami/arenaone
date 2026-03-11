@@ -19,30 +19,47 @@ class LiveActivityService {
   Future<void> startActivity(Game game) async {
     if (game.isLive == false) return;
 
-    // For now, we only support one active live activity for simplicity
-    // but the plugin supports multiple.
-    if (_latestActivityId != null) {
-      await updateActivity(game);
-    } else {
-      Map<String, dynamic> activityData = _formatGameData(game);
-      _latestActivityId = await _liveActivitiesPlugin.createActivity(game.id, activityData);
+    try {
+      // For now, we only support one active live activity for simplicity
+      // but the plugin supports multiple.
+      if (_latestActivityId != null) {
+        await updateActivity(game);
+      } else {
+        Map<String, dynamic> activityData = _formatGameData(game);
+        _latestActivityId =
+            await _liveActivitiesPlugin.createActivity(game.id, activityData);
+      }
+    } catch (e) {
+      print('DEBUG: LiveActivityService.startActivity failed: $e');
     }
   }
 
   Future<void> updateActivity(Game game) async {
-    if (_latestActivityId == null) {
-      await startActivity(game);
-      return;
-    }
+    try {
+      if (_latestActivityId == null) {
+        await startActivity(game);
+        return;
+      }
 
-    Map<String, dynamic> activityData = _formatGameData(game);
-    await _liveActivitiesPlugin.updateActivity(_latestActivityId!, activityData);
+      Map<String, dynamic> activityData = _formatGameData(game);
+      await _liveActivitiesPlugin.updateActivity(
+          _latestActivityId!, activityData);
+    } catch (e) {
+      print('DEBUG: LiveActivityService.updateActivity failed: $e');
+      // If updating fails (e.g. activity was killed on iOS side), try to re-start
+      _latestActivityId = null;
+      await startActivity(game);
+    }
   }
 
   Future<void> stopActivity() async {
-    if (_latestActivityId != null) {
-      await _liveActivitiesPlugin.endActivity(_latestActivityId!);
-      _latestActivityId = null;
+    try {
+      if (_latestActivityId != null) {
+        await _liveActivitiesPlugin.endActivity(_latestActivityId!);
+        _latestActivityId = null;
+      }
+    } catch (e) {
+      print('DEBUG: LiveActivityService.stopActivity failed: $e');
     }
   }
 
@@ -80,7 +97,7 @@ class LiveActivityService {
     }
 
     return {
-      'game_id': game.id,
+      'game_id': game.id.toString(),
       'title': title,
       'status': status,
       'score': score,

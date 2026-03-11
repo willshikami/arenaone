@@ -5,45 +5,25 @@ import 'package:arenaone/core/data/mappers/sport_mapper.dart';
 class GolfMapper extends SportMapper {
   @override
   Game? map(Map<String, dynamic> json) {
-    final participants = json['event_participants'] as List<dynamic>? ?? [];
+    final competitions = json['competitions'] as List<dynamic>? ?? [];
+    if (competitions.isEmpty) return null;
+    
+    final statusMap = json['status'] as Map<String, dynamic>?;
+    final competition = competitions[0] as Map<String, dynamic>;
+    final participants = competition['competitionTeams'] as List<dynamic>? ?? [];
     
     final leaders = participants.map((p) {
-      final pInfo = getParticipantMap(p['participants']);
-      final pLinescores = p['linescores'] as List<dynamic>? ?? [];
+      final teamsData = p['teams'] as Map<String, dynamic>?;
       
-      String playerRound = json['period']?.toString() ?? 'R1';
-      String playerThru = p['record']?.toString() ?? 'F';
+      String playerRound = statusMap?['period']?.toString() ?? 'R1';
+      String playerThru = p['records']?.toString() ?? 'F';
 
-      if (pLinescores.isNotEmpty) {
-        // Find the most recent linescore with statistics (this is usually the current round)
-        final currentRoundData = pLinescores.lastWhere(
-          (ls) => ls['statistics'] != null,
-          orElse: () => pLinescores.first,
-        );
-        
-        if (currentRoundData != null) {
-          if (currentRoundData['period'] != null) {
-            playerRound = 'R${currentRoundData['period']}';
-          }
-          
-          try {
-            final stats = currentRoundData['statistics']?['categories']?[0]?['stats'] as List<dynamic>?;
-            if (stats != null && stats.length >= 6) {
-              final thruValue = stats[5]?['displayValue']?.toString();
-              if (thruValue != null && thruValue.isNotEmpty) {
-                playerThru = thruValue;
-              }
-            }
-          } catch (e) {
-            // Fallback to record if statistics parsing fails
-          }
-        }
-      }
-
-      final pName = pInfo?['name'] ?? 'Unknown';
+      // Golf specific stats might be nested in statistics JSONB
+      // Assuming a similar structure to competitive sports but tailored for golf
+      final pName = teamsData?['name'] ?? 'Unknown';
       
       // Map golfer names to their respective Headshots
-      String playerImage = pInfo?['logo'] ?? '';
+      String playerImage = teamsData?['logo'] ?? '';
       int totalWins = 0;
       int championships = 0;
 
@@ -167,9 +147,9 @@ class GolfMapper extends SportMapper {
       }
 
       return GolfLeader(
-        position: p['position'] ?? 0,
+        position: p['orderInCompetition'] ?? 0,
         name: pName,
-        team: pInfo?['team'] ?? '',
+        team: teamsData?['shortDisplayName'] ?? '',
         score: p['score']?.toString() ?? 'E',
         thru: playerThru,
         image: playerImage,
@@ -185,13 +165,13 @@ class GolfMapper extends SportMapper {
     return GolfGame(
       id: json['id'].toString(),
       sport: 'Golf',
-      startTime: DateTime.parse(json['start_time']),
-      status: mapStatus(json['status_state'], json['status_type']),
-      isLive: isLive(json['is_live'], json['status_state']),
-      stadium: json['venue_name'] ?? json['name'],
-      leagueType: 'PGA Tour',
+      startTime: DateTime.parse(json['startTime']),
+      status: mapStatus(statusMap),
+      isLive: isLive(statusMap),
+      stadium: json['venue'] ?? json['name'],
+      leagueType: json['leagues']?['name'] ?? 'PGA Tour',
       tournamentName: json['name'],
-      round: json['period']?.toString() ?? 'R1',
+      round: statusMap?['period']?.toString() ?? 'R1',
       leaderboard: leaders,
     );
   }

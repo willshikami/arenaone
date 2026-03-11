@@ -5,31 +5,33 @@ import 'package:arenaone/core/data/mappers/sport_mapper.dart';
 class BasketballMapper extends SportMapper {
   @override
   Game? map(Map<String, dynamic> json) {
-    final participants = json['event_participants'] as List<dynamic>? ?? [];
-    final teams = findHomeAwayTeams(participants, json['name']);
+    final teams = findHomeAwayTeams(json);
     if (teams == null) return null;
 
     final home = teams['home'];
     final away = teams['away'];
+    
+    final statusMap = json['status'] as Map<String, dynamic>?;
+    final typeMap = statusMap?['type'] as Map<String, dynamic>?;
 
     return BasketballGame(
       id: json['id'].toString(),
       sport: 'NBA',
-      startTime: DateTime.parse(json['start_time']),
-      status: mapStatus(json['status_state'], json['status_type']),
-      isLive: isLive(json['is_live'], json['status_state']),
-      stadium: json['venue_name'],
+      startTime: DateTime.parse(json['startTime']),
+      status: mapStatus(statusMap),
+      isLive: isLive(statusMap),
+      stadium: json['venue'],
       homeTeamName: home?['name'] ?? 'TBD',
       awayTeamName: away?['name'] ?? 'TBD',
       homeTeamAbbr: home?['abbreviation'] ?? _getAbbreviation(home?['name'] ?? 'TBD'),
       awayTeamAbbr: away?['abbreviation'] ?? _getAbbreviation(away?['name'] ?? 'TBD'),
       homeTeamLogo: home?['logo'],
       awayTeamLogo: away?['logo'],
-      score: getScore(json['status_state'], teams['homeData']['score'], teams['awayData']['score']),
-      clock: json['clock']?.toString(),
-      period: json['period'] as int?,
-      statusType: json['status_type']?.toString(),
-      leagueType: 'Regular Season', // leagues table removed from schema
+      score: getScore(statusMap, teams['homeData']['score'], teams['awayData']['score']),
+      clock: statusMap?['displayClock']?.toString(),
+      period: statusMap?['period'] as int?,
+      statusType: typeMap?['name']?.toString(),
+      leagueType: json['leagues']?['name'] ?? 'NBA',
     );
   }
 

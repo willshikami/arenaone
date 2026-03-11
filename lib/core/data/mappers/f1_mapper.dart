@@ -38,15 +38,17 @@ class F1Mapper extends SportMapper {
 
   @override
   Game? map(Map<String, dynamic> json) {
-    final participants = json['event_participants'] as List<dynamic>? ?? [];
+    final competitions = json['competitions'] as List<dynamic>? ?? [];
+    if (competitions.isEmpty) return null;
+    
+    final competition = competitions[0] as Map<String, dynamic>;
+    final participants = competition['competitionTeams'] as List<dynamic>? ?? [];
     
     final drivers = participants.map((p) {
-      final pInfo = getParticipantMap(p['participants']);
+      final teamsData = p['teams'] as Map<String, dynamic>?;
       
-      // Sometimes ESPN API puts team name in 'abbreviation' or 'type' mapping
-      // or even as a separate field in the participant object.
-      final pName = pInfo?['name'] ?? 'Unknown';
-      final pLogo = pInfo?['logo'] ?? 'https://a.espncdn.com/i/teamlogos/f1/500/f1.png';
+      final pName = teamsData?['name'] ?? 'Unknown';
+      final pLogo = teamsData?['logo'] ?? 'https://a.espncdn.com/i/teamlogos/f1/500/f1.png';
       
       // Map driver names to their respective F1 teams for 2026 season
       String teamName = 'TBD';
@@ -138,12 +140,12 @@ class F1Mapper extends SportMapper {
       }
 
       return F1Driver(
-        position: p['position'] ?? 0,
+        position: p['orderInCompetition'] ?? 0,
         name: pName,
         team: teamName,
         image: driverImage,
         points: p['score']?.toString() ?? '0',
-        gap: p['record']?.toString(), // Sometimes gap is in record
+        gap: p['records']?.toString(), // Sometimes gap is in record
         wins: wins,
         podiums: podiums,
         totalRaces: totalRaces,
@@ -157,47 +159,33 @@ class F1Mapper extends SportMapper {
     final p3 = drivers.length > 2 ? drivers[2] : null;
     final p4 = drivers.length > 3 ? drivers[3] : null;
 
-    final venueName = json['venue_name'];
     final eventName = json['name'];
-    final venueCity = json['venue_city'];
-    final trackAsset = _getTrackAsset(venueName, eventName, venueCity);
+    final venue = json['venue']?.toString();
+    final trackAsset = _getTrackAsset(venue, eventName, null);
 
-    // Parsing session times from event_participants if available in linescores
-    // Or from the event itself if the schema changes to include them there.
-    DateTime? p1Time;
-    DateTime? p2Time;
-    DateTime? p3Time;
-    DateTime? qTime;
-    DateTime? sTime;
-
-    // Detection of session type from status_type or name
-    String? sessionType = 'race';
-    final statusType = json['status_type']?.toString().toLowerCase() ?? '';
+    // Detection of session type from status or name
+    final statusMap = json['status'] as Map<String, dynamic>?;
+    final typeMap = statusMap?['type'] as Map<String, dynamic>?;
+    final statusType = typeMap?['name']?.toString().toLowerCase() ?? '';
     final name = eventName?.toString().toLowerCase() ?? '';
     
+    String? sessionType = 'race';
     if (statusType.contains('qualifying') || name.contains('qualifying')) {
       sessionType = 'qualifying';
     } else if (statusType.contains('practice') || name.contains('practice')) {
       sessionType = 'practice';
     } else if (statusType.contains('sprint') || name.contains('sprint')) {
       sessionType = 'sprint';
-    } else if (statusType.contains('final') || name.contains('grand prix')) {
-      // If it mentions Grand Prix or is Final and not tagged as Quali/Practice, it's likely the Race
-      sessionType = 'race';
     }
-
-    // Check if session times are in event_participants linescores (e.g. for upcoming races)
-    // This is where Option B (Dynamic Wait) logic will live.
-    // For now, it stays null until data is observed.
 
     return F1Game(
       id: json['id'].toString(),
       sport: 'F1',
-      startTime: DateTime.parse(json['start_time']),
-      status: mapStatus(json['status_state'], json['status_type']),
-      isLive: isLive(json['is_live'], json['status_state']),
-      stadium: venueName ?? eventName,
-      leagueType: 'Formula 1',
+      startTime: DateTime.parse(json['startTime']),
+      status: mapStatus(statusMap),
+      isLive: isLive(statusMap),
+      stadium: venue ?? eventName,
+      leagueType: json['leagues']?['name'] ?? 'Formula 1',
       sessionType: sessionType,
       winnerName: winner?.name,
       winnerTeam: winner?.team ?? 'TBD',
@@ -221,11 +209,6 @@ class F1Mapper extends SportMapper {
       raceNumber: 1,
       eventImageUrl: trackAsset,
       drivers: drivers,
-      practice1Time: p1Time,
-      practice2Time: p2Time,
-      practice3Time: p3Time,
-      qualifyingTime: qTime,
-      sprintTime: sTime,
     );
   }
 }

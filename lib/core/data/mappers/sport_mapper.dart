@@ -3,136 +3,93 @@ import 'package:arenaone/core/data/game.dart';
 abstract class SportMapper {
   Game? map(Map<String, dynamic> json);
 
-  String mapStatus(String? state, String? type) {
+  String mapStatus(Map<String, dynamic>? status) {
+    if (status == null) return 'Upcoming';
+    
+    final type = status['type'] as Map<String, dynamic>?;
+    final state = type?['state']?.toString().toLowerCase();
+    
     if (state == 'pre') return 'Upcoming';
     if (state == 'in') return 'Live';
     if (state == 'post') return 'Final';
     
-    if (type == null) return 'Upcoming';
-    final s = type.toLowerCase();
-    if (s == 'final' || s == 'status_final' || s == 'finished' || s == 'complete') return 'Final';
-    if (s.contains('live') || s.contains('progress') || s.contains('playing') || s.contains('quarter') || s.contains('half')) {
+    final typeName = type?['name']?.toString().toLowerCase();
+    if (typeName == 'final' || typeName == 'finished' || typeName == 'complete') return 'Final';
+    if (typeName != null && (typeName.contains('live') || typeName.contains('progress'))) {
       return 'Live';
     }
     return 'Upcoming';
   }
 
-  bool isLive(bool? isLive, String? state) {
-    if (isLive == true) return true;
-    final s = state?.toLowerCase() ?? '';
-    return s == 'in' || s == 'live' || s == 'inprogress';
+  bool isLive(Map<String, dynamic>? status) {
+    if (status == null) return false;
+    final type = status['type'] as Map<String, dynamic>?;
+    final state = type?['state']?.toString().toLowerCase();
+    return state == 'in';
   }
 
-  String? getScore(String? state, dynamic homeScore, dynamic awayScore) {
+  String? getScore(Map<String, dynamic>? status, dynamic homeScore, dynamic awayScore) {
+    final state = status?['type']?['state']?.toString().toLowerCase();
     if (state == 'pre') return null;
     return "${homeScore ?? '0'}-${awayScore ?? '0'}";
   }
 
-  Map<String, dynamic>? getParticipantMap(dynamic participantsField) {
-    if (participantsField == null) return null;
-    if (participantsField is Map<String, dynamic>) return participantsField;
-    if (participantsField is List && participantsField.isNotEmpty) {
-      return participantsField[0] as Map<String, dynamic>;
-    }
-    return null;
-  }
+  Map<String, dynamic>? findHomeAwayTeams(Map<String, dynamic> json) {
+    final competitions = json['competitions'] as List<dynamic>?;
+    if (competitions == null || competitions.isEmpty) return null;
+    
+    final competition = competitions[0] as Map<String, dynamic>;
+    final teams = (competition['competitionTeams'] as List<dynamic>?)
+            ?.map((e) => e as Map<String, dynamic>)
+            .toList() ??
+        [];
+    if (teams.isEmpty) return null;
 
-  Map<String, dynamic>? findHomeAwayTeams(List<dynamic> eventParticipants, String? eventName) {
-    // REMOVED early return: process even if participants are empty
-    // if (eventParticipants.isEmpty) return null;
+    Map<String, dynamic> homeData = <String, dynamic>{};
+    Map<String, dynamic> awayData = <String, dynamic>{};
 
-    dynamic homeData;
-    dynamic awayData;
-
-    // 1. Try to find by explicit home_away field (new schema)
-    homeData = eventParticipants.firstWhere(
-      (p) => p['home_away'] == 'home',
-      orElse: () => null,
+    // 1. Try to find by explicit homeAway field
+    homeData = teams.firstWhere(
+      (p) => p['homeAway'] == 'home',
+      orElse: () => <String, dynamic>{},
     );
-    awayData = eventParticipants.firstWhere(
-      (p) => p['home_away'] == 'away',
-      orElse: () => null,
+    awayData = teams.firstWhere(
+      (p) => p['homeAway'] == 'away',
+      orElse: () => <String, dynamic>{},
     );
 
-    // 2. Try to find by explicit position (1=Home, 2=Away)
-    if (homeData == null || awayData == null) {
-      homeData = eventParticipants.firstWhere(
-        (p) => p['position'] == 1,
-        orElse: () => null,
+    // 2. Fallback to order in competition
+    if (homeData.isEmpty || awayData.isEmpty) {
+      homeData = teams.firstWhere(
+        (p) => p['orderInCompetition'] == 0,
+        orElse: () => <String, dynamic>{},
       );
-      awayData = eventParticipants.firstWhere(
-        (p) => p['position'] == 2,
-        orElse: () => null,
-      );
-    }
-
-    // 2. If positions are missing OR no participants, try to infer from event name
-    if (homeData == null || awayData == null) {
-      final name = eventName ?? '';
-      String? separator;
-      if (name.contains(' at ')) {
-        separator = ' at ';
-      } else if (name.contains(' vs ')) separator = ' vs ';
-      else if (name.contains(' - ')) separator = ' - ';
-
-      if (separator != null) {
-        final parts = name.split(separator);
-        final awayNameFromEvent = parts[0].trim();
-        final homeNameFromEvent = parts.length > 1 ? parts[1].trim() : '';
-
-        if (eventParticipants.length >= 2) {
-          for (int i = 0; i < eventParticipants.length; i++) {
-            final p = eventParticipants[i];
-            final pMap = getParticipantMap(p['participants']);
-            final pName = pMap?['name']?.toLowerCase() ?? '';
-            
-            if (awayNameFromEvent.toLowerCase().contains(pName) || 
-                (pName.isNotEmpty && awayNameFromEvent.toLowerCase().startsWith(pName))) {
-              awayData = p;
-            } else if (homeNameFromEvent.toLowerCase().contains(pName) || 
-                       (pName.isNotEmpty && homeNameFromEvent.toLowerCase().startsWith(pName))) {
-              homeData = p;
-            }
-          }
-        } else if (eventParticipants.isNotEmpty) {
-          final p = eventParticipants[0];
-          final pMap = getParticipantMap(p['participants']);
-          final pName = pMap?['name']?.toLowerCase() ?? '';
-          if (awayNameFromEvent.toLowerCase().contains(pName)) {
-            awayData = p;
-          } else {
-            homeData = p;
-          }
-        } else if (homeNameFromEvent.isNotEmpty && awayNameFromEvent.isNotEmpty) {
-          homeData = {
-            'participants': {'name': homeNameFromEvent, 'logo': null},
-            'score': 0,
-            'position': 1
-          };
-          awayData = {
-            'participants': {'name': awayNameFromEvent, 'logo': null},
-            'score': 0,
-            'position': 2
-          };
-        }
+      if (teams.length > 1) {
+        awayData = teams.firstWhere(
+          (p) => p['orderInCompetition'] == 1,
+          orElse: () => <String, dynamic>{},
+        );
       }
     }
 
-    // 3. Fallback to index order
-    if (homeData == null && eventParticipants.isNotEmpty) {
-      homeData = eventParticipants[0];
+    // 3. Last resort fallback
+    if (homeData.isEmpty && teams.isNotEmpty) {
+      homeData = teams[0];
     }
-    if (awayData == null && eventParticipants.isNotEmpty) {
-      awayData = eventParticipants.length > 1 ? eventParticipants[1] : (eventParticipants.isNotEmpty ? eventParticipants[0] : null);
+    if (awayData.isEmpty && teams.length > 1) {
+      awayData = teams[1];
     }
 
-    // REMOVED: If we have no participants, we return a shell with TBDs instead of null
-    // so the event actually appears in the UI.
+    if (homeData.isEmpty && awayData.isEmpty) {
+      print('DEBUG: findHomeAwayTeams failed to find ANY team data');
+      return null;
+    }
+
     return {
-      'home': homeData != null ? getParticipantMap(homeData['participants']) : null,
-      'away': awayData != null ? getParticipantMap(awayData['participants']) : null,
-      'homeData': homeData ?? {},
-      'awayData': awayData ?? {},
+      'home': homeData['teams'],
+      'away': awayData['teams'],
+      'homeData': homeData,
+      'awayData': awayData,
     };
   }
 

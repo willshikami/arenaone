@@ -14,15 +14,15 @@ class SupabaseService {
   final SupabaseClient _client = SupabaseConfig.client;
 
   Future<List<Game>> fetchNBAGames() async {
-    return _fetchGamesBySlug('nba', BasketballMapper());
+    return _fetchGamesBySportSlug('basketball', BasketballMapper());
   }
 
   Future<List<Game>> fetchFootballGames() async {
-    return _fetchGamesBySlug('football', FootballMapper());
+    return _fetchGamesBySportSlug('soccer', FootballMapper());
   }
 
   Future<List<Game>> fetchF1Games() async {
-    final games = await _fetchGamesBySlug('f1', F1Mapper());
+    final games = await _fetchGamesBySportSlug('racing', F1Mapper());
     
     // Group games by their base name (e.g., "Australian Grand Prix")
     // and only keep the one with the latest start time or most advanced session.
@@ -44,74 +44,139 @@ class SupabaseService {
   }
 
   Future<List<Game>> fetchGolfGames() async {
-    return _fetchGamesBySlug('golf', GolfMapper());
+    return _fetchGamesBySportSlug('golf', GolfMapper());
   }
 
   Future<List<Game>> fetchTennisGames() async {
-    return _fetchGamesBySlug('tennis', TennisMapper());
+    return _fetchGamesBySportSlug('tennis', TennisMapper());
   }
 
   Future<List<Game>> fetchRallyGames() async {
-    return _fetchGamesBySlug('rally', RallyMapper());
+    return _fetchGamesBySportSlug('rally', RallyMapper());
   }
 
-  Future<List<Game>> _fetchGamesBySlug(String slug, SportMapper mapper) async {
+  Future<List<Game>> _fetchGamesBySportSlug(String sportSlug, SportMapper mapper) async {
     try {
-      final List<dynamic> response = await _client
-          .from('events')
-          .select('''
+      // 1. Get the Sport ID from the slug
+      final sportResponse = await _client
+          .from('sports')
+          .select('id')
+          .eq('slug', sportSlug)
+          .maybeSingle();
+
+      if (sportResponse == null) {
+        debugPrint('--- SUPABASE FETCH: $sportSlug --- SPORT NOT FOUND');
+        return [];
+      }
+
+      final sportId = sportResponse['id'];
+
+      // 2. Get all Leagues for this Sport
+      final leaguesResponse = await _client
+          .from('leagues')
+          .select('id, name, abbreviation')
+          .eq('sport_id', sportId);
+
+      if (leaguesResponse.isEmpty) {
+        debugPrint('--- SUPABASE FETCH: $sportSlug --- NO LEAGUES FOUND');
+        return [];
+      }
+
+      final List<Game> allGames = [];
+      
+      // 3. For each league, fetch events separately to avoid deep join collisions
+      for (var league in leaguesResponse) {
+        final leagueId = league['id'];
+        final leagueName = league['name'];
+
+    final eventsResponse = await _client
+        .from('events')
+        .select('''
+          id,
+          name,
+          short_name,
+          event_date,
+          status,
+          venue,
+          competitions(
             id,
-            name,
-            short_name,
-            start_time,
-            status_type,
-            status_state,
-            completed,
-            is_live,
-            clock,
-            period,
-            venue_name,
-            venue_city,
-            venue_country,
-            sports!inner(slug),
-            event_participants(
+            neutral_site,
+            competition_teams(
+              id,
               score,
-              winner,
               home_away,
-              record,
-              seed,
-              position,
-              linescores,
-              participants(
+              statistics,
+              records,
+              order_in_competition,
+              teams(
+                id,
                 name,
                 logo,
                 abbreviation,
-                type
+                display_name,
+                short_display_name,
+                color,
+                alternate_color
               )
             )
-          ''')
-          .eq('sports.slug', slug)
-          .order('start_time', ascending: true);
+          )
+        ''')
+        .eq('league_id', leagueId)
+        .gte('event_date', DateTime.now().subtract(const Duration(days: 1)).toUtc().toIso8601String())
+        .order('event_date', ascending: true);
 
-      // CRITICAL DEBUG LOGS
-      debugPrint('--- SUPABASE FETCH: $slug ---');
-      debugPrint('Status: ${response.isNotEmpty ? "SUCCESS" : "EMPTY"}');
-      debugPrint('Count: ${response.length}');
-      if (response.isNotEmpty) {
-        debugPrint('First Event: ${response[0]['name']}');
-        debugPrint('First Event ID: ${response[0]['id']}');
+        if (eventsResponse.isNotEmpty) {
+          final mapped = eventsResponse.map((eventJson) {
+            final Map<String, dynamic> doc = Map<String, dynamic>.from(eventJson as Map);
+            
+            // Root Aliases
+            doc['shortName'] = doc['short_name'];
+            doc['startTime'] = doc['event_date'];
+            doc['leagues'] = {'name': leagueName, 'id': leagueId.toString()};
+
+            // Nested Aliases
+            final competitions = doc['competitions'] as List<dynamic>?;
+            if (competitions != null && competitions.isNotEmpty) {
+              for (var comp in competitions) {
+                final compMap = comp as Map<String, dynamic>;
+                compMap['neutralSite'] = compMap['neutral_site'];
+                
+                final competitionTeams = compMap['competition_teams'];
+                if (competitionTeams != null) {
+                  compMap['competitionTeams'] = (competitionTeams as List).map((ct) {
+                    final ctMap = ct as Map<String, dynamic>;
+                    ctMap['homeAway'] = ctMap['home_away'];
+                    ctMap['orderInCompetition'] = ctMap['order_in_competition'];
+                    
+                    final team = ctMap['teams'] as Map<String, dynamic>?;
+                    if (team != null) {
+                      team['id'] = team['id'].toString();
+                      team['displayName'] = team['display_name'];
+                      team['shortDisplayName'] = team['short_display_name'];
+                      team['alternateColor'] = team['alternate_color'];
+                    }
+                    return ctMap;
+                  }).toList();
+                }
+              }
+            }
+            
+            final mappedGame = mapper.map(doc);
+            if (mappedGame != null) {
+              return mappedGame;
+            }
+            return null;
+          }).whereType<Game>().toList();
+          
+          allGames.addAll(mapped);
+        }
       }
-      debugPrint('-----------------------------');
 
-      final mappedGames = response
-          .map((eventJson) => mapper.map(eventJson as Map<String, dynamic>))
-          .whereType<Game>()
-          .toList();
-
-      debugPrint('SUCCESS: Mapped ${mappedGames.length} games for $slug');
-      return mappedGames;
-    } catch (e) {
-      debugPrint('DEBUG: SupabaseService fetch failed for $slug: $e');
+      debugPrint('SUCCESS: Mapped ${allGames.length} games for $sportSlug');
+      return allGames;
+    } catch (e, stackTrace) {
+      debugPrint('DEBUG: SupabaseService fetch failed for $sportSlug: $e');
+      debugPrint('STACKTRACE: $stackTrace');
       return [];
     }
   }

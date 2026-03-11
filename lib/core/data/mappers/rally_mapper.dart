@@ -5,15 +5,20 @@ import 'package:arenaone/core/data/mappers/sport_mapper.dart';
 class RallyMapper extends SportMapper {
   @override
   Game? map(Map<String, dynamic> json) {
-    final participants = json['event_participants'] as List<dynamic>? ?? [];
+    final statusMap = json['status'] as Map<String, dynamic>?;
+    final competitions = json['competitions'] as List<dynamic>? ?? [];
+    if (competitions.isEmpty) return null;
     
-    final leaders = participants.map((p) {
-      final pInfo = getParticipantMap(p['participants']);
+    final competition = competitions[0] as Map<String, dynamic>;
+    final teams = competition['competitionTeams'] as List<dynamic>? ?? [];
+    
+    final leaders = teams.map((p) {
+      final teamsData = p['teams'] as Map<String, dynamic>?;
       return RallyLeader(
-        position: p['position'] ?? 0,
-        name: pInfo?['name'] ?? 'Unknown',
-        team: pInfo?['team'] ?? '',
-        image: pInfo?['logo'],
+        position: p['orderInCompetition'] ?? 0,
+        name: teamsData?['name'] ?? 'Unknown',
+        team: teamsData?['shortDisplayName'] ?? '',
+        image: teamsData?['logo'],
         time: p['score']?.toString(),
       );
     }).toList();
@@ -21,10 +26,11 @@ class RallyMapper extends SportMapper {
     return RallyGame(
       id: json['id'].toString(),
       sport: 'Rally',
-      startTime: DateTime.parse(json['start_time']),
-      status: mapStatus(json['status_state'], json['status_type']),
-      isLive: isLive(json['is_live'], json['status_state']),
-      stadium: json['venue_name'],
+      startTime: DateTime.parse(json['startTime']),
+      status: mapStatus(statusMap),
+      isLive: isLive(statusMap),
+      stadium: json['venue'],
+      leagueType: json['leagues']?['name'] ?? 'Rally',
       eventName: json['name'],
       leaderboard: leaders,
     );
