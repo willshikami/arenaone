@@ -7,1208 +7,726 @@ This document records the database schema and edge functions used to power the A
 Run the following SQL in your Supabase SQL Editor to create the necessary tables and seed the sports data.
 
 ```sql
--- Sports: Main categories (NBA, F1, Football, etc.)
-create table sports (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  slug text unique not null,
-  created_at timestamp default now()
+-- Status of an event
+create type event_status as enum ('scheduled', 'in_progress', 'completed', 'postponed', 'canceled');
+
+-- Season type
+create type season_type as enum ('preseason', 'regular', 'postseason');
+
+-- Tennis surfaces (used by many APIs)
+create type tennis_surface as enum ('clay', 'grass', 'hard', 'carpet', 'unknown');
+
+-- Golf round type
+create type golf_round_type as enum ('stroke_play', 'match_play', 'scramble', 'unknown');
+
+
+-- Sports (e.g. basketball, football, tennis)
+CREATE TABLE sports (
+    id BIGINT PRIMARY KEY,
+    name TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+    abbreviation TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
 );
 
--- Seed defaults
-insert into sports (name, slug) values
-('NBA', 'nba'),
-('Formula 1', 'f1'),
-('Football', 'football'),
-('Tennis', 'tennis'),
-('Golf', 'golf'),
-('World Rally Championship', 'rally');
+CREATE INDEX idx_sports_slug ON sports(slug);
 
 
--- Participants: Teams or athletes
-create table participants (
-  id uuid primary key default gen_random_uuid(),
-  sport_id uuid references sports(id) on delete cascade,
-  external_id text not null,
-  type text not null, -- team | athlete
-  name text,
-  abbreviation text,
-  logo text,
-  created_at timestamp default now(),
-  unique(external_id)
+-- Leagues (e.g. NBA, Premier League, ATP/WTA)
+CREATE TABLE leagues (
+    id BIGINT PRIMARY KEY,
+    sport_id BIGINT REFERENCES sports(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    abbreviation TEXT,
+    season_year INT,
+    start_date TIMESTAMP,
+    end_date TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW()
 );
 
--- Events: Individual games or races
-create table events (
-  id uuid primary key default gen_random_uuid(),
-  sport_id uuid references sports(id) on delete cascade,
-  external_id text not null,
-  name text,
-  short_name text,
-  season integer,
-  start_time timestamptz,
+CREATE INDEX idx_leagues_sport_id ON leagues(sport_id);
+CREATE INDEX idx_leagues_season_year ON leagues(season_year);
+
+
+  -- Events (Matches / Games / Races / Rounds)
+CREATE TABLE events (
+    id BIGINT PRIMARY KEY,
+    league_id BIGINT REFERENCES leagues(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    short_name TEXT,
+    event_date TIMESTAMP,
+    end_date TIMESTAMP,
+    venue TEXT,
+    status JSONB,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_events_league_id ON events(league_id);
+CREATE INDEX idx_events_event_date ON events(event_date);
   
-  -- Status
-  status_type text,
-  status_state text, -- pre | in | post
-  completed boolean default false,
-  is_live boolean default false,
-  clock text,
-  period integer,
-  
-  -- Venue
-  venue_name text,
-  venue_city text,
-  venue_country text,
-  
-  created_at timestamp default now(),
-  updated_at timestamp default now(),
-  unique(external_id)
+
+  -- Competitions (specific matchups within an event, e.g. Federer vs Nadal in Wimbledon Final)
+CREATE TABLE competitions (
+    id BIGINT PRIMARY KEY,
+    event_id BIGINT REFERENCES events(id) ON DELETE CASCADE,
+    type_id INT,
+    neutral_site BOOLEAN,
+    play_by_play_available BOOLEAN,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_competitions_event_id ON competitions(event_id);
+
+
+
+-- Teams (e.g. Lakers, Manchester United, Federer)
+CREATE TABLE teams (
+    id BIGINT PRIMARY KEY,
+    name TEXT NOT NULL,
+    abbreviation TEXT,
+    display_name TEXT,
+    short_display_name TEXT,
+    color TEXT,
+    alternate_color TEXT,
+    is_active BOOLEAN,
+    logo TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_teams_name ON teams(name);
+
+
+-- Competition_Teams (linking teams/athletes to specific competitions with stats)
+CREATE TABLE competition_teams (
+    id BIGINT PRIMARY KEY,
+    competition_id BIGINT REFERENCES competitions(id) ON DELETE CASCADE,
+    team_id BIGINT REFERENCES teams(id) ON DELETE CASCADE,
+    home_away TEXT,
+    score TEXT,
+    statistics JSONB,
+    records JSONB,
+    order_in_competition INT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_competition_teams_competition_id ON competition_teams(competition_id);
+
+
+
+-- Broadcasts (TV/streaming info for events)
+CREATE TABLE broadcasts (
+    id BIGINT PRIMARY KEY,
+    competition_id BIGINT REFERENCES competitions(id) ON DELETE CASCADE,
+    market TEXT,
+    names TEXT[],
+    media JSONB,
+    created_at TIMESTAMP DEFAULT NOW()
 );
 
 
--- Event Participants: Mapping participants to events (for scores and winners)
-create table event_participants (
-  id uuid primary key default gen_random_uuid(),
-  event_id uuid references events(id) on delete cascade,
-  participant_id uuid references participants(id) on delete cascade,
 
-  score text,
-  winner boolean,
-  home_away text,
-  record text,
-  seed integer,
-  position integer, -- order for F1/Golf
-  linescores jsonb,
-
-  created_at timestamp default now(),
-  unique(event_id, participant_id)
+-- Highlights (links to videos or recaps of key moments)
+CREATE TABLE highlights (
+    id BIGINT PRIMARY KEY,
+    event_id BIGINT REFERENCES events(id) ON DELETE CASCADE,
+    type TEXT,
+    url TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
 );
+
 ```
 
+
+
+```
 ## Edge Function: ingest-events (TypeScript)
+// supabase/functions/ingestSportsData/index.ts
 
-Deploy this function to Supabase to fetch live and upcoming events from the ESPN API and prefill your tables.
-
-```typescript
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.31.0";
 
-const SPORTS = [
-  { slug: "nba", path: "basketball/nba" },
-  { slug: "f1", path: "racing/f1" },
-  { slug: "football", path: "soccer/eng.1" },
-  { slug: "tennis", path: "tennis/atp" },
-  { slug: "golf", path: "golf/pga" },
-  { slug: "rally", path: "racing/wrc" },
-];
+type Json = Record<string, any>;
 
-Deno.serve(async (req: Request) => {
-  // CORS preflight response - adjust allowed origins as needed for production
-  if (req.method === "OPTIONS") {
-    const headers = {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Authorization, Content-Type",
-    };
-    return new Response("ok", { status: 204, headers });
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  throw new Error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
+}
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+const SPORT_CONFIG: Record<string, { id: string; name: string; slug: string; abbreviation: string }> = {
+  tennis: { id: "1", name: "Tennis", slug: "tennis", abbreviation: "TEN" },
+  golf: { id: "2", name: "Golf", slug: "golf", abbreviation: "GLF" },
+  racing: { id: "3", name: "Racing", slug: "racing", abbreviation: "RAC" },
+  soccer: { id: "4", name: "Soccer", slug: "soccer", abbreviation: "SOC" },
+  basketball: { id: "5", name: "Basketball", slug: "basketball", abbreviation: "BKB" },
+};
+
+const API_ENDPOINTS: Record<string, string[]> = {
+  tennis: [
+    "https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard",
+    "https://sports.core.api.espn.com/v2/sports/tennis/leagues/atp/events/411-2026?lang=en&region=us",
+  ],
+  golf: [
+    "https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard",
+    "https://site.api.espn.com/apis/site/v2/sports/golf/lpga/scoreboard",
+    "https://site.api.espn.com/apis/site/v2/sports/golf/liv/scoreboard",
+    "https://site.api.espn.com/apis/site/v2/sports/golf/eur/scoreboard",
+    "https://site.api.espn.com/apis/site/v2/sports/golf/tgl/scoreboard",
+    "https://site.api.espn.com/apis/site/v2/sports/golf/champions-tour/scoreboard",
+    "https://site.api.espn.com/apis/site/v2/sports/golf/mens-olympics-golf/scoreboard",
+    "https://site.api.espn.com/apis/site/v2/sports/golf/ntw/scoreboard",
+    "https://site.api.espn.com/apis/site/v2/sports/golf/womens-olympics-golf/scoreboard",
+  ],
+  racing: [
+    "https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard",
+    "https://site.api.espn.com/apis/site/v2/sports/racing/irl/scoreboard",
+    "https://site.api.espn.com/apis/site/v2/sports/racing/nascar-premier/scoreboard",
+  ],
+  soccer: [
+    "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard",
+    "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard",
+  ],
+  basketball: [
+    "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard",
+  ],
+};
+
+function asArray<T = any>(value: any): T[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function cleanUrl(url: string): string {
+  return url.replace(/^http:\/\//i, "https://");
+}
+
+function inferLeagueSlugFromUrl(url: string): string | null {
+  const cleaned = cleanUrl(url);
+
+  const m = cleaned.match(/\/leagues\/([^/?]+)/i);
+  if (m?.[1]) return decodeURIComponent(m[1]);
+
+  const m2 = cleaned.match(/\/sports\/[^/]+\/([^/]+)\/scoreboard/i);
+  if (m2?.[1]) return decodeURIComponent(m2[1]);
+
+  return null;
+}
+
+function safeTimestamp(value: any): string | null {
+  if (!value || typeof value !== "string") return null;
+  return value;
+}
+
+function pickVenue(event: Json): string | null {
+  if (typeof event?.venue?.displayName === "string") return event.venue.displayName;
+  if (typeof event?.venue?.fullName === "string") return event.venue.fullName;
+
+  const firstCompetition = asArray(event?.competitions)[0];
+  if (typeof firstCompetition?.venue?.fullName === "string") return firstCompetition.venue.fullName;
+  if (typeof firstCompetition?.venue?.address?.summary === "string") return firstCompetition.venue.address.summary;
+  if (typeof firstCompetition?.court?.description === "string") return firstCompetition.court.description;
+
+  return null;
+}
+
+function pickEventStatus(event: Json): Json | null {
+  if (event?.status && typeof event.status === "object") return event.status;
+
+  const firstCompetition = asArray(event?.competitions)[0];
+  if (firstCompetition?.status && typeof firstCompetition.status === "object") {
+    return firstCompetition.status;
   }
 
-  // Basic env validation
-  const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
-  const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-  const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"); // optional
+  return null;
+}
 
-  if (!SUPABASE_URL) {
-    console.error("Missing SUPABASE_URL");
-    return new Response(JSON.stringify({ error: "Server misconfiguration: missing SUPABASE_URL" }), { status: 500, headers: { "Content-Type": "application/json" } });
+function toStableBigintString(input: string): string {
+  const FNV_OFFSET = 14695981039346656037n;
+  const FNV_PRIME = 1099511628211n;
+  const MAX_SIGNED_BIGINT = 9223372036854775807n;
+
+  let hash = FNV_OFFSET;
+  for (let i = 0; i < input.length; i++) {
+    hash ^= BigInt(input.charCodeAt(i));
+    hash = (hash * FNV_PRIME) % MAX_SIGNED_BIGINT;
   }
-  if (!SUPABASE_ANON_KEY && !SUPABASE_SERVICE_ROLE_KEY) {
-    console.error("Missing keys: need SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE_KEY");
-    return new Response(JSON.stringify({ error: "Server misconfiguration: missing keys" }), { status: 500, headers: { "Content-Type": "application/json" } });
+
+  if (hash < 0n) hash = -hash;
+  if (hash === 0n) hash = 1n;
+  return hash.toString();
+}
+
+function normalizeBigintId(raw: any, fallbackKey: string): string {
+  if (typeof raw === "number" && Number.isFinite(raw)) {
+    return Math.trunc(raw).toString();
   }
 
-  try {
-    // === DIAGNOSTIC & robust header extraction ===
-    // Collect headers (header names are lowercased by iteration)
-    const headersObj: Record<string, string | null> = {};
-    for (const [k, v] of req.headers.entries()) {
-      headersObj[k] = v;
-    }
-
-    // Try multiple ways to extract Authorization, tolerant to casing
-    const rawAuth = req.headers.get("Authorization") ?? req.headers.get("authorization") ?? null;
-    const rawAuthMasked = rawAuth ? `${rawAuth.slice(0, 8)}...` : null;
-    const split = rawAuth ? rawAuth.split(" ") : [];
-    const tokenCandidate = split.length >= 2 && split[0].toLowerCase() === "bearer" ? split.slice(1).join(" ") : null;
-
-    console.info("Authorization header present:", Boolean(rawAuth));
-    console.info("Authorization header (masked):", rawAuthMasked);
-    console.info("tokenCandidate present:", Boolean(tokenCandidate));
-
-    // Expose a short diagnostic endpoint if requested
-    const url = new URL(req.url);
-    if (url.searchParams.get("diag") === "1") {
-      return new Response(JSON.stringify({
-        headers: headersObj,
-        authorization_present: Boolean(rawAuth),
-        raw_auth_masked: rawAuthMasked,
-        token_candidate_present: Boolean(tokenCandidate),
-      }, null, 2), { status: 200, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } });
-    }
-    // === end diagnostic ===
-
-    // Choose runtime key:
-    // - If an Authorization header exists, we still initialize with anon key but forward the Authorization header so RLS applies.
-    // - If no Authorization header and SUPABASE_SERVICE_ROLE_KEY exists, use it for trusted server operations.
-    const runtimeKey = rawAuth ? (SUPABASE_ANON_KEY || SUPABASE_SERVICE_ROLE_KEY!) : (SUPABASE_SERVICE_ROLE_KEY ?? SUPABASE_ANON_KEY);
-
-    // If we ended with no runtimeKey, fail early (shouldn't happen due to checks above)
-    if (!runtimeKey) {
-      console.error("No runtime key available");
-      return new Response(JSON.stringify({ error: "Server misconfiguration: no runtime key" }), { status: 500, headers: { "Content-Type": "application/json" } });
-    }
-
-    // Create per-request Supabase client with optional forwarded Authorization header
-    const supabase = createClient(SUPABASE_URL, runtimeKey, {
-      global: {
-        headers: {
-          // If rawAuth is null, this will be empty string; supabase-js ignores empty Authorization
-          Authorization: rawAuth ?? "",
-        },
-      },
-      auth: { persistSession: false },
-    });
-
-    // If we extracted a Bearer token, ensure the SDK auth layer uses it
-    // supabase.auth.setAuth(token) helps auth helpers rely on the token
-    if (tokenCandidate) {
-      try {
-        // setAuth is synchronous and sets the runtime token for auth calls
-        // @ts-ignore - supabase-js types may or may not expose this method depending on version
-        supabase.auth.setAuth(tokenCandidate);
-        console.info("Set supabase auth token via supabase.auth.setAuth");
-      } catch (e) {
-        // If setAuth isn't available in this runtime, fallback to leaving Authorization header in global headers
-        console.warn("supabase.auth.setAuth failed or not available:", String(e));
-      }
-    }
-
-    // Optional: log whether we are using service role
-    const usingServiceRole = runtimeKey === SUPABASE_SERVICE_ROLE_KEY;
-    console.info("Using service role key:", usingServiceRole);
-
-    // Ingestion loop
-    for (const sport of SPORTS) {
-      const url = `https://site.api.espn.com/apis/site/v2/sports/${sport.path}/scoreboard`;
-
-      const res = await fetch(url);
-      if (!res.ok) {
-        console.error("Failed fetch:", sport.slug, res.status);
-        continue;
-      }
-
-      const data = await res.json();
-      if (!data?.events) continue;
-
-      await processEvents(data.events, sport.slug, supabase);
-    }
-
-    const respHeaders: Record<string, string> = {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    };
-
-    return new Response(JSON.stringify({ status: "ok" }), { status: 200, headers: respHeaders });
-  } catch (err) {
-    console.error("Ingestion error:", err);
-    return new Response(JSON.stringify({ error: String(err) }), { status: 500, headers: { "Content-Type": "application/json" } });
+  if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    if (/^\d+$/.test(trimmed)) return trimmed;
+    return toStableBigintString(`${fallbackKey}:${trimmed}`);
   }
-});
 
-async function processEvents(events: any[], slug: string, supabase: ReturnType<typeof createClient>) {
-  const { data: sportRow, error: sportErr } = await supabase
+  return toStableBigintString(`${fallbackKey}:unknown`);
+}
+
+function competitionIdFrom(eventId: string, comp: Json, index: number): string {
+  if (comp?.id != null) {
+    return normalizeBigintId(comp.id, `competition:${eventId}:${index}`);
+  }
+  return toStableBigintString(`competition:${eventId}:${index}`);
+}
+
+function competitionTeamIdFrom(
+  competitionId: string,
+  entityId: string,
+  order: number | null,
+  homeAway: string | null,
+): string {
+  return toStableBigintString(
+    `competition_team:${competitionId}:${entityId}:${order ?? "na"}:${homeAway ?? "na"}`,
+  );
+}
+
+function highlightIdFrom(eventId: string, h: Json, index: number): string {
+  const seed =
+    h?.id ??
+    h?.url ??
+    h?.href ??
+    h?.links?.[0]?.href ??
+    h?.title ??
+    h?.headline ??
+    h?.type ??
+    index;
+
+  return normalizeBigintId(seed, `highlight:${eventId}:${index}`);
+}
+
+async function fetchJson(url: string): Promise<Json> {
+  const finalUrl = cleanUrl(url);
+  const response = await fetch(finalUrl, {
+    headers: {
+      Accept: "application/json",
+      "User-Agent": "supabase-edge-function/ingestSportsData",
+    },
+  });
+
+  if (!response.ok) {
+    const body = await response.text().catch(() => "");
+    throw new Error(`Fetch failed ${response.status} for ${finalUrl}: ${body.slice(0, 300)}`);
+  }
+
+  return await response.json();
+}
+
+async function upsertOne(table: string, row: Json) {
+  const { error } = await supabase.from(table).upsert(row, { onConflict: "id" });
+  if (error) {
+    throw new Error(`Upsert failed for ${table}: ${error.message}`);
+  }
+}
+
+async function upsertMany(table: string, rows: Json[], onConflict = "id") {
+  if (!rows.length) return;
+
+  const { error } = await supabase.from(table).upsert(rows, { onConflict });
+  if (error) {
+    throw new Error(`Upsert failed for ${table}: ${error.message}`);
+  }
+}
+
+async function ensureSportRow(sportKey: string) {
+  const sport = SPORT_CONFIG[sportKey];
+  if (!sport) throw new Error(`Unknown sport key: ${sportKey}`);
+
+  const { data: existing, error: selectError } = await supabase
     .from("sports")
-    .select("id")
-    .eq("slug", slug)
+    .select("id, slug")
+    .eq("slug", sport.slug)
     .maybeSingle();
 
-  if (sportErr) {
-    console.error("Error fetching sport row:", sportErr);
-    return;
+  if (selectError) {
+    throw new Error(`Select failed for sports: ${selectError.message}`);
   }
 
-  if (!sportRow?.id) {
-    console.error("Missing sport:", slug);
-    return;
+  if (existing) {
+    const { error: updateError } = await supabase
+      .from("sports")
+      .update({
+        name: sport.name,
+        abbreviation: sport.abbreviation,
+      })
+      .eq("slug", sport.slug);
+
+    if (updateError) {
+      throw new Error(`Update failed for sports: ${updateError.message}`);
+    }
+
+    return String(existing.id);
   }
+
+  const { error: insertError } = await supabase.from("sports").insert({
+    id: sport.id,
+    name: sport.name,
+    slug: sport.slug,
+    abbreviation: sport.abbreviation,
+  });
+
+  if (insertError) {
+    throw new Error(`Insert failed for sports: ${insertError.message}`);
+  }
+
+  return sport.id;
+}
+
+type ProcessContext = {
+  sportKey: string;
+  sportId: string;
+  sourceUrl: string;
+  leagueCache: Map<string, string>;
+  report: {
+    endpoints: string[];
+    leagues: number;
+    events: number;
+    competitions: number;
+    teams: number;
+    highlights: number;
+    errors: { url: string; error: string }[];
+  };
+};
+
+async function processPayload(payload: Json, ctx: ProcessContext) {
+  const inferredLeagueSlug = inferLeagueSlugFromUrl(ctx.sourceUrl);
+
+  const topLevelLeagues = [
+    ...asArray(payload?.leagues),
+    ...(payload?.league ? [payload.league] : []),
+  ];
+
+  const leaguesToUpsert: Json[] = [];
+  let defaultLeagueId: string | null = null;
+
+  for (const league of topLevelLeagues) {
+    const leagueId = normalizeBigintId(
+      league?.id ?? league?.uid ?? `${ctx.sportKey}:${league?.slug ?? league?.name ?? "league"}`,
+      `league:${ctx.sportKey}`,
+    );
+
+    const season = league?.season ?? {};
+    const leagueSlug = String(league?.slug ?? inferredLeagueSlug ?? "").trim();
+
+    leaguesToUpsert.push({
+      id: leagueId,
+      sport_id: ctx.sportId,
+      name: ((league?.name ?? league?.shortName ?? leagueSlug) || `${ctx.sportKey} league`),
+      abbreviation: league?.abbreviation ?? null,
+      season_year: season?.year ?? payload?.season?.year ?? null,
+      start_date: safeTimestamp(season?.startDate ?? league?.calendarStartDate),
+      end_date: safeTimestamp(season?.endDate ?? league?.calendarEndDate),
+      raw_data: league,
+    });
+
+    if (leagueSlug) ctx.leagueCache.set(leagueSlug, leagueId);
+    if (!defaultLeagueId) defaultLeagueId = leagueId;
+  }
+
+  if (!defaultLeagueId && inferredLeagueSlug && ctx.leagueCache.has(inferredLeagueSlug)) {
+    defaultLeagueId = ctx.leagueCache.get(inferredLeagueSlug)!;
+  }
+
+  if (leaguesToUpsert.length) {
+    await upsertMany("leagues", leaguesToUpsert);
+    ctx.report.leagues += leaguesToUpsert.length;
+  }
+
+  const payloadEvents = asArray(payload?.events);
+  const singleEventPayload =
+    payload?.id != null && payload?.name != null && Array.isArray(payload?.competitions)
+      ? [payload]
+      : [];
+
+  const events = payloadEvents.length ? payloadEvents : singleEventPayload;
 
   for (const event of events) {
-    const competition = event.competitions?.[0];
-    const venue = competition?.venue;
-    const status = event.status?.type;
+    const eventId = normalizeBigintId(
+      event?.id ?? event?.uid ?? `${ctx.sourceUrl}:${event?.name ?? "event"}`,
+      `event:${ctx.sportKey}`,
+    );
 
-    const eventPayload = {
-      sport_id: sportRow.id,
-      external_id: event.id,
-      name: event.name,
-      short_name: event.shortName ?? null,
-      season: event.season?.year ?? null,
-      start_time: event.date ?? null,
+    let leagueId: string | null = null;
 
-      status_type: status?.name ?? null,
-      status_state: status?.state ?? null,
-      completed: status?.completed ?? false,
-      is_live: status?.state === "in",
-      clock: event.status?.displayClock ?? null,
-      period: event.status?.period ?? null,
+    if (event?.league?.id != null) {
+      leagueId = normalizeBigintId(event.league.id, `league_ref:${ctx.sportKey}`);
+    } else if (event?.leagues?.[0]?.id != null) {
+      leagueId = normalizeBigintId(event.leagues[0].id, `league_ref:${ctx.sportKey}`);
+    } else {
+      leagueId = defaultLeagueId;
+    }
 
-      venue_name: venue?.fullName ?? null,
-      venue_city: venue?.address?.city ?? null,
-      venue_country: venue?.address?.country ?? null,
-
-      updated_at: new Date().toISOString(),
+    const eventRow = {
+      id: eventId,
+      league_id: leagueId,
+      name: event?.name ?? event?.shortName ?? `Event ${eventId}`,
+      short_name: event?.shortName ?? null,
+      event_date: safeTimestamp(event?.date),
+      end_date: safeTimestamp(event?.endDate),
+      venue: pickVenue(event),
+      status: pickEventStatus(event),
+      raw_data: event,
     };
 
-    const { data: eventRow, error: eventErr } = await supabase
-      .from("events")
-      .upsert(eventPayload, { onConflict: "external_id" })
-      .select()
-      .maybeSingle();
+    await upsertOne("events", eventRow);
+    ctx.report.events += 1;
 
-    if (eventErr) {
-      console.error("Upsert event error:", eventErr, "payload:", eventPayload);
-      continue;
+    const { error: deleteError } = await supabase
+      .from("competitions")
+      .delete()
+      .eq("event_id", eventId);
+
+    if (deleteError) {
+      throw new Error(`Delete competitions failed for event ${eventId}: ${deleteError.message}`);
     }
 
-    if (!eventRow?.id) continue;
+    const competitions = asArray(event?.competitions);
+    const teamRowsMap = new Map<string, Json>();
+    const competitionRows: Json[] = [];
+    const competitionTeamRows: Json[] = [];
+    const highlightRows: Json[] = [];
 
-    const competitors = competition?.competitors ?? [];
+    for (let i = 0; i < competitions.length; i++) {
+      const comp = competitions[i];
+      const competitionId = competitionIdFrom(eventId, comp, i);
 
-    for (const comp of competitors) {
-      const participantPayload = {
-        sport_id: sportRow.id,
-        external_id: comp.id,
-        type: comp.type ?? "team",
-        name: comp.team?.displayName ?? comp.athlete?.displayName ?? null,
-        abbreviation: comp.team?.abbreviation ?? null,
-        logo: comp.team?.logo ?? null,
-      };
+      competitionRows.push({
+        id: competitionId,
+        event_id: eventId,
+        type_id:
+          comp?.type?.id != null && !Number.isNaN(Number(comp.type.id))
+            ? Number(comp.type.id)
+            : null,
+        neutral_site: comp?.neutralSite ?? null,
+        play_by_play_available: comp?.playByPlayAvailable ?? event?.playByPlayAvailable ?? null,
+        raw_data: comp,
+      });
 
-      const { data: participant, error: participantErr } = await supabase
-        .from("participants")
-        .upsert(participantPayload, { onConflict: "external_id" })
-        .select()
-        .maybeSingle();
+      const competitors = asArray(comp?.competitors);
 
-      if (participantErr) {
-        console.error("Upsert participant error:", participantErr, "payload:", participantPayload);
-        continue;
+      for (let j = 0; j < competitors.length; j++) {
+        const competitor = competitors[j];
+        const baseEntity = competitor?.team ?? competitor?.athlete ?? competitor;
+
+        const entityId = normalizeBigintId(
+          competitor?.team?.id ??
+            competitor?.athlete?.id ??
+            competitor?.id ??
+            `${competitionId}:${j}`,
+          `team_entity:${ctx.sportKey}`,
+        );
+
+        const teamRow = {
+          id: entityId,
+          name:
+            baseEntity?.name ??
+            baseEntity?.fullName ??
+            baseEntity?.displayName ??
+            competitor?.name ??
+            `Entity ${entityId}`,
+          abbreviation: baseEntity?.abbreviation ?? null,
+          display_name:
+            baseEntity?.displayName ??
+            baseEntity?.fullName ??
+            baseEntity?.name ??
+            competitor?.name ??
+            null,
+          short_display_name:
+            baseEntity?.shortDisplayName ??
+            baseEntity?.shortName ??
+            null,
+          color: baseEntity?.color ?? null,
+          alternate_color: baseEntity?.alternateColor ?? null,
+          is_active: baseEntity?.isActive ?? baseEntity?.active ?? null,
+          logo:
+            baseEntity?.logo ??
+            baseEntity?.flag?.href ??
+            baseEntity?.headshot ??
+            null,
+          raw_data: baseEntity,
+        };
+
+        teamRowsMap.set(entityId, teamRow);
+
+        const competitionTeamId = competitionTeamIdFrom(
+          competitionId,
+          entityId,
+          typeof competitor?.order === "number" ? competitor.order : j,
+          competitor?.homeAway ?? null,
+        );
+
+        const score =
+          competitor?.score?.displayValue ??
+          competitor?.score ??
+          null;
+
+        competitionTeamRows.push({
+          id: competitionTeamId,
+          competition_id: competitionId,
+          team_id: entityId,
+          home_away: competitor?.homeAway ?? null,
+          score: score != null ? String(score) : null,
+          statistics: competitor?.statistics ?? null,
+          records: competitor?.records ?? null,
+          order_in_competition:
+            typeof competitor?.order === "number" ? competitor.order : j,
+        });
       }
 
-      if (!participant?.id) continue;
-
-      const epPayload = {
-        event_id: eventRow.id,
-        participant_id: participant.id,
-        score: comp.score ?? null,
-        winner: comp.winner ?? false,
-        home_away: comp.homeAway ?? null,
-        record: comp.records?.map((r: any) => r.summary).join(" | ") ?? null,
-        seed: comp.seed ?? null,
-        position: comp.order ?? null,
-        linescores: comp.linescores ?? null,
-      };
-
-      const { error: epErr } = await supabase
-        .from("event_participants")
-        .upsert(epPayload, { onConflict: ["event_id", "participant_id"] });
-
-      if (epErr) {
-        console.error("Upsert event_participants error:", epErr, "payload:", epPayload);
+      const compHighlights = asArray(comp?.highlights);
+      for (let hIndex = 0; hIndex < compHighlights.length; hIndex++) {
+        const h = compHighlights[hIndex];
+        highlightRows.push({
+          id: highlightIdFrom(eventId, h, hIndex),
+          event_id: eventId,
+          type: h?.type ?? h?.headline ?? h?.title ?? "highlight",
+          url: h?.url ?? h?.href ?? h?.links?.[0]?.href ?? null,
+        });
       }
+    }
+
+    const eventHighlights = asArray(event?.highlights);
+    for (let hIndex = 0; hIndex < eventHighlights.length; hIndex++) {
+      const h = eventHighlights[hIndex];
+      highlightRows.push({
+        id: highlightIdFrom(eventId, h, hIndex + 1000),
+        event_id: eventId,
+        type: h?.type ?? h?.headline ?? h?.title ?? "highlight",
+        url: h?.url ?? h?.href ?? h?.links?.[0]?.href ?? null,
+      });
+    }
+
+    if (teamRowsMap.size) {
+      const rows = [...teamRowsMap.values()];
+      await upsertMany("teams", rows);
+      ctx.report.teams += rows.length;
+    }
+
+    if (competitionRows.length) {
+      await upsertMany("competitions", competitionRows);
+      ctx.report.competitions += competitionRows.length;
+    }
+
+    if (competitionTeamRows.length) {
+      const dedupedCompetitionTeamRows = [
+        ...new Map(competitionTeamRows.map((row) => [row.id, row])).values(),
+      ];
+      await upsertMany("competition_teams", dedupedCompetitionTeamRows);
+    }
+
+    if (highlightRows.length) {
+      const dedupedHighlightRows = [
+        ...new Map(highlightRows.map((row) => [row.id, row])).values(),
+      ];
+      await upsertMany("highlights", dedupedHighlightRows);
+      ctx.report.highlights += dedupedHighlightRows.length;
     }
   }
 }
-```
-```typescript v2
 
-import { createClient } from "npm:@supabase/supabase-js@2.31.0";
+serve(async (req: Request) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: CORS_HEADERS });
+  }
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (req.method !== "POST" && req.method !== "GET") {
+    return new Response(
+      JSON.stringify({ success: false, error: "Method not allowed" }),
+      {
+        status: 405,
+        headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+      },
+    );
+  }
 
-if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error("Missing SUPABASE_URL or SUPABASE_KEY");
-}
+  const report = {
+    endpoints: [] as string[],
+    leagues: 0,
+    events: 0,
+    competitions: 0,
+    teams: 0,
+    highlights: 0,
+    errors: [] as { url: string; error: string }[],
+  };
 
-const supabase = createClient(SUPABASE_URL ?? "", SUPABASE_KEY ?? "", {
-  auth: { persistSession: false }
-});
-
-const SPORTS = [
-  { slug: "nba", path: "basketball/nba" },
-  { slug: "f1", path: "racing/f1" },
-  { slug: "football", path: "soccer/eng.1" },
-  { slug: "tennis", path: "tennis/atp" },
-  { slug: "golf", path: "golf/pga" },
-];
-
-Deno.serve(async (_req: Request) => {
   try {
-    for (const sport of SPORTS) {
-      const url = `https://site.api.espn.com/apis/site/v2/sports/${sport.path}/scoreboard`;
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 10_000);
+    const leagueCache = new Map<string, string>();
 
-      let res;
-      try {
-        res = await fetch(url, { signal: controller.signal });
-      } catch (err) {
-        console.error("Fetch error for", sport.slug, err);
-        clearTimeout(timeout);
-        continue;
+    for (const [sportKey, urls] of Object.entries(API_ENDPOINTS)) {
+      const sportId = await ensureSportRow(sportKey);
+
+      for (const url of urls) {
+        report.endpoints.push(url);
+
+        try {
+          const payload = await fetchJson(url);
+
+          await processPayload(payload, {
+            sportKey,
+            sportId,
+            sourceUrl: url,
+            leagueCache,
+            report,
+          });
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          console.error(`[${sportKey}] ${url}: ${message}`);
+          report.errors.push({ url, error: message });
+        }
       }
-      clearTimeout(timeout);
-
-      if (!res.ok) {
-        console.error("Non-OK response from ESPN for", sport.slug, res.status);
-        continue;
-      }
-
-      let data: any;
-      try {
-        data = await res.json();
-      } catch (err) {
-        console.error("Invalid JSON from ESPN for", sport.slug, err);
-        continue;
-      }
-
-      if (!data?.events || !Array.isArray(data.events)) {
-        console.warn("No events for", sport.slug);
-        continue;
-      }
-
-      await processEvents(data, sport.slug);
     }
 
-    return new Response(JSON.stringify({ status: "ok", message: "Ingestion complete" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
-    });
-  } catch (err) {
-    console.error("Unhandled error in ingestion:", err);
-    return new Response(JSON.stringify({ error: String(err) }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
-    });
+    return new Response(
+      JSON.stringify({
+        success: report.errors.length === 0,
+        summary: {
+          endpoints_processed: report.endpoints.length,
+          leagues_upserted: report.leagues,
+          events_upserted: report.events,
+          competitions_upserted: report.competitions,
+          teams_upserted: report.teams,
+          highlights_upserted: report.highlights,
+          errors: report.errors.length,
+        },
+        errors: report.errors,
+      }),
+      {
+        status: report.errors.length === 0 ? 200 : 207,
+        headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+      },
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Unhandled ingest error: ${message}`);
+
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: message,
+        summary: report,
+      }),
+      {
+        status: 500,
+        headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+      },
+    );
   }
 });
-
-async function processEvents(data: any, slug: string) {
-  for (const event of data.events) {
-    try {
-      const sportResp = await supabase
-        .from("sports")
-        .select("id")
-        .eq("slug", slug)
-        .limit(1)
-        .maybeSingle();
-
-      if (sportResp.error) {
-        console.error("Supabase error selecting sport:", sportResp.error);
-        continue;
-      }
-
-      const sportRow = sportResp.data;
-      if (!sportRow?.id) {
-        console.warn("No sport row found for slug:", slug);
-        continue;
-      }
-
-      const competition = event.competitions?.[0];
-      const venue = competition?.venue;
-      const status = event.status?.type;
-
-      const eventPayload = {
-        sport_id: sportRow.id,
-        external_id: event.id,
-        name: event.name,
-        short_name: event.shortName ?? null,
-        season: event.season?.year ?? null,
-        start_time: event.date ?? null,
-
-        status_type: status?.name ?? null,
-        status_state: status?.state ?? null,
-        completed: status?.completed ?? false,
-        is_live: status?.state === "in",
-        clock: event.status?.displayClock ?? null,
-        period: event.status?.period ?? null,
-
-        venue_name: venue?.fullName ?? null,
-        venue_city: venue?.address?.city ?? null,
-        venue_country: venue?.address?.country ?? null,
-
-        updated_at: new Date().toISOString(),
-      };
-
-      const eventResp = await supabase
-        .from("events")
-        .upsert(eventPayload, { onConflict: "external_id", ignoreDuplicates: false })
-        .select()
-        .limit(1)
-        .maybeSingle();
-
-      if (eventResp.error) {
-        console.error("Supabase error upserting event:", eventResp.error, "payload:", eventPayload);
-        continue;
-      }
-
-      const eventRow = eventResp.data;
-      if (!eventRow?.id) continue;
-
-      const competitors = competition?.competitors ?? [];
-
-      for (const comp of competitors) {
-        const participantPayload = {
-          sport_id: sportRow.id,
-          external_id: comp.id,
-          type: comp.type ?? "team",
-          name: comp.team?.displayName ?? comp.athlete?.displayName ?? null,
-          abbreviation: comp.team?.abbreviation ?? null,
-          logo: comp.team?.logo ?? null,
-        };
-
-        const partResp = await supabase
-          .from("participants")
-          .upsert(participantPayload, { onConflict: "external_id", ignoreDuplicates: false })
-          .select()
-          .limit(1)
-          .maybeSingle();
-
-        if (partResp.error) {
-          console.error("Supabase error upserting participant:", partResp.error, "payload:", participantPayload);
-          continue;
-        }
-
-        const participant = partResp.data;
-        if (!participant?.id) continue;
-
-        const epPayload = {
-          event_id: eventRow.id,
-          participant_id: participant.id,
-          score: comp.score ?? null,
-          winner: comp.winner ?? false,
-          home_away: comp.homeAway ?? null,
-          record: comp.records?.map((r: any) => r.summary).join(" | ") ?? null,
-          seed: comp.seed ?? null,
-          position: comp.order ?? null,
-          linescores: comp.linescores ?? null,
-        };
-
-        const epResp = await supabase
-          .from("event_participants")
-          .upsert(epPayload, { onConflict: ["event_id", "participant_id"] });
-
-        if (epResp.error) {
-          console.error("Supabase error upserting event_participant:", epResp.error, "payload:", epPayload);
-        }
-      }
-    } catch (err) {
-      console.error("Error processing event", event?.id ?? "<unknown>", err);
-    }
-  }
-}
-```
-
-----------------------------------------------------------------------------------------------------------
-
-```typescript v3
-
-import { createClient } from "npm:@supabase/supabase-js@2.31.0";
-
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-
-if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error("Missing SUPABASE_URL or SUPABASE_KEY");
-}
-
-const supabase = createClient(SUPABASE_URL ?? "", SUPABASE_KEY ?? "", {
-  auth: { persistSession: false }
-});
-
-// Keep existing sports ingestion but remove the old tennis entry
-const SPORTS = [
-  { slug: "nba", path: "basketball/nba" },
-  { slug: "f1", path: "racing/f1" },
-  { slug: "football", path: "soccer/eng.1" },
-  // tennis removed from here
-  { slug: "golf", path: "golf/pga" },
-];
-
-// Additional tennis Core API URLs (ATP and WTA)
-const TENNIS_CORE_URLS = [
-  { slug: "tennis", url: "http://sports.core.api.espn.com/v2/sports/tennis/leagues/atp/events/411-2026?lang=en&region=us" },
-  { slug: "tennis", url: "http://sports.core.api.espn.com/v2/sports/tennis/leagues/wta/events/411-2026?lang=en&region=us" },
-];
-
-Deno.serve(async (_req: Request) => {
-  try {
-    // Existing scoreboard ingestion (no tennis here)
-    for (const sport of SPORTS) {
-      const url = `https://site.api.espn.com/apis/site/v2/sports/${sport.path}/scoreboard`;
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 10_000);
-
-      let res;
-      try {
-        res = await fetch(url, { signal: controller.signal });
-      } catch (err) {
-        console.error("Fetch error for", sport.slug, err);
-        clearTimeout(timeout);
-        continue;
-      }
-      clearTimeout(timeout);
-
-      if (!res.ok) {
-        console.error("Non-OK response from ESPN for", sport.slug, res.status);
-        continue;
-      }
-
-      let data: any;
-      try {
-        data = await res.json();
-      } catch (err) {
-        console.error("Invalid JSON from ESPN for", sport.slug, err);
-        continue;
-      }
-
-      if (!data?.events || !Array.isArray(data.events)) {
-        console.warn("No events for", sport.slug);
-        continue;
-      }
-
-      await processEvents(data, sport.slug);
-    }
-
-    // Tennis Core API ingestion (ATP + WTA)
-    for (const entry of TENNIS_CORE_URLS) {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 10_000);
-
-      let res;
-      try {
-        res = await fetch(entry.url, { signal: controller.signal });
-      } catch (err) {
-        console.error("Fetch error for tennis core API", entry.url, err);
-        clearTimeout(timeout);
-        continue;
-      }
-      clearTimeout(timeout);
-
-      if (!res.ok) {
-        console.error("Non-OK response from tennis core API", entry.url, res.status);
-        continue;
-      }
-
-      let data: any;
-      try {
-        data = await res.json();
-      } catch (err) {
-        console.error("Invalid JSON from tennis core API", entry.url, err);
-        continue;
-      }
-
-      // Normalize response to { events: [...] }
-      const normalized = normalizeTennisResponse(data, entry.url);
-      if (!normalized || !Array.isArray(normalized.events) || normalized.events.length === 0) {
-        console.warn("No events found for", entry.url);
-        continue;
-      }
-
-      await processEvents(normalized, entry.slug);
-    }
-
-    return new Response(JSON.stringify({ status: "ok", message: "Ingestion complete" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
-    });
-  } catch (err) {
-    console.error("Unhandled error in ingestion:", err);
-    return new Response(JSON.stringify({ error: String(err) }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
-    });
-  }
-});
-
-/**
- * Normalize various ESPN Core API shapes into { events: [...] }
- */
-function normalizeTennisResponse(data: any, srcUrl: string) {
-  if (!data) return null;
-
-  if (Array.isArray(data.events)) return { events: data.events };
-  if (Array.isArray(data.items)) return { events: data.items };
-  if (data.event) return { events: [data.event] };
-
-  if (data.id && (Array.isArray(data.competitions) || Array.isArray(data.competitors) || data.status)) {
-    return { events: [data] };
-  }
-
-  if (Array.isArray(data.competitions)) {
-    return {
-      events: [{
-        id: data.id ?? data.eventId ?? null,
-        name: data.name ?? null,
-        competitions: data.competitions,
-        status: data.status ?? null,
-        date: data.date ?? null,
-        season: data.season ?? null,
-      }]
-    };
-  }
-
-  console.warn("Unrecognized tennis core API structure for", srcUrl);
-  return null;
-}
-
-/* Helpers for normalization */
-const normalizeExternalId = (v: any) => v == null ? null : String(v);
-const normalizeTime = (v: any) => {
-  if (!v) return null;
-  const d = new Date(v);
-  return isNaN(d.getTime()) ? null : d.toISOString();
-};
-const normalizeBoolean = (v: any) => Boolean(v);
-
-/* Main processing */
-async function processEvents(data: any, slug: string) {
-  for (const event of data.events) {
-    try {
-      const sportResp = await supabase
-        .from("sports")
-        .select("id")
-        .eq("slug", slug)
-        .limit(1)
-        .maybeSingle();
-
-      if (sportResp.error) {
-        console.error("Supabase error selecting sport:", sportResp.error);
-        continue;
-      }
-
-      const sportRow = sportResp.data;
-      if (!sportRow?.id) {
-        console.warn("No sport row found for slug:", slug);
-        continue;
-      }
-
-      const competition = event.competitions?.[0] ?? (() => {
-        if (Array.isArray(event.competitors) && event.competitors.length > 0) {
-          return {
-            competitors: event.competitors,
-            venue: event.venue ?? event.location ?? null,
-            id: event.competitionId ?? null,
-          };
-        }
-        return undefined;
-      })();
-
-      const venue = competition?.venue ?? event.venue ?? event.location ?? null;
-      const status = event.status?.type ?? event.status ?? null;
-
-      const eventPayload = {
-        sport_id: sportRow.id,
-        external_id: normalizeExternalId(event.id ?? event.eventId ?? event._id),
-        name: event.name ?? event.shortName ?? null,
-        short_name: event.shortName ?? null,
-        season: (event.season && event.season.year) ? event.season.year : (event.season ?? null),
-        start_time: normalizeTime(event.date ?? event.startDate ?? null),
-
-        status_type: status?.name ?? status?.type ?? null,
-        status_state: status?.state ?? null,
-        completed: normalizeBoolean(status?.completed ?? (status && status.state === "post")),
-        is_live: normalizeBoolean((status?.state === "in") || (status?.type === "LIVE")),
-        clock: event.status?.displayClock ?? null,
-        period: event.status?.period ?? null,
-
-        venue_name: venue?.fullName ?? venue?.name ?? null,
-        venue_city: venue?.address?.city ?? venue?.city ?? null,
-        venue_country: venue?.address?.country ?? venue?.country ?? null,
-
-        updated_at: new Date().toISOString(),
-      };
-
-      if (!eventPayload.external_id) {
-        console.warn("Skipping event without external id:", eventPayload);
-        continue;
-      }
-
-      const eventResp = await supabase
-        .from("events")
-        .upsert(eventPayload, { onConflict: "external_id", ignoreDuplicates: false })
-        .select()
-        .limit(1)
-        .maybeSingle();
-
-      if (eventResp.error) {
-        console.error("Supabase error upserting event:", eventResp.error, "payload:", eventPayload);
-        continue;
-      }
-
-      const eventRow = eventResp.data;
-      if (!eventRow?.id) {
-        console.warn("Event upsert did not return id, skipping participants for", eventPayload.external_id);
-        continue;
-      }
-
-      const competitors = competition?.competitors ?? event.competitors ?? [];
-
-      for (const comp of competitors) {
-        const compId = comp.id ?? comp._id ?? comp.team?.id ?? comp.athlete?.id ?? comp.entrantId ?? null;
-        const compType = comp.type ?? (comp.team ? "team" : (comp.athlete ? "athlete" : "player"));
-        const compName = comp.team?.displayName ?? comp.athlete?.displayName ?? comp.name ?? comp.displayName ?? null;
-        const compAbbr = comp.team?.abbreviation ?? comp.abbreviation ?? null;
-        const compLogo = comp.team?.logo ?? comp.athlete?.headshot ?? comp.logo ?? null;
-
-        if (!compId) {
-          console.warn("Skipping competitor without id for event", eventPayload.external_id, comp);
-          continue;
-        }
-
-        const participantPayload = {
-          sport_id: sportRow.id,
-          external_id: normalizeExternalId(compId),
-          type: compType,
-          name: compName,
-          abbreviation: compAbbr,
-          logo: compLogo,
-        };
-
-        const partResp = await supabase
-          .from("participants")
-          .upsert(participantPayload, { onConflict: "external_id", ignoreDuplicates: false })
-          .select()
-          .limit(1)
-          .maybeSingle();
-
-        if (partResp.error) {
-          console.error("Supabase error upserting participant:", partResp.error, "payload:", participantPayload);
-          continue;
-        }
-
-        const participant = partResp.data;
-        if (!participant?.id) {
-          console.warn("Participant upsert did not return id for external_id", participantPayload.external_id);
-          continue;
-        }
-
-        // Prepare event_participants payload. Keep linescores as-is (array/object) so it can be stored in json/jsonb if your column supports it.
-        const epPayload: any = {
-          event_id: eventRow.id,
-          participant_id: participant.id,
-          score: comp.score ?? comp.result ?? null,
-          winner: normalizeBoolean(comp.winner ?? comp.isWinner ?? false),
-          home_away: comp.homeAway ?? null,
-          record: Array.isArray(comp.records) ? comp.records.map((r: any) => r.summary).join(" | ") : (comp.record ?? null),
-          seed: comp.seed ?? null,
-          position: comp.order ?? comp.position ?? null,
-          linescores: (comp.linescores ?? comp.runs) ?? null,
-        };
-
-        // If linescores is an object/array and your DB column is text, you may want to stringify:
-        // epPayload.linescores = epPayload.linescores ? JSON.stringify(epPayload.linescores) : null;
-
-        const epResp = await supabase
-          .from("event_participants")
-          .upsert(epPayload, { onConflict: ["event_id", "participant_id"] });
-
-        if (epResp.error) {
-          console.error("Supabase error upserting event_participant:", epResp.error, "payload:", epPayload);
-        }
-      }
-    } catch (err) {
-      console.error("Error processing event", event?.id ?? "<unknown>", err);
-    }
-  }
-}
 
 ```
 
 
-----------------------------------------------------------------------------------------------------------
-
-```typescript v5 with tennis core API and season_ref extraction patch
-
-import { createClient } from "npm:@supabase/supabase-js@2.31.0";
-
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-
-if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error("Missing SUPABASE_URL or SUPABASE_KEY");
-}
-
-const supabase = createClient(SUPABASE_URL ?? "", SUPABASE_KEY ?? "", {
-  auth: { persistSession: false }
-});
-
-// Keep existing sports ingestion but remove the old tennis entry
-const SPORTS = [
-  { slug: "nba", path: "basketball/nba" },
-  { slug: "f1", path: "racing/f1" },
-  { slug: "football", path: "soccer/eng.1" },
-  // tennis removed from here
-  { slug: "golf", path: "golf/pga" },
-];
-
-// Additional tennis Core API URLs (ATP and WTA)
-const TENNIS_CORE_URLS = [
-  { slug: "tennis", url: "http://sports.core.api.espn.com/v2/sports/tennis/leagues/atp/events/411-2026?lang=en&region=us" },
-  { slug: "tennis", url: "http://sports.core.api.espn.com/v2/sports/tennis/leagues/wta/events/411-2026?lang=en&region=us" },
-];
-
-Deno.serve(async (_req: Request) => {
-  try {
-    // Existing scoreboard ingestion (no tennis here)
-    for (const sport of SPORTS) {
-      const url = `https://site.api.espn.com/apis/site/v2/sports/${sport.path}/scoreboard`;
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 10_000);
-
-      let res;
-      try {
-        res = await fetch(url, { signal: controller.signal });
-      } catch (err) {
-        console.error("Fetch error for", sport.slug, err);
-        clearTimeout(timeout);
-        continue;
-      }
-      clearTimeout(timeout);
-
-      if (!res.ok) {
-        console.error("Non-OK response from ESPN for", sport.slug, res.status);
-        continue;
-      }
-
-      let data: any;
-      try {
-        data = await res.json();
-      } catch (err) {
-        console.error("Invalid JSON from ESPN for", sport.slug, err);
-        continue;
-      }
-
-      if (!data?.events || !Array.isArray(data.events)) {
-        console.warn("No events for", sport.slug);
-        continue;
-      }
-
-      await processEvents(data, sport.slug);
-    }
-
-    // Tennis Core API ingestion (ATP + WTA)
-    for (const entry of TENNIS_CORE_URLS) {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 10_000);
-
-      let res;
-      try {
-        res = await fetch(entry.url, { signal: controller.signal });
-      } catch (err) {
-        console.error("Fetch error for tennis core API", entry.url, err);
-        clearTimeout(timeout);
-        continue;
-      }
-      clearTimeout(timeout);
-
-      if (!res.ok) {
-        console.error("Non-OK response from tennis core API", entry.url, res.status);
-        continue;
-      }
-
-      let data: any;
-      try {
-        data = await res.json();
-      } catch (err) {
-        console.error("Invalid JSON from tennis core API", entry.url, err);
-        continue;
-      }
-
-      // Normalize response to { events: [...] }
-      const normalized = normalizeTennisResponse(data, entry.url);
-      if (!normalized || !Array.isArray(normalized.events) || normalized.events.length === 0) {
-        console.warn("No events found for", entry.url);
-        continue;
-      }
-
-      await processEvents(normalized, entry.slug);
-    }
-
-    return new Response(JSON.stringify({ status: "ok", message: "Ingestion complete" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
-    });
-  } catch (err) {
-    console.error("Unhandled error in ingestion:", err);
-    return new Response(JSON.stringify({ error: String(err) }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
-    });
-  }
-});
-
-/**
- * Normalize various ESPN Core API shapes into { events: [...] }
- */
-function normalizeTennisResponse(data: any, srcUrl: string) {
-  if (!data) return null;
-
-  if (Array.isArray(data.events)) return { events: data.events };
-  if (Array.isArray(data.items)) return { events: data.items };
-  if (data.event) return { events: [data.event] };
-
-  if (data.id && (Array.isArray(data.competitions) || Array.isArray(data.competitors) || data.status)) {
-    return { events: [data] };
-  }
-
-  if (Array.isArray(data.competitions)) {
-    return {
-      events: [{
-        id: data.id ?? data.eventId ?? null,
-        name: data.name ?? null,
-        competitions: data.competitions,
-        status: data.status ?? null,
-        date: data.date ?? null,
-        season: data.season ?? null,
-      }]
-    };
-  }
-
-  console.warn("Unrecognized tennis core API structure for", srcUrl);
-  return null;
-}
-
-/* Helpers for normalization */
-const normalizeExternalId = (v: any) => v == null ? null : String(v);
-const normalizeTime = (v: any) => {
-  if (!v) return null;
-  const d = new Date(v);
-  return isNaN(d.getTime()) ? null : d.toISOString();
-};
-const normalizeBoolean = (v: any) => Boolean(v);
-
-/* New helper: extract season_ref (json) and a numeric season if present */
-function extractSeasonInfo(rawSeason: any) {
-  // The function returns { season_ref, season_numeric }
-  // season_ref: a JSON-compatible object (or null)
-  // season_numeric: a number (year) when available, otherwise null
-  try {
-    if (rawSeason == null) return { season_ref: null, season_numeric: null };
-
-    // If rawSeason is an object already, keep it as-is for season_ref
-    if (typeof rawSeason === "object") {
-      // Try to find a numeric year
-      const year =
-        (rawSeason.year && Number.isFinite(Number(rawSeason.year))) ? Number(rawSeason.year) :
-        (rawSeason.season && Number.isFinite(Number(rawSeason.season))) ? Number(rawSeason.season) :
-        null;
-
-      return { season_ref: rawSeason, season_numeric: year };
-    }
-
-    // If rawSeason is a string, attempt to parse JSON first, then fallback to extracting a number
-    if (typeof rawSeason === "string") {
-      try {
-        const parsed = JSON.parse(rawSeason);
-        if (typeof parsed === "object") {
-          const year =
-            (parsed.year && Number.isFinite(Number(parsed.year))) ? Number(parsed.year) :
-            (parsed.season && Number.isFinite(Number(parsed.season))) ? Number(parsed.season) :
-            null;
-          return { season_ref: parsed, season_numeric: year };
-        }
-      } catch {
-        // not JSON; try to extract a 4-digit year
-        const m = rawSeason.match(/(19|20)\d{2}/);
-        const year = m ? Number(m[0]) : null;
-        return { season_ref: rawSeason, season_numeric: year };
-      }
-    }
-
-    // For numeric values
-    if (typeof rawSeason === "number" && Number.isFinite(rawSeason)) {
-      return { season_ref: rawSeason, season_numeric: rawSeason };
-    }
-
-    // Fallback: stringify other types
-    return { season_ref: String(rawSeason), season_numeric: null };
-  } catch (err) {
-    console.warn("extractSeasonInfo error:", err);
-    return { season_ref: null, season_numeric: null };
-  }
-}
-
-/* Main processing */
-async function processEvents(data: any, slug: string) {
-  for (const event of data.events) {
-    try {
-      const sportResp = await supabase
-        .from("sports")
-        .select("id")
-        .eq("slug", slug)
-        .limit(1)
-        .maybeSingle();
-
-      if (sportResp.error) {
-        console.error("Supabase error selecting sport:", sportResp.error);
-        continue;
-      }
-
-      const sportRow = sportResp.data;
-      if (!sportRow?.id) {
-        console.warn("No sport row found for slug:", slug);
-        continue;
-      }
-
-      const competition = event.competitions?.[0] ?? (() => {
-        if (Array.isArray(event.competitors) && event.competitors.length > 0) {
-          return {
-            competitors: event.competitors,
-            venue: event.venue ?? event.location ?? null,
-            id: event.competitionId ?? null,
-          };
-        }
-        return undefined;
-      })();
-
-      const venue = competition?.venue ?? event.venue ?? event.location ?? null;
-      const status = event.status?.type ?? event.status ?? null;
-
-      // New: extract season_ref and numeric season from available fields
-      // The code will check event.season first, then event.seasonRef or event.season_ref, then competition.season.
-      let rawSeason = event.season ?? event.seasonRef ?? event.season_ref ?? competition?.season ?? null;
-      const { season_ref, season_numeric } = extractSeasonInfo(rawSeason);
-
-      const eventPayload: any = {
-        sport_id: sportRow.id,
-        external_id: normalizeExternalId(event.id ?? event.eventId ?? event._id),
-        name: event.name ?? event.shortName ?? null,
-        short_name: event.shortName ?? null,
-        // Keep existing behavior for `season`: only set when a numeric value is available
-        season: season_numeric ?? (typeof event.season === "number" ? event.season : null),
-        start_time: normalizeTime(event.date ?? event.startDate ?? null),
-
-        status_type: status?.name ?? status?.type ?? null,
-        status_state: status?.state ?? null,
-        completed: normalizeBoolean(status?.completed ?? (status && status.state === "post")),
-        is_live: normalizeBoolean((status?.state === "in") || (status?.type === "LIVE")),
-        clock: event.status?.displayClock ?? null,
-        period: event.status?.period ?? null,
-
-        venue_name: venue?.fullName ?? venue?.name ?? null,
-        venue_city: venue?.address?.city ?? venue?.city ?? null,
-        venue_country: venue?.address?.country ?? venue?.country ?? null,
-
-        updated_at: new Date().toISOString(),
-
-        // New: attach season_ref jsonb when available
-        season_ref: season_ref ?? null,
-      };
-
-      if (!eventPayload.external_id) {
-        console.warn("Skipping event without external id:", eventPayload);
-        continue;
-      }
-
-      const eventResp = await supabase
-        .from("events")
-        .upsert(eventPayload, { onConflict: "external_id", ignoreDuplicates: false })
-        .select()
-        .limit(1)
-        .maybeSingle();
-
-      if (eventResp.error) {
-        console.error("Supabase error upserting event:", eventResp.error, "payload:", eventPayload);
-        continue;
-      }
-
-      const eventRow = eventResp.data;
-      if (!eventRow?.id) {
-        console.warn("Event upsert did not return id, skipping participants for", eventPayload.external_id);
-        continue;
-      }
-
-      const competitors = competition?.competitors ?? event.competitors ?? [];
-
-      for (const comp of competitors) {
-        const compId = comp.id ?? comp._id ?? comp.team?.id ?? comp.athlete?.id ?? comp.entrantId ?? null;
-        const compType = comp.type ?? (comp.team ? "team" : (comp.athlete ? "athlete" : "player"));
-        const compName = comp.team?.displayName ?? comp.athlete?.displayName ?? comp.name ?? comp.displayName ?? null;
-        const compAbbr = comp.team?.abbreviation ?? comp.abbreviation ?? null;
-        const compLogo = comp.team?.logo ?? comp.athlete?.headshot ?? comp.logo ?? null;
-
-        if (!compId) {
-          console.warn("Skipping competitor without id for event", eventPayload.external_id, comp);
-          continue;
-        }
-
-        const participantPayload = {
-          sport_id: sportRow.id,
-          external_id: normalizeExternalId(compId),
-          type: compType,
-          name: compName,
-          abbreviation: compAbbr,
-          logo: compLogo,
-        };
-
-        const partResp = await supabase
-          .from("participants")
-          .upsert(participantPayload, { onConflict: "external_id", ignoreDuplicates: false })
-          .select()
-          .limit(1)
-          .maybeSingle();
-
-        if (partResp.error) {
-          console.error("Supabase error upserting participant:", partResp.error, "payload:", participantPayload);
-          continue;
-        }
-
-        const participant = partResp.data;
-        if (!participant?.id) {
-          console.warn("Participant upsert did not return id for external_id", participantPayload.external_id);
-          continue;
-        }
-
-        // Prepare event_participants payload. Keep linescores as-is (array/object) so it can be stored in json/jsonb if your column supports it.
-        const epPayload: any = {
-          event_id: eventRow.id,
-          participant_id: participant.id,
-          score: comp.score ?? comp.result ?? null,
-          winner: normalizeBoolean(comp.winner ?? comp.isWinner ?? false),
-          home_away: comp.homeAway ?? null,
-          record: Array.isArray(comp.records) ? comp.records.map((r: any) => r.summary).join(" | ") : (comp.record ?? null),
-          seed: comp.seed ?? null,
-          position: comp.order ?? comp.position ?? null,
-          linescores: (comp.linescores ?? comp.runs) ?? null,
-        };
-
-        // If linescores is an object/array and your DB column is text, you may want to stringify:
-        // epPayload.linescores = epPayload.linescores ? JSON.stringify(epPayload.linescores) : null;
-
-        const epResp = await supabase
-          .from("event_participants")
-          .upsert(epPayload, { onConflict: ["event_id", "participant_id"] });
-
-        if (epResp.error) {
-          console.error("Supabase error upserting event_participant:", epResp.error, "payload:", epPayload);
-        }
-      }
-    } catch (err) {
-      console.error("Error processing event", event?.id ?? "<unknown>", err);
-    }
-  }
-}
-
-````
