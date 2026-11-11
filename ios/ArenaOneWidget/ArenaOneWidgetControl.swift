@@ -9,6 +9,7 @@ import AppIntents
 import SwiftUI
 import WidgetKit
 
+@available(iOSApplicationExtension 18.0, *)
 struct ArenaOneWidgetControl: ControlWidget {
     static let kind: String = "com.arenaone.arenaone.ArenaOneWidget"
 
@@ -30,6 +31,7 @@ struct ArenaOneWidgetControl: ControlWidget {
     }
 }
 
+@available(iOSApplicationExtension 18.0, *)
 extension ArenaOneWidgetControl {
     struct Value {
         var isRunning: Bool
@@ -48,6 +50,7 @@ extension ArenaOneWidgetControl {
     }
 }
 
+@available(iOSApplicationExtension 18.0, *)
 struct TimerConfiguration: ControlConfigurationIntent {
     static let title: LocalizedStringResource = "Timer Name Configuration"
 
@@ -55,6 +58,7 @@ struct TimerConfiguration: ControlConfigurationIntent {
     var timerName: String
 }
 
+@available(iOSApplicationExtension 18.0, *)
 struct StartTimerIntent: SetValueIntent {
     static let title: LocalizedStringResource = "Start a timer"
 

@@ -11,8 +11,8 @@ import SwiftUI
 @main
 struct ArenaOneWidgetBundle: WidgetBundle {
     var body: some Widget {
-        ArenaOneWidget()
-        ArenaOneWidgetControl()
-        ArenaOneWidgetLiveActivity()
+        if #available(iOSApplicationExtension 16.1, *) {
+            ArenaOneWidgetLiveActivity()
+        }
     }
 }
