@@ -1,149 +1,257 @@
-//
-//  ArenaOneWidgetLiveActivity.swift
-//  ArenaOneWidget
-//
-//  Created by Donator on 26/02/2026.
-//
-
 import ActivityKit
-import WidgetKit
 import SwiftUI
+import WidgetKit
 
-struct ArenaOneWidgetAttributes: ActivityAttributes {
+enum ArenaOneLiveActivityConstants {
+    static let appGroupId = "group.com.opus.arenaone"
+}
+
+struct LiveActivitiesAppAttributes: ActivityAttributes, Identifiable {
+    public typealias LiveDeliveryData = ContentState
+
     public struct ContentState: Codable, Hashable {
-        var status: String
-        var score: String
-        var team_a: String
-        var team_b: String
-        var title: String
-        var sport: String
-        var game_id: String
+        var appGroupId: String
+    }
+
+    var id = UUID()
+}
+
+extension LiveActivitiesAppAttributes {
+    func prefixedKey(_ key: String) -> String {
+        "\(id)_\(key)"
     }
 }
 
+@available(iOSApplicationExtension 16.1, *)
 struct ArenaOneWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: ArenaOneWidgetAttributes.self) { context in
-            // Lock screen/banner UI
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text(context.state.title)
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    Spacer()
-                    Text(context.state.sport)
-                        .font(.system(size: 8, weight: .black))
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 2)
-                        .background(Color.orange.opacity(0.2))
-                        .foregroundColor(.orange)
-                        .cornerRadius(4)
-                }
-                
-                HStack {
-                    Text(context.state.team_a)
-                        .font(.headline)
-                        .bold()
-                    
-                    Spacer()
-                    
-                    Text(context.state.score)
-                        .font(.title2)
-                        .bold()
-                        .monospacedDigit()
-                    
-                    Spacer()
-                    
-                    Text(context.state.team_b)
-                        .font(.headline)
-                        .bold()
-                }
-                
-                Text(context.state.status)
-                    .font(.caption2)
-                    .foregroundColor(context.state.status.uppercased().contains("LIVE") ? .red : .gray)
-                    .bold()
-            }
-            .padding()
-            .activityBackgroundTint(Color(red: 0.05, green: 0.05, blue: 0.07))
-            .activitySystemActionForegroundColor(Color.white)
+        ActivityConfiguration(for: LiveActivitiesAppAttributes.self) { context in
+            let data = ArenaOneLiveActivityData(context: context)
 
+            ArenaOneLockScreenLiveActivityView(data: data)
+                .activityBackgroundTint(Color(red: 0.05, green: 0.05, blue: 0.07))
+                .activitySystemActionForegroundColor(.white)
         } dynamicIsland: { context in
-            DynamicIsland {
-                // Expanded UI
+            let data = ArenaOneLiveActivityData(context: context)
+
+            return DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    Text(context.state.team_a)
-                        .font(.title3)
-                        .bold()
-                        .padding(.leading, 8)
+                    ArenaOneDynamicIslandTeamView(
+                        title: data.teamA,
+                        subtitle: data.teamADetail,
+                        alignment: .leading
+                    )
                 }
+
                 DynamicIslandExpandedRegion(.trailing) {
-                    Text(context.state.team_b)
-                        .font(.title3)
-                        .bold()
-                        .padding(.trailing, 8)
+                    ArenaOneDynamicIslandTeamView(
+                        title: data.teamB,
+                        subtitle: data.teamBDetail,
+                        alignment: .trailing
+                    )
                 }
+
                 DynamicIslandExpandedRegion(.center) {
-                    Text(context.state.score)
-                        .font(.title)
-                        .bold()
-                        .monospacedDigit()
-                        .foregroundColor(.orange)
-                }
-                DynamicIslandExpandedRegion(.bottom) {
                     VStack(spacing: 4) {
-                        Text(context.state.title)
+                        Text(data.score)
+                            .font(.title3)
+                            .fontWeight(.black)
+                            .monospacedDigit()
+                            .foregroundStyle(.orange)
+
+                        Text(data.sport.uppercased())
+                            .font(.system(size: 9, weight: .black, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                DynamicIslandExpandedRegion(.bottom) {
+                    VStack(spacing: 3) {
+                        Text(data.title)
                             .font(.caption)
-                            .foregroundColor(.gray)
-                        
-                        Text(context.state.status)
+                            .fontWeight(.semibold)
+                            .lineLimit(1)
+
+                        Text(data.status.uppercased())
                             .font(.caption2)
-                            .foregroundColor(context.state.status.uppercased().contains("LIVE") ? .red : .gray)
-                            .bold()
+                            .fontWeight(.black)
+                            .foregroundStyle(data.isLive ? .red : .secondary)
                     }
                 }
             } compactLeading: {
-                Text(context.state.team_a)
+                Text(data.teamA.prefix(3).uppercased())
                     .font(.caption2)
-                    .bold()
-                    .foregroundColor(.gray)
+                    .fontWeight(.black)
+                    .foregroundStyle(.secondary)
             } compactTrailing: {
-                Text(context.state.score)
+                Text(data.score)
                     .font(.caption2)
-                    .bold()
-                    .foregroundColor(.orange)
+                    .fontWeight(.black)
+                    .monospacedDigit()
+                    .foregroundStyle(.orange)
             } minimal: {
-                Text(context.state.score.contains("-") ? context.state.score.split(separator: "-").first?.trimmingCharacters(in: .whitespaces) ?? "" : "...")
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundColor(.orange)
+                Text(data.sport.prefix(2).uppercased())
+                    .font(.system(size: 10, weight: .black, design: .rounded))
+                    .foregroundStyle(.orange)
             }
-            .keylineTint(Color.orange)
+            .keylineTint(.orange)
         }
     }
 }
 
-extension ArenaOneWidgetAttributes {
-    fileprivate static var preview: ArenaOneWidgetAttributes {
-        ArenaOneWidgetAttributes()
+@available(iOSApplicationExtension 16.1, *)
+struct ArenaOneLiveActivityData {
+    let gameId: String
+    let title: String
+    let status: String
+    let score: String
+    let teamA: String
+    let teamB: String
+    let teamADetail: String
+    let teamBDetail: String
+    let sport: String
+    let footer: String
+
+    var isLive: Bool {
+        status.localizedCaseInsensitiveContains("live") ||
+            status.localizedCaseInsensitiveContains("thru")
+    }
+
+    init(context: ActivityViewContext<LiveActivitiesAppAttributes>) {
+        let defaults = UserDefaults(suiteName: context.state.appGroupId)
+            ?? UserDefaults(suiteName: ArenaOneLiveActivityConstants.appGroupId)
+            ?? .standard
+
+        func value(_ key: String, fallback: String) -> String {
+            let prefixedKey = context.attributes.prefixedKey(key)
+            let stringValue = defaults.string(forKey: prefixedKey)
+            return stringValue?.isEmpty == false ? stringValue! : fallback
+        }
+
+        gameId = value("game_id", fallback: "")
+        title = value("title", fallback: "Arena One")
+        status = value("status", fallback: "Live")
+        score = value("score", fallback: "LIVE")
+        teamA = value("team_a", fallback: "Arena")
+        teamB = value("team_b", fallback: "One")
+        teamADetail = value("team_a_detail", fallback: "")
+        teamBDetail = value("team_b_detail", fallback: "")
+        sport = value("sport", fallback: "Sports")
+        footer = value("footer", fallback: "")
     }
 }
 
-extension ArenaOneWidgetAttributes.ContentState {
-    fileprivate static var dummy: ArenaOneWidgetAttributes.ContentState {
-        ArenaOneWidgetAttributes.ContentState(
-            status: "LIVE - 4TH QTR",
-            score: "102 - 98",
-            team_a: "LAK",
-            team_b: "GSW",
-            title: "Lakers vs Warriors",
-            sport: "BASKETBALL",
-            game_id: "preview_game_123"
-        )
-     }
+@available(iOSApplicationExtension 16.1, *)
+struct ArenaOneLockScreenLiveActivityView: View {
+    let data: ArenaOneLiveActivityData
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .center) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(data.title)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+
+                    if !data.footer.isEmpty {
+                        Text(data.footer)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+
+                Spacer()
+
+                Text(data.sport.uppercased())
+                    .font(.system(size: 9, weight: .black, design: .rounded))
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 4)
+                    .background(.orange.opacity(0.18), in: Capsule())
+                    .foregroundStyle(.orange)
+            }
+
+            HStack(alignment: .center, spacing: 12) {
+                ArenaOneLockScreenTeamView(title: data.teamA, subtitle: data.teamADetail)
+
+                Spacer(minLength: 8)
+
+                Text(data.score)
+                    .font(.system(size: 28, weight: .black, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+
+                Spacer(minLength: 8)
+
+                ArenaOneLockScreenTeamView(title: data.teamB, subtitle: data.teamBDetail)
+                    .multilineTextAlignment(.trailing)
+            }
+
+            HStack(spacing: 6) {
+                Circle()
+                    .fill(data.isLive ? .red : .secondary)
+                    .frame(width: 6, height: 6)
+
+                Text(data.status.uppercased())
+                    .font(.caption2)
+                    .fontWeight(.black)
+                    .foregroundStyle(data.isLive ? .red : .secondary)
+                    .lineLimit(1)
+            }
+        }
+        .padding()
+    }
 }
 
-#Preview("Live Activity Header", as: .content, using: ArenaOneWidgetAttributes.preview) {
-   ArenaOneWidgetLiveActivity()
-} contentStates: {
-    ArenaOneWidgetAttributes.ContentState.dummy
+@available(iOSApplicationExtension 16.1, *)
+struct ArenaOneLockScreenTeamView: View {
+    let title: String
+    let subtitle: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(title)
+                .font(.headline)
+                .fontWeight(.black)
+                .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.65)
+
+            if !subtitle.isEmpty {
+                Text(subtitle)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+        }
+        .frame(maxWidth: 96, alignment: .leading)
+    }
+}
+
+@available(iOSApplicationExtension 16.1, *)
+struct ArenaOneDynamicIslandTeamView: View {
+    let title: String
+    let subtitle: String
+    let alignment: HorizontalAlignment
+
+    var body: some View {
+        VStack(alignment: alignment, spacing: 3) {
+            Text(title)
+                .font(.caption)
+                .fontWeight(.black)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+
+            if !subtitle.isEmpty {
+                Text(subtitle)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
+        }
+    }
 }
